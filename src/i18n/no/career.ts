@@ -281,11 +281,12 @@ export const career: CareerDict = {
     empty: "Ingen Icons her.",
   },
   informs: {
-    intro: (total: number, rounds: number) => `${total} inform-kort fra ${rounds} ${rounds === 1 ? "runde" : "runder"}. Nye trekkes hver fredag kl. 18:00.`,
+    intro: (total: number, rounds: number) => `${total} inform-kort fra ${rounds} ${rounds === 1 ? "runde" : "runder"}. Hver fredag kl. 18:00 får spillerne som har spilt best i ekte kamper nye kort på 82–90. Jo høyere rating, jo sjeldnere i pakker.`,
     thisWeek: "Denne uken",
     week: (date: string) => `Uken fra ${date}`,
     count: (count: number) => `${count} kort`,
     boost: (boost: number) => `+${boost} fra forrige kort`,
+    chance: (percent: string) => `${percent} % av informs i pakker`,
     empty: "Ingen informs er trukket ennå. Første runde kommer fredag kl. 18:00.",
   },
 };

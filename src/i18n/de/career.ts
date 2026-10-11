@@ -276,11 +276,12 @@ export const career = {
     empty: "Keine Icons hier.",
   },
   informs: {
-    intro: (total: number, rounds: number) => `${total} Inform-Karten aus ${rounds} ${rounds === 1 ? "Runde" : "Runden"}. Neue werden jeden Freitag um 18:00 Uhr gezogen.`,
+    intro: (total: number, rounds: number) => `${total} Inform-Karten aus ${rounds} ${rounds === 1 ? "Runde" : "Runden"}. Jeden Freitag um 18:00 Uhr bekommen die Spieler, die in echten Spielen am besten waren, neue Karten mit 82–90. Je höher die Wertung, desto seltener in Packs.`,
     thisWeek: "Diese Woche",
     week: (date: string) => `Woche ab ${date}`,
     count: (count: number) => `${count} ${count === 1 ? "Karte" : "Karten"}`,
     boost: (boost: number) => `+${boost} zur vorherigen Karte`,
+    chance: (percent: string) => `${percent} % der Informs in Packs`,
     empty: "Es wurden noch keine Informs gezogen. Die erste Runde kommt am Freitag um 18:00 Uhr.",
   },
 };

@@ -276,11 +276,12 @@ export const career = {
     empty: "Ingen Icons her.",
   },
   informs: {
-    intro: (total: number, rounds: number) => `${total} Inform-kort fra ${rounds} ${rounds === 1 ? "runde" : "runder"}. Nye trækkes hver fredag kl. 18:00.`,
+    intro: (total: number, rounds: number) => `${total} Inform-kort fra ${rounds} ${rounds === 1 ? "runde" : "runder"}. Hver fredag kl. 18:00 får spillerne, der har spillet bedst i rigtige kampe, nye kort på 82–90. Jo højere rating, jo sjældnere i pakker.`,
     thisWeek: "Denne uge",
     week: (date: string) => `Ugen fra ${date}`,
     count: (count: number) => `${count} kort`,
     boost: (boost: number) => `+${boost} fra forrige kort`,
+    chance: (percent: string) => `${percent} % af informs i pakker`,
     empty: "Der er ikke trukket nogen Informs endnu. Første runde kommer fredag kl. 18:00.",
   },
 };

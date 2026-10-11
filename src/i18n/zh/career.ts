@@ -276,11 +276,12 @@ export const career = {
     empty: "这里没有传奇卡。",
   },
   informs: {
-    intro: (total: number, rounds: number) => `共 ${rounds} 轮，${total} 张状态卡。每周五 18:00 抽取新卡。`,
+    intro: (total: number, rounds: number) => `共 ${rounds} 轮，${total} 张状态卡。每周五 18:00，真实比赛中表现最好的球员会获得 82–90 的新卡。评分越高，在卡包中越稀有。`,
     thisWeek: "本周",
     week: (date: string) => `${date} 起的一周`,
     count: (count: number) => `${count} 张`,
     boost: (boost: number) => `比上一张卡 +${boost}`,
+    chance: (percent: string) => `卡包中状态卡的 ${percent}%`,
     empty: "还没有抽出状态卡。第一轮将于周五 18:00 推出。",
   },
 };

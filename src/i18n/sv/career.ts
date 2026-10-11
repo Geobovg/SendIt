@@ -276,11 +276,12 @@ export const career = {
     empty: "Inga Icons här.",
   },
   informs: {
-    intro: (total: number, rounds: number) => `${total} Informkort från ${rounds} ${rounds === 1 ? "omgång" : "omgångar"}. Nya dras varje fredag kl. 18:00.`,
+    intro: (total: number, rounds: number) => `${total} Informkort från ${rounds} ${rounds === 1 ? "omgång" : "omgångar"}. Varje fredag kl. 18:00 får spelarna som spelat bäst i riktiga matcher nya kort på 82–90. Ju högre betyg, desto ovanligare i paket.`,
     thisWeek: "Den här veckan",
     week: (date: string) => `Veckan från ${date}`,
     count: (count: number) => `${count} kort`,
     boost: (boost: number) => `+${boost} från förra kortet`,
+    chance: (percent: string) => `${percent} % av informs i paket`,
     empty: "Inga Inform har dragits ännu. Första omgången kommer fredag kl. 18:00.",
   },
 };

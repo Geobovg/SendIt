@@ -54,7 +54,7 @@ Et kort av en spiller som er bedre enn spillerens vanlige kort og har eget utsee
 _Avoid_: Spesialutgave, Event-kort
 
 **Inform**:
-Spesialkortet for en spiller som er i form denne uken, som Team of the Week i FC. Hver fredag kl. 18:00 trekkes 25 tilfeldige spillere blant topp 400 (en **inform-runde**). Kortet er 1–3 bedre, men aldri over 89, så bare spillere under 89 kan få inform. Har spilleren hatt inform før, bygger det på forrige inform. Spillere fra de to siste rundene trekkes ikke, og topp 20 kan bare få inform én gang. Informs fra før migrering 0082 teller ikke.
+Spesialkortet for en spiller som er i form denne uken, som Team of the Week i FC. Hver fredag kl. 18:00 velges 23 spillere (en **inform-runde**) etter ekte form: kampkarakterene fra Fantasy-dataene (API-Football) siste uke, først en startellever (1 keeper, 4 forsvarere, 3 midtbane, 3 angrep) og så de 12 beste av resten. Mangler det kampdata, fylles runden med tilfeldige spillere blant topp 400. Kortet er 1–3 bedre (9,0+ i karakter gir +3, 8,0+ gir +2), men alltid mellom 82 og 90: lavere kort løftes til 82, og spillere som er 90 får ikke inform. Har spilleren hatt inform før, bygger det på forrige inform. Jo høyere rating, jo sjeldnere er informen i pakker (vektene ligger i `inform_tiers`; en 90 er omtrent 20 ganger sjeldnere enn en 82). Runden fra 9. oktober 2026 ble valgt for hånd etter FC 27 TOTW 2–4 (migrering 0086). Informs fra før migrering 0082 teller ikke.
 _Avoid_: TOTW, Ukens lag
 
 **TOTS**:
