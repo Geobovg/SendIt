@@ -20,6 +20,7 @@ export const career = {
     informs: "بطاقات الفورمة",
     tots: "TOTS",
     icons: "Icons",
+    honorable: "Honorable mention",
   },
   subTabs: {
     squad: "فرقة",
@@ -262,7 +263,7 @@ export const career = {
     unusableCard: "تحتوي الفرقة على بطاقة لا يمكنك استخدامها",
     wrongPosition: "اللاعب في مركز لا يستطيع اللعب فيه",
   },
-  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", personal: "شخصية" }, name: { inform: "بطاقة الفورمة", tots: "Team of the Season", icon: "أيقونة", personal: "بطاقة شخصية" }, untradable: "غير قابلة للبيع", anyPosition: "الكل", personalHint: "تلعب في كل المراكز. +1 تقييم لكل درجة جديدة تصل إليها" },
+  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", honorable: "HON. MENTION", personal: "شخصية" }, name: { inform: "بطاقة الفورمة", tots: "Team of the Season", icon: "أيقونة", honorable: "Honorable mention", personal: "بطاقة شخصية" }, untradable: "غير قابلة للبيع", anyPosition: "الكل", personalHint: "تلعب في كل المراكز. +1 تقييم لكل درجة جديدة تصل إليها" },
   tots: {
     intro: (count: number) => `${count} بطاقة Team of the Season لأفضل اللاعبين في كل دوري. يمكن أن تظهر في الحزم.`,
     all: "الكل",
@@ -274,6 +275,11 @@ export const career = {
   icons: {
     intro: (count: number) => `${count} بطاقة Icon لأعظم أساطير تاريخ كرة القدم. هي أندر من TOTS في الحزم.`,
     empty: "لا توجد بطاقات Icon هنا.",
+  },
+  honorable: {
+    intro: (count: number) => `${count} بطاقة Honorable mention للاعبين الشباب المتألقين. ترقيات كبيرة إلى 85–90، وأندر بخمس مرات من بطاقات الفورمة في الحزم.`,
+    boost: (boost: number) => `+${boost} عن البطاقة العادية`,
+    empty: "لا توجد بطاقات Honorable mention هنا.",
   },
   informs: {
     intro: (total: number, rounds: number) => `${total} بطاقة فورمة من ${rounds} جولة. كل جمعة الساعة 18:00 يحصل اللاعبون الأفضل أداءً في المباريات الحقيقية على بطاقات جديدة بتقييم 82–90. كلما ارتفع التقييم، صارت أندر في الحزم.`,

@@ -20,6 +20,7 @@ export const career = {
     informs: "Inform",
     tots: "TOTS",
     icons: "Icons",
+    honorable: "Honorable mention",
   },
   subTabs: {
     squad: "plantilla",
@@ -262,7 +263,7 @@ export const career = {
     unusableCard: "El escuadrón contiene una tarjeta que no puedes usar.",
     wrongPosition: "Un jugador está en una posición en la que no puede jugar.",
   },
-  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", personal: "PERSONAL" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", personal: "Carta personal" }, untradable: "No vendible", anyPosition: "TODAS", personalHint: "Juega en todas las posiciones. +1 de valoración por cada nueva división que alcances" },
+  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", honorable: "HON. MENTION", personal: "PERSONAL" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", honorable: "Honorable mention", personal: "Carta personal" }, untradable: "No vendible", anyPosition: "TODAS", personalHint: "Juega en todas las posiciones. +1 de valoración por cada nueva división que alcances" },
   tots: {
     intro: (count: number) => `${count} cartas Team of the Season con los mejores jugadores de cada liga. Pueden salir en sobres.`,
     all: "Todas",
@@ -274,6 +275,11 @@ export const career = {
   icons: {
     intro: (count: number) => `${count} cartas Icon de las mayores leyendas de la historia del fútbol. Son más raras que los TOTS en los sobres.`,
     empty: "No hay Icons aquí.",
+  },
+  honorable: {
+    intro: (count: number) => `${count} cartas Honorable mention para jóvenes que han destacado. Grandes mejoras a 85–90, y cinco veces más raras que los Inform en los sobres.`,
+    boost: (boost: number) => `+${boost} sobre la carta normal`,
+    empty: "No hay cartas Honorable mention aquí.",
   },
   informs: {
     intro: (total: number, rounds: number) => `${total} cartas Inform de ${rounds} ${rounds === 1 ? "ronda" : "rondas"}. Cada viernes a las 18:00, los jugadores que mejor han jugado en partidos reales reciben nuevas cartas de 82–90. Cuanto más alta la media, más rara en sobres.`,

@@ -24,6 +24,7 @@ export const career: CareerDict = {
     informs: "Informs",
     tots: "TOTS",
     icons: "Icons",
+    honorable: "Honorable mention",
   },
   subTabs: {
     squad: "Lagtropp",
@@ -267,7 +268,7 @@ export const career: CareerDict = {
     unusableCard: "Troppen inneholder et kort du ikke kan bruke",
     wrongPosition: "En spiller står i en posisjon han ikke kan spille",
   },
-  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", personal: "PERSONLIG" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", personal: "Personlig kort" }, untradable: "Kan ikke selges", anyPosition: "ALLE", personalHint: "Spiller alle posisjoner. +1 i rating for hver ny divisjon du når" },
+  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", honorable: "HON. MENTION", personal: "PERSONLIG" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", honorable: "Honorable mention", personal: "Personlig kort" }, untradable: "Kan ikke selges", anyPosition: "ALLE", personalHint: "Spiller alle posisjoner. +1 i rating for hver ny divisjon du når" },
   tots: {
     intro: (count: number) => `${count} Team of the Season-kort med de beste spillerne i hver liga. De kan dukke opp i pakker.`,
     all: "Alle",
@@ -279,6 +280,11 @@ export const career: CareerDict = {
   icons: {
     intro: (count: number) => `${count} Icon-kort av de største legendene i fotballhistorien. De er sjeldnere enn TOTS i pakker.`,
     empty: "Ingen Icons her.",
+  },
+  honorable: {
+    intro: (count: number) => `${count} Honorable mention-kort til unge spillere som har imponert. Store oppgraderinger til 85–90, og fem ganger sjeldnere enn informs i pakker.`,
+    boost: (boost: number) => `+${boost} fra vanlig-kortet`,
+    empty: "Ingen Honorable mention-kort her.",
   },
   informs: {
     intro: (total: number, rounds: number) => `${total} inform-kort fra ${rounds} ${rounds === 1 ? "runde" : "runder"}. Hver fredag kl. 18:00 får spillerne som har spilt best i ekte kamper nye kort på 82–90. Jo høyere rating, jo sjeldnere i pakker.`,

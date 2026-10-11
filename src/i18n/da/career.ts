@@ -20,6 +20,7 @@ export const career = {
     informs: "Informs",
     tots: "TOTS",
     icons: "Icons",
+    honorable: "Honorable mention",
   },
   subTabs: {
     squad: "Squad",
@@ -262,7 +263,7 @@ export const career = {
     unusableCard: "Holdet indeholder et kort, du ikke kan bruge",
     wrongPosition: "En spiller er i en position, han ikke kan spille",
   },
-  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", personal: "PERSONLIG" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", personal: "Personligt kort" }, untradable: "Kan ikke sælges", anyPosition: "ALLE", personalHint: "Spiller alle positioner. +1 i rating for hver ny division du når" },
+  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", honorable: "HON. MENTION", personal: "PERSONLIG" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", honorable: "Honorable mention", personal: "Personligt kort" }, untradable: "Kan ikke sælges", anyPosition: "ALLE", personalHint: "Spiller alle positioner. +1 i rating for hver ny division du når" },
   tots: {
     intro: (count: number) => `${count} Team of the Season-kort med de bedste spillere i hver liga. De kan dukke op i pakker.`,
     all: "Alle",
@@ -274,6 +275,11 @@ export const career = {
   icons: {
     intro: (count: number) => `${count} Icon-kort med de største legender i fodboldhistorien. De er sjældnere end TOTS i pakker.`,
     empty: "Ingen Icons her.",
+  },
+  honorable: {
+    intro: (count: number) => `${count} Honorable mention-kort til unge spillere, der har imponeret. Store opgraderinger til 85–90, og fem gange sjældnere end informs i pakker.`,
+    boost: (boost: number) => `+${boost} fra det almindelige kort`,
+    empty: "Ingen Honorable mention-kort her.",
   },
   informs: {
     intro: (total: number, rounds: number) => `${total} Inform-kort fra ${rounds} ${rounds === 1 ? "runde" : "runder"}. Hver fredag kl. 18:00 får spillerne, der har spillet bedst i rigtige kampe, nye kort på 82–90. Jo højere rating, jo sjældnere i pakker.`,

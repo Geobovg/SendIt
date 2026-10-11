@@ -20,6 +20,7 @@ export const career = {
     informs: "状态卡",
     tots: "TOTS",
     icons: "传奇",
+    honorable: "荣誉提名卡",
   },
   subTabs: {
     squad: "小队",
@@ -262,7 +263,7 @@ export const career = {
     unusableCard: "小队包含一张你无法使用的卡牌",
     wrongPosition: "球员处于无法上场的位置",
   },
-  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", personal: "个人" }, name: { inform: "状态卡", tots: "Team of the Season", icon: "传奇卡", personal: "个人卡" }, untradable: "不可交易", anyPosition: "全能", personalHint: "可以踢所有位置。每达到一个新级别，评分 +1" },
+  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", honorable: "HON. MENTION", personal: "个人" }, name: { inform: "状态卡", tots: "Team of the Season", icon: "传奇卡", honorable: "荣誉提名卡", personal: "个人卡" }, untradable: "不可交易", anyPosition: "全能", personalHint: "可以踢所有位置。每达到一个新级别，评分 +1" },
   tots: {
     intro: (count: number) => `${count} 张赛季最佳阵容卡，来自各联赛最好的球员。可能出现在卡包中。`,
     all: "全部",
@@ -274,6 +275,11 @@ export const career = {
   icons: {
     intro: (count: number) => `${count} 张传奇卡，来自足球史上最伟大的传奇球星。在卡包中比 TOTS 更稀有。`,
     empty: "这里没有传奇卡。",
+  },
+  honorable: {
+    intro: (count: number) => `${count} 张荣誉提名卡，献给表现出色的年轻球员。评分大幅提升至 85–90，在卡包中比状态卡稀有五倍。`,
+    boost: (boost: number) => `比普通卡 +${boost}`,
+    empty: "这里没有荣誉提名卡。",
   },
   informs: {
     intro: (total: number, rounds: number) => `共 ${rounds} 轮，${total} 张状态卡。每周五 18:00，真实比赛中表现最好的球员会获得 82–90 的新卡。评分越高，在卡包中越稀有。`,

@@ -406,6 +406,8 @@ const withPhoto = new Set([
   "yussuf-poulsen", "yves-bissouma", "yvon-mvogo", "zachary-athekame",
   "zakaria-aboukhlal", "zeno-debast", "zian-flemming", "zion-suzuki",
   "zubimendi",
+  // Honorable mention-spillere uten vanlig kort (migrering 0088).
+  "cavan-sullivan", "max-dowman", "rio-ngumoha",
 ]);
 
 /**

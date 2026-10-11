@@ -143,6 +143,7 @@ const crests: Record<string, string> = {
   "Paris Saint-Germain": "/crests/paris-saint-germain.png",
   "Parma": "/crests/parma.png",
   "Pisa": "/crests/pisa.png",
+  "Philadelphia Union": "/crests/philadelphia-union.png",
   "PSV Eindhoven": "/crests/psv-eindhoven.png",
   "Queens Park Rangers": "/crests/queens-park-rangers.png",
   "Racing Club": "/crests/racing-club.png",

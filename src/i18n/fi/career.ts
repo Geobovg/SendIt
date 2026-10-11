@@ -20,6 +20,7 @@ export const career = {
     informs: "Informit",
     tots: "TOTS",
     icons: "Icons",
+    honorable: "Honorable mention",
   },
   subTabs: {
     squad: "Ryhmä",
@@ -262,7 +263,7 @@ export const career = {
     unusableCard: "Joukkueessa on kortti, jota et voi käyttää",
     wrongPosition: "Pelaaja on tilanteessa, jossa hän ei voi pelata",
   },
-  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", personal: "HENKILÖKOHTAINEN" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", personal: "Henkilökohtainen kortti" }, untradable: "Ei myytävissä", anyPosition: "KAIKKI", personalHint: "Pelaa kaikilla pelipaikoilla. +1 luokitus jokaisesta uudesta divisioonasta, jonka saavutat" },
+  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", honorable: "HON. MENTION", personal: "HENKILÖKOHTAINEN" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", honorable: "Honorable mention", personal: "Henkilökohtainen kortti" }, untradable: "Ei myytävissä", anyPosition: "KAIKKI", personalHint: "Pelaa kaikilla pelipaikoilla. +1 luokitus jokaisesta uudesta divisioonasta, jonka saavutat" },
   tots: {
     intro: (count: number) => `${count} Team of the Season -korttia jokaisen liigan parhaista pelaajista. Niitä voi saada paketeista.`,
     all: "Kaikki",
@@ -274,6 +275,11 @@ export const career = {
   icons: {
     intro: (count: number) => `${count} Icon-korttia jalkapallohistorian suurimmista legendoista. Ne ovat paketeissa harvinaisempia kuin TOTS.`,
     empty: "Ei Icon-kortteja täällä.",
+  },
+  honorable: {
+    intro: (count: number) => `${count} Honorable mention -korttia nuorille pelaajille, jotka ovat tehneet vaikutuksen. Isot päivitykset tasolle 85–90, ja paketeissa viisi kertaa harvinaisempia kuin informit.`,
+    boost: (boost: number) => `+${boost} tavalliseen korttiin`,
+    empty: "Ei Honorable mention -kortteja.",
   },
   informs: {
     intro: (total: number, rounds: number) => `${total} Inform-korttia ${rounds} kierrokselta. Joka perjantai klo 18.00 oikeissa otteluissa parhaiten pelanneet saavat uudet 82–90-kortit. Mitä korkeampi luokitus, sitä harvinaisempi paketeissa.`,

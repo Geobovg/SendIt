@@ -20,6 +20,7 @@ export const career = {
     informs: "Inform",
     tots: "TOTS",
     icons: "Icons",
+    honorable: "Honorable mention",
   },
   subTabs: {
     squad: "Squadra",
@@ -262,7 +263,7 @@ export const career = {
     unusableCard: "La squadra contiene una carta che non puoi utilizzare",
     wrongPosition: "Un giocatore è in una posizione in cui non può giocare",
   },
-  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", personal: "PERSONALE" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", personal: "Carta personale" }, untradable: "Non scambiabile", anyPosition: "TUTTI", personalHint: "Gioca in ogni ruolo. +1 di valutazione per ogni nuova divisione raggiunta" },
+  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", honorable: "HON. MENTION", personal: "PERSONALE" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", honorable: "Honorable mention", personal: "Carta personale" }, untradable: "Non scambiabile", anyPosition: "TUTTI", personalHint: "Gioca in ogni ruolo. +1 di valutazione per ogni nuova divisione raggiunta" },
   tots: {
     intro: (count: number) => `${count} carte Team of the Season con i migliori giocatori di ogni campionato. Possono uscire nei pacchetti.`,
     all: "Tutti",
@@ -274,6 +275,11 @@ export const career = {
   icons: {
     intro: (count: number) => `${count} carte Icon delle più grandi leggende della storia del calcio. Nei pacchetti sono più rare dei TOTS.`,
     empty: "Nessuna Icon qui.",
+  },
+  honorable: {
+    intro: (count: number) => `${count} carte Honorable mention per i giovani che si sono distinti. Grandi upgrade a 85–90, e cinque volte più rare degli Inform nei pacchetti.`,
+    boost: (boost: number) => `+${boost} rispetto alla carta normale`,
+    empty: "Nessuna carta Honorable mention qui.",
   },
   informs: {
     intro: (total: number, rounds: number) => `${total} carte Inform da ${rounds} ${rounds === 1 ? "turno" : "turni"}. Ogni venerdì alle 18:00 i giocatori migliori nelle partite reali ricevono nuove carte da 82–90. Più alto il valore, più rara nei pacchetti.`,
