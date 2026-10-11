@@ -1,8 +1,8 @@
-// Spesialkort (migrering 0060). Inform, TOTS (0065) og Icons (0074) ligger i special_cards.kind i databasen; nye typer legges til der
+// Spesialkort (migrering 0060). Inform, TOTS (0065), Icons (0074) og Honorable mention (0088) ligger i special_cards.kind i databasen; nye typer legges til der
 // og her, og får egen stil på kortbildet. «personal» er de personlige kortene (migrering 0063), som har
 // egen tabell, men vises med samme mekanikk.
 
-export type SpecialKind = "inform" | "tots" | "icon" | "personal";
+export type SpecialKind = "inform" | "tots" | "icon" | "honorable" | "personal";
 
 /** Fargene på et spesialkort: bakgrunn, kantlinje og teksten i merket. */
 export const specialStyles: Record<SpecialKind, { background: string; border: string; badge: string; glow: string }> = {
@@ -25,6 +25,13 @@ export const specialStyles: Record<SpecialKind, { background: string; border: st
     border: "#f6e7b8",
     badge: "#fff4d1",
     glow: "#ffe9a8",
+  },
+  // Honorable mention, unge spillere med et stort løft: mørk smaragdgrønn med sølvkant og grønt lys fra øvre hjørne.
+  honorable: {
+    background: "radial-gradient(circle at 85% 0%, rgba(80,240,170,.5), transparent 42%), radial-gradient(circle at 5% 100%, rgba(220,230,240,.22), transparent 38%), linear-gradient(160deg, #0d5c43 0%, #063626 55%, #021a12 100%)",
+    border: "#d7dee6",
+    badge: "#7ff5c3",
+    glow: "#34e0a1",
   },
   // Inspirert av FUTTIES i FC: sommerlig rosa, oransje og gult, med solstråler fra øvre hjørne.
   personal: {

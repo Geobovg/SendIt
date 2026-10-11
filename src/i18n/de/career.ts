@@ -20,6 +20,7 @@ export const career = {
     informs: "Informs",
     tots: "TOTS",
     icons: "Icons",
+    honorable: "Honorable Mention",
   },
   subTabs: {
     squad: "Kader",
@@ -262,7 +263,7 @@ export const career = {
     unusableCard: "Der Trupp enthält eine Karte, die Sie nicht verwenden können",
     wrongPosition: "Ein Spieler befindet sich auf einer Position, die er nicht spielen kann",
   },
-  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", personal: "PERSÖNLICH" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", personal: "Persönliche Karte" }, untradable: "Nicht handelbar", anyPosition: "ALLE", personalHint: "Spielt jede Position. +1 Wertung für jede neue Division, die du erreichst" },
+  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", honorable: "HON. MENTION", personal: "PERSÖNLICH" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", honorable: "Honorable Mention", personal: "Persönliche Karte" }, untradable: "Nicht handelbar", anyPosition: "ALLE", personalHint: "Spielt jede Position. +1 Wertung für jede neue Division, die du erreichst" },
   tots: {
     intro: (count: number) => `${count} Team-of-the-Season-Karten mit den besten Spielern jeder Liga. Sie können in Packs auftauchen.`,
     all: "Alle",
@@ -274,6 +275,11 @@ export const career = {
   icons: {
     intro: (count: number) => `${count} Icon-Karten der größten Legenden der Fußballgeschichte. Sie sind in Packs seltener als TOTS.`,
     empty: "Keine Icons hier.",
+  },
+  honorable: {
+    intro: (count: number) => `${count} Honorable-Mention-Karten für junge Spieler, die überzeugt haben. Große Upgrades auf 85–90 und in Paketen fünfmal seltener als Informs.`,
+    boost: (boost: number) => `+${boost} gegenüber der normalen Karte`,
+    empty: "Keine Honorable-Mention-Karten hier.",
   },
   informs: {
     intro: (total: number, rounds: number) => `${total} Inform-Karten aus ${rounds} ${rounds === 1 ? "Runde" : "Runden"}. Jeden Freitag um 18:00 Uhr bekommen die Spieler, die in echten Spielen am besten waren, neue Karten mit 82–90. Je höher die Wertung, desto seltener in Packs.`,

@@ -71,6 +71,7 @@ function PackOdds({ pack, informFactor }: { pack: ManagerPack; informFactor: num
   const inform = pack.inform_chance * informFactor * 100;
   const tots = pack.tots_chance * informFactor * 100;
   const icon = pack.icon_chance * informFactor * 100;
+  const honorable = pack.honorable_chance * informFactor * 100;
   return <dl className="grid gap-1 text-xs">
     {[...pack.odds].reverse().map((tier) => <div key={tier.min} className="flex items-center justify-between gap-3">
       <dt className="text-muted">{tp.rating(tierLabel(tier))}</dt>
@@ -92,6 +93,10 @@ function PackOdds({ pack, informFactor }: { pack: ManagerPack; informFactor: num
     {icon > 0 ? <div className="flex items-center justify-between gap-3">
       <dt className="font-semibold" style={{ color: specialStyles.icon.glow }}>{tp.iconOdds}</dt>
       <dd className="font-semibold tabular-nums">{tp.percent(oddsLabel(icon, locale))}</dd>
+    </div> : null}
+    {honorable > 0 ? <div className="flex items-center justify-between gap-3">
+      <dt className="font-semibold" style={{ color: specialStyles.honorable.glow }}>{tp.honorableOdds}</dt>
+      <dd className="font-semibold tabular-nums">{tp.percent(oddsLabel(honorable, locale))}</dd>
     </div> : null}
   </dl>;
 }
@@ -227,7 +232,10 @@ export function PackStore({ packs, freePacks, budget, shop }: { packs: ManagerPa
     {Object.values(freePacks).some(Boolean) ? <p className="rounded-lg border border-accent/40 bg-accent-soft p-3 text-sm font-semibold text-accent">{tp.freePacks(packs.filter((pack) => freePacks[pack.key]).map((pack) => `${freePacks[pack.key]}× ${nameOf(pack)}`).join(", "))}</p> : null}
 
 
-    <Link href="/managerkarriere/informs" className="justify-self-start text-xs font-black tracking-wide underline-offset-4 hover:underline" style={{ color: specialStyles.inform.border }}>{tp.allInforms} →</Link>
+    <div className="flex flex-wrap gap-x-5 gap-y-1">
+      <Link href="/managerkarriere/informs" className="text-xs font-black tracking-wide underline-offset-4 hover:underline" style={{ color: specialStyles.inform.border }}>{tp.allInforms} →</Link>
+      <Link href="/managerkarriere/honorable" className="text-xs font-black tracking-wide underline-offset-4 hover:underline" style={{ color: specialStyles.honorable.glow }}>{tp.allHonorable} →</Link>
+    </div>
 
     <div className="grid gap-3 sm:grid-cols-2">
       {visible.map((pack) => {

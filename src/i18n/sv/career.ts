@@ -20,6 +20,7 @@ export const career = {
     informs: "Inform",
     tots: "TOTS",
     icons: "Icons",
+    honorable: "Honorable mention",
   },
   subTabs: {
     squad: "Truppen",
@@ -262,7 +263,7 @@ export const career = {
     unusableCard: "Truppen innehåller ett kort som du inte kan använda",
     wrongPosition: "En spelare är i en position han inte kan spela",
   },
-  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", personal: "PERSONLIG" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", personal: "Personligt kort" }, untradable: "Kan inte säljas", anyPosition: "ALLA", personalHint: "Spelar alla positioner. +1 i betyg för varje ny division du når" },
+  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", honorable: "HON. MENTION", personal: "PERSONLIG" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", honorable: "Honorable mention", personal: "Personligt kort" }, untradable: "Kan inte säljas", anyPosition: "ALLA", personalHint: "Spelar alla positioner. +1 i betyg för varje ny division du når" },
   tots: {
     intro: (count: number) => `${count} Team of the Season-kort med de bästa spelarna i varje liga. De kan dyka upp i paket.`,
     all: "Alla",
@@ -274,6 +275,11 @@ export const career = {
   icons: {
     intro: (count: number) => `${count} Icon-kort med de största legendarerna i fotbollshistorien. De är ovanligare än TOTS i paket.`,
     empty: "Inga Icons här.",
+  },
+  honorable: {
+    intro: (count: number) => `${count} Honorable mention-kort för unga spelare som har imponerat. Stora uppgraderingar till 85–90, och fem gånger ovanligare än informs i paket.`,
+    boost: (boost: number) => `+${boost} från vanliga kortet`,
+    empty: "Inga Honorable mention-kort här.",
   },
   informs: {
     intro: (total: number, rounds: number) => `${total} Informkort från ${rounds} ${rounds === 1 ? "omgång" : "omgångar"}. Varje fredag kl. 18:00 får spelarna som spelat bäst i riktiga matcher nya kort på 82–90. Ju högre betyg, desto ovanligare i paket.`,

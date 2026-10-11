@@ -20,6 +20,7 @@ export const career = {
     informs: "Inform",
     tots: "TOTS",
     icons: "Icons",
+    honorable: "Honorable mention",
   },
   subTabs: {
     squad: "Escouade",
@@ -262,7 +263,7 @@ export const career = {
     unusableCard: "L'escouade contient une carte que vous ne pouvez pas utiliser",
     wrongPosition: "Un joueur est dans une position où il ne peut pas jouer",
   },
-  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", personal: "PERSONNELLE" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", personal: "Carte personnelle" }, untradable: "Non échangeable", anyPosition: "TOUS", personalHint: "Joue à tous les postes. +1 de note pour chaque nouvelle division atteinte" },
+  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", honorable: "HON. MENTION", personal: "PERSONNELLE" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", honorable: "Honorable mention", personal: "Carte personnelle" }, untradable: "Non échangeable", anyPosition: "TOUS", personalHint: "Joue à tous les postes. +1 de note pour chaque nouvelle division atteinte" },
   tots: {
     intro: (count: number) => `${count} cartes Team of the Season avec les meilleurs joueurs de chaque ligue. Elles peuvent sortir dans les packs.`,
     all: "Toutes",
@@ -274,6 +275,11 @@ export const career = {
   icons: {
     intro: (count: number) => `${count} cartes Icon des plus grandes légendes de l'histoire du football. Elles sont plus rares que les TOTS dans les packs.`,
     empty: "Aucune Icon ici.",
+  },
+  honorable: {
+    intro: (count: number) => `${count} cartes Honorable mention pour les jeunes joueurs qui ont brillé. De gros upgrades à 85–90, et cinq fois plus rares que les Informs dans les packs.`,
+    boost: (boost: number) => `+${boost} par rapport à la carte normale`,
+    empty: "Aucune carte Honorable mention ici.",
   },
   informs: {
     intro: (total: number, rounds: number) => `${total} cartes Inform sur ${rounds} ${rounds === 1 ? "tour" : "tours"}. Chaque vendredi à 18h00, les joueurs les plus performants en vrais matchs reçoivent de nouvelles cartes notées 82–90. Plus la note est haute, plus elle est rare dans les packs.`,
