@@ -38,7 +38,7 @@ with picks (slug, overall) as (values
   ('nico-paz', 89),           -- Nico Paz, Como
   ('nusa', 89),               -- Antonio Nusa, RB Leipzig
   ('max-dowman', 88),         -- Max Dowman, Arsenal
-  ('franco-mastantuono', 88), -- Franco Mastantuono
+  ('luka-vuskovic', 88),      -- Luka Vušković, midtstopper
   ('dean-huijsen', 88),       -- Dean Huijsen, Real Madrid
   ('cavan-sullivan', 88),     -- Cavan Sullivan, Philadelphia Union
   ('ethan-nwaneri', 87),      -- Ethan Nwaneri, Arsenal
