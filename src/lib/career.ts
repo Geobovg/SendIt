@@ -188,7 +188,23 @@ export async function getPackShop(userId: string): Promise<PackShop> {
   };
 }
 
-export type InformRound = { id: string; startsAt: string; current: boolean; cards: InformCard[] };
+export type InformRound = { id: string; startsAt: string; current: boolean; cards: InformCard[]; chances: Record<string, number> };
+
+type InformTier = { min: number; max: number; weight: number };
+
+/**
+ * Sjansen (0–1) for hvert kort når en pakke gir en inform fra runden, regnet som draw_special_card (0086):
+ * hvert ratinglag med kort teller med vekten sin, og kortene i laget deler den likt.
+ */
+function informChances(cards: InformCard[], tiers: InformTier[]) {
+  const inTier = (tier: InformTier) => cards.filter((card) => card.overall >= tier.min && card.overall <= tier.max);
+  const used = tiers.filter((tier) => inTier(tier).length);
+  const total = used.reduce((sum, tier) => sum + tier.weight, 0);
+  const chances: Record<string, number> = {};
+  if (!total) return chances;
+  for (const tier of used) for (const card of inTier(tier)) chances[card.id] = tier.weight / total / inTier(tier).length;
+  return chances;
+}
 
 /**
  * Alle inform-rundene som er trukket, nyeste først, med kortene sortert etter rating.
@@ -199,8 +215,11 @@ export async function getInformHistory(): Promise<InformRound[]> {
   const { error: roundError } = await db.rpc("ensure_special_round");
   if (roundError) throw new Error(roundError.message);
   // Informs fra før migrering 0082 kunne gå over 89 og kan ikke trekkes lenger, så historikken starter der.
-  const { data: since, error: sinceError } = await db.from("game_settings").select("value").eq("key", "inform_history_from").maybeSingle();
-  if (sinceError) throw new Error(sinceError.message);
+  const [{ data: since, error: sinceError }, { data: tiers, error: tiersError }] = await Promise.all([
+    db.from("game_settings").select("value").eq("key", "inform_history_from").maybeSingle(),
+    db.from("game_settings").select("value").eq("key", "inform_tiers").maybeSingle(),
+  ]);
+  if (sinceError || tiersError) throw new Error(sinceError?.message ?? tiersError?.message);
   let roundsQuery = db.from("special_rounds").select("id, starts_at, ends_at").eq("kind", "inform").order("starts_at", { ascending: false });
   if (typeof since?.value === "string") roundsQuery = roundsQuery.gte("starts_at", since.value);
   const { data: rounds, error } = await roundsQuery;
@@ -219,7 +238,12 @@ export async function getInformHistory(): Promise<InformRound[]> {
     if ((data ?? []).length < 1000) break;
   }
   const now = Date.now();
-  return (rounds ?? []).map((round) => ({ id: round.id, startsAt: round.starts_at, current: new Date(round.starts_at).getTime() <= now && now < new Date(round.ends_at).getTime(), cards: cards.filter((card) => roundOf.get(card.id) === round.id) })).filter((round) => round.cards.length);
+  return (rounds ?? []).map((round) => {
+    const roundCards = cards.filter((card) => roundOf.get(card.id) === round.id);
+    const current = new Date(round.starts_at).getTime() <= now && now < new Date(round.ends_at).getTime();
+    // Bare ukens runde kan trekkes i pakker, så det er bare der sjansen vises.
+    return { id: round.id, startsAt: round.starts_at, current, cards: roundCards, chances: current && Array.isArray(tiers?.value) ? informChances(roundCards, tiers.value as InformTier[]) : {} };
+  }).filter((round) => round.cards.length);
 }
 
 export type TotsCard = InformCard & { league: string };

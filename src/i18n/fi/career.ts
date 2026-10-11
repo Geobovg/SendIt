@@ -276,11 +276,12 @@ export const career = {
     empty: "Ei Icon-kortteja täällä.",
   },
   informs: {
-    intro: (total: number, rounds: number) => `${total} Inform-korttia ${rounds} kierrokselta. Uudet arvotaan joka perjantai klo 18.00.`,
+    intro: (total: number, rounds: number) => `${total} Inform-korttia ${rounds} kierrokselta. Joka perjantai klo 18.00 oikeissa otteluissa parhaiten pelanneet saavat uudet 82–90-kortit. Mitä korkeampi luokitus, sitä harvinaisempi paketeissa.`,
     thisWeek: "Tällä viikolla",
     week: (date: string) => `Viikko alkaen ${date}`,
     count: (count: number) => `${count} korttia`,
     boost: (boost: number) => `+${boost} edelliseen korttiin`,
+    chance: (percent: string) => `${percent} % informeista paketeissa`,
     empty: "Informeja ei ole vielä arvottu. Ensimmäinen kierros tulee perjantaina klo 18.00.",
   },
 };

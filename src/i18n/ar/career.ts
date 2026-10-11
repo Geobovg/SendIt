@@ -276,11 +276,12 @@ export const career = {
     empty: "لا توجد بطاقات Icon هنا.",
   },
   informs: {
-    intro: (total: number, rounds: number) => `${total} بطاقة فورمة من ${rounds} جولة. تُسحب بطاقات جديدة كل جمعة الساعة 18:00.`,
+    intro: (total: number, rounds: number) => `${total} بطاقة فورمة من ${rounds} جولة. كل جمعة الساعة 18:00 يحصل اللاعبون الأفضل أداءً في المباريات الحقيقية على بطاقات جديدة بتقييم 82–90. كلما ارتفع التقييم، صارت أندر في الحزم.`,
     thisWeek: "هذا الأسبوع",
     week: (date: string) => `أسبوع ${date}`,
     count: (count: number) => `${count} بطاقة`,
     boost: (boost: number) => `+${boost} عن البطاقة السابقة`,
+    chance: (percent: string) => `${percent}% من بطاقات الفورمة في الحزم`,
     empty: "لم تُسحب أي بطاقات فورمة بعد. الجولة الأولى يوم الجمعة الساعة 18:00.",
   },
 };
