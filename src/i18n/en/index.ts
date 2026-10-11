@@ -8,11 +8,12 @@ import { friends } from "./friends";
 import { market } from "./market";
 import { match } from "./match";
 import { profile } from "./profile";
+import { quiz } from "./quiz";
 import { sbc } from "./sbc";
 import { seasons } from "./seasons";
 import { tournaments } from "./tournaments";
 
 // Den engelske ordboken er fasiten: alle andre språk må ha nøyaktig de samme nøklene.
-export const en = { common, auth, profile, friends, tournaments, career, market, match, seasons, sbc, fantasy, femmer, dbErrors };
+export const en = { common, auth, profile, friends, tournaments, career, market, match, seasons, sbc, fantasy, femmer, quiz, dbErrors };
 
 export type Dictionary = typeof en;
