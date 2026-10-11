@@ -34,17 +34,17 @@ with picks (slug, overall) as (values
   ('estevao', 90),            -- Estêvão, Chelsea
   ('cubarsi', 90),            -- Pau Cubarsí, Barcelona
   ('lennart-karl', 90),       -- Lennart Karl, Bayern München
-  ('max-dowman', 89),         -- Max Dowman, Arsenal
   ('kenan-yildiz', 89),       -- Kenan Yıldız, Juventus
-  ('franco-mastantuono', 89), -- Franco Mastantuono
-  ('ethan-nwaneri', 88),      -- Ethan Nwaneri, Arsenal
-  ('nico-paz', 88),           -- Nico Paz, Como
+  ('nico-paz', 89),           -- Nico Paz, Como
+  ('nusa', 89),               -- Antonio Nusa, RB Leipzig
+  ('max-dowman', 88),         -- Max Dowman, Arsenal
+  ('franco-mastantuono', 88), -- Franco Mastantuono
   ('dean-huijsen', 88),       -- Dean Huijsen, Real Madrid
   ('cavan-sullivan', 88),     -- Cavan Sullivan, Philadelphia Union
-  ('nusa', 87),               -- Antonio Nusa, RB Leipzig
+  ('ethan-nwaneri', 87),      -- Ethan Nwaneri, Arsenal
   ('myles-lewis-skelly', 87), -- Myles Lewis-Skelly, Arsenal
-  ('rodrigo-mora', 87),       -- Rodrigo Mora, FC Porto
-  ('rio-ngumoha', 86),        -- Rio Ngumoha, Liverpool
+  ('rio-ngumoha', 87),        -- Rio Ngumoha, Liverpool
+  ('rodrigo-mora', 86),       -- Rodrigo Mora, FC Porto
   ('geovany-quenda', 86),     -- Geovany Quenda
   ('nypan', 86),              -- Sverre Nypan
   ('jorrel-hato', 86),        -- Jorrel Hato, Chelsea
