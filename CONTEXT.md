@@ -4,6 +4,10 @@ En app for å holde styr på en simulert fotball-managerkarriere med spillerkort
 
 ## Language
 
+**Quiz**:
+Fotballquizen på `/quiz`, som virker uten innlogging og uten nett. Alt skjer i nettleseren: spørsmålene ligger i koden, og rekorder og statistikk lagres bare på enheten (localStorage). Ingenting synkes til kontoen. Har ni typer (blandet, klassisk, sant/usant, spillerbilde, klubbmerke, flagg, karrierevei, eldste klubb, årstall) og fire spillmoduser (klassisk, tidsjakt, overlevelse, sofaduell), pluss **Dagens quiz**.
+_Avoid_: Trivia alene, Offline-modus (quizen er modusen; resten av appen trenger fortsatt nett)
+
 **Managerkarriere**:
 Den kortbaserte modusen der du bygger en tropp av spillerkort, kjøper i katalogen, kjøper/selger på overgangsmarkedet og spiller simulerte kamper mot venners tropper. Alt skjer inne i appen. Den eneste premien er opprykk i AI-sesongen, som gir MB og en **pakke**.
 _Avoid_: Karriere alene (tvetydig med Turnering)

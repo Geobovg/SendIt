@@ -199,3 +199,8 @@ const crests: Record<string, string> = {
 export function clubCrest(club: string): string | null {
   return crests[club] ?? null;
 }
+
+// Alle klubbene som har merke, brukt av quizen «Klubbmerket».
+export function clubsWithCrest(): { club: string; crest: string }[] {
+  return Object.entries(crests).map(([club, crest]) => ({ club, crest }));
+}
