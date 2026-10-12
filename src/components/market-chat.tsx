@@ -147,7 +147,8 @@ export function MarketChat({ userId, initialMessages, initialUnread }: { userId:
     window.dispatchEvent(new Event(marketChatReadEvent));
   }, []);
 
-  // Åpen chat henter nytt hvert 3. sekund og merker alt som lest. Lukket chat sjekker bare telleren.
+  // Åpen chat henter nytt hvert 10. sekund og merker alt som lest. Lukket chat sjekker bare telleren.
+  // Hvert kall er et serverkall, og på PC står chatten åpen så lenge markedet vises.
   useEffect(() => {
     const tick = () => {
       if (document.visibilityState !== "visible") return;
@@ -155,7 +156,7 @@ export function MarketChat({ userId, initialMessages, initialUnread }: { userId:
       else marketChatUnreadAction().then(setUnread).catch(() => undefined);
     };
     if (visible) tick();
-    const timer = setInterval(tick, visible ? 3_000 : 30_000);
+    const timer = setInterval(tick, visible ? 10_000 : 60_000);
     return () => clearInterval(timer);
   }, [load, visible]);
 

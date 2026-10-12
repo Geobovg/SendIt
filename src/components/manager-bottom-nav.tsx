@@ -17,13 +17,13 @@ const tabs = [
   { href: "/managerkarriere/sesong", label: "season", icon: "▤", match: (path: string) => ["/managerkarriere/sesong", "/managerkarriere/kamplobby", "/managerkarriere/karrierehistorikk"].some((prefix) => path.startsWith(prefix)) },
 ] as const;
 
-// Uleste meldinger i markedschatten, sjekket hvert 30. sekund og ved hvert sidebytte.
+// Uleste meldinger i markedschatten, sjekket hvert minutt og ved hvert sidebytte.
 function useMarketChatUnread(pathname: string) {
   const [unread, setUnread] = useState<MarketChatUnread>({ count: 0, mentioned: false });
   useEffect(() => {
     const check = () => { if (document.visibilityState === "visible") marketChatUnreadAction().then(setUnread).catch(() => undefined); };
     check();
-    const timer = setInterval(check, 30_000);
+    const timer = setInterval(check, 60_000);
     // Chatten har nettopp vist alt, så telleren kan nullstilles uten et nytt kall.
     const read = () => setUnread({ count: 0, mentioned: false });
     window.addEventListener(marketChatReadEvent, read);
