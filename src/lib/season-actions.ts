@@ -60,14 +60,15 @@ export async function playAiSeasonMatchAction(_prev: ActionState, _formData: For
   if (limitError) return { error: limitError };
   const team = ((season.teams ?? []) as AiTeam[]).find((entry) => entry.key === (next.home_ai_key ?? next.away_ai_key));
   if (!team) return { error: errors.opponentNotFound };
-  const snapshots = await managerTeamSnapshots(db, team.user_id ? [user.id, team.user_id] : [user.id]);
+  // Ditt eget lag er det du har lagret. Motstanderen er en annen brukers lag med spillerne de faktisk har.
+  const [snapshots, theirSnapshots] = await Promise.all([managerTeamSnapshots(db, [user.id]), team.user_id ? managerTeamSnapshots(db, [team.user_id], { realPlayers: true }) : new Map()]);
   if ("error" in snapshots) return { error: snapshots.error };
+  if ("error" in theirSnapshots) return { error: theirSnapshots.error };
   const mine = snapshots.get(user.id);
   if (!mine) return { error: errors.needEleven };
-  // Motstanderen er en annen brukers lag slik det står nå. Har brukeren ikke lenger en gyldig ellever,
-  // stiller klubben med oppdiktede spillere i stedet, så kampen kan spilles uansett.
+  // Har motstanderen ikke lenger en gyldig ellever, stiller klubben med oppdiktede spillere, så kampen kan spilles uansett.
   const maxOverall = aiPlayerMaxOverall(season.arena ?? 1);
-  const theirs = team.user_id ? snapshots.get(team.user_id) : undefined;
+  const theirs = team.user_id ? theirSnapshots.get(team.user_id) : undefined;
   const opponent = theirs ? userTeamAsOpponent(theirs, team, maxOverall) : aiTeamSnapshot(season.id, team, maxOverall);
   // Kvalikkampen må ha en vinner: likt etter 90′ gir ekstraomganger, og likt etter 120′ straffekonkurranse.
   // Du står alltid som hjemmelag i selve kampen. Hjemme og borte i sesongoppsettet gjelder bare tabellen.
@@ -85,7 +86,7 @@ export async function seasonOpponentTeamAction(key: string): Promise<TeamView | 
   if (error) return { error: await dbErrorMessage(error) };
   const team = ((season?.teams ?? []) as AiTeam[]).find((entry) => entry.key === key);
   if (!season || !team) return { error: errors.opponentNotFound };
-  const snapshots = team.user_id ? await managerTeamSnapshots(db, [team.user_id]) : new Map();
+  const snapshots = team.user_id ? await managerTeamSnapshots(db, [team.user_id], { realPlayers: true }) : new Map();
   if ("error" in snapshots) return { error: snapshots.error };
   const maxOverall = aiPlayerMaxOverall(season.arena ?? 1);
   const theirs = team.user_id ? snapshots.get(team.user_id) : undefined;
