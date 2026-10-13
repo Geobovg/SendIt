@@ -17,7 +17,7 @@ export const seasons: SeasonsDict = {
     next: (opponent: string) => `Spill neste kamp mot ${opponent} →`,
   },
   ai: {
-    eyebrow: (season: number) => `AI-SESONG ${season}`,
+    eyebrow: (season: number) => `SESONG ${season}`,
     matchOf: (match: number, total: number) => `Kamp ${match} av ${total}`,
     place: (position: number, points: number) => `${position}. plass · ${points} p`,
     promotionRule: (spots: number) => spots === 0 ? "Toppdivisjonen" : spots === 1 ? "Bare vinneren rykker opp" : `Topp ${spots} rykker opp`,
@@ -101,7 +101,7 @@ export const seasons: SeasonsDict = {
     unlockReward: (rewards: string) => `Første gang her: ${rewards}`,
     championTitles: (count: number) => `${count} ${count === 1 ? "mestertittel" : "mestertitler"}`,
     unlockedTitle: "Ny arena",
-    unlockedBody: (name: string) => `Velkommen til ${name}. AI-klubbene er tøffere her, og premiene er større.`,
+    unlockedBody: (name: string) => `Velkommen til ${name}. Motstanderne er tøffere her, og premiene er større.`,
     continue: "Kjør på",
     toNextArena: (name: string) => `Bare vinneren går opp til ${name}`,
     toChampion: "Vinneren får en mestertittel",

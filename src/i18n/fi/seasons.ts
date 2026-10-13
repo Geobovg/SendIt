@@ -16,7 +16,7 @@ export const seasons = {
     next: (opponent: string) => `Pelaa seuraava ottelu vs ${opponent} →`,
   },
   ai: {
-    eyebrow: (season: number) => `AI KAUSI ${season}`,
+    eyebrow: (season: number) => `KAUSI ${season}`,
     matchOf: (match: number, total: number) => `Vastaa ${match}/${total}`,
     place: (position: number, points: number) => `${ordinal(position)} paikka · ${points} pistettä`,
     promotionRule: (spots: number) => spots === 0 ? "Ylin divisioona" : spots === 1 ? "Vain voittaja nousee" : `${spots} parasta nousee`,

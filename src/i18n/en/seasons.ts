@@ -20,7 +20,7 @@ export const seasons = {
     next: (opponent: string) => `Play next match vs ${opponent} →`,
   },
   ai: {
-    eyebrow: (season: number) => `AI SEASON ${season}`,
+    eyebrow: (season: number) => `SEASON ${season}`,
     matchOf: (match: number, total: number) => `Match ${match} of ${total}`,
     place: (position: number, points: number) => `${ordinal(position)} place · ${points} pts`,
     promotionRule: (spots: number) => spots === 0 ? "Top division" : spots === 1 ? "Only the winner goes up" : `Top ${spots} go up`,
@@ -104,7 +104,7 @@ export const seasons = {
     unlockReward: (rewards: string) => `First time here: ${rewards}`,
     championTitles: (count: number) => `${count} ${count === 1 ? "master title" : "master titles"}`,
     unlockedTitle: "New arena",
-    unlockedBody: (name: string) => `Welcome to ${name}. The AI clubs are tougher here, and the prizes are bigger.`,
+    unlockedBody: (name: string) => `Welcome to ${name}. The opponents are tougher here, and the prizes are bigger.`,
     continue: "Let's go",
     toNextArena: (name: string) => `Only the winner goes up to ${name}`,
     toChampion: "The winner gets a master title",

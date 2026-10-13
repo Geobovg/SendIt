@@ -5,7 +5,8 @@ import { getT } from "@/i18n/server";
 import type { AiTeam } from "./ai-opponent";
 import { supabaseAdmin } from "./supabase/server";
 
-export type SeasonTableRow = { participant: string; name: string; isMe: boolean; played: number; wins: number; draws: number; losses: number; goalsFor: number; goalsAgainst: number; points: number; position: number };
+/** `manager` er brukernavnet når klubben er en annen brukers lag i AI-sesongen. */
+export type SeasonTableRow = { participant: string; name: string; manager?: string; isMe: boolean; played: number; wins: number; draws: number; losses: number; goalsFor: number; goalsAgainst: number; points: number; position: number };
 export type SeasonFixture = { id: string; round: number; homeName: string; awayName: string; homeIsMe: boolean; awayIsMe: boolean; status: "scheduled" | "live" | "completed"; homeScore: number | null; awayScore: number | null; matchId: string | null; playoff: boolean };
 export type SeasonOutcome = "promoted" | "relegated" | "stayed" | "champion";
 /** `highestArena` er den høyeste arenaen manageren har nådd, `championTitles` antall mestertitler på Camp Nou. */
@@ -18,8 +19,8 @@ type StandingRow = { participant: string; played: number; wins: number; draws: n
 
 export const divisionName = (t: Dictionary, division: number) => t.seasons.division(division);
 
-function toTable(rows: StandingRow[], names: Map<string, string>, userId: string, unknown: string): SeasonTableRow[] {
-  return rows.map((row) => ({ participant: row.participant, name: names.get(row.participant) ?? unknown, isMe: row.participant === userId, played: row.played, wins: row.wins, draws: row.draws, losses: row.losses, goalsFor: row.goals_for, goalsAgainst: row.goals_against, points: row.points, position: row.table_position })).sort((a, b) => a.position - b.position);
+function toTable(rows: StandingRow[], names: Map<string, string>, userId: string, unknown: string, managers = new Map<string, string>()): SeasonTableRow[] {
+  return rows.map((row) => ({ participant: row.participant, name: names.get(row.participant) ?? unknown, manager: managers.get(row.participant), isMe: row.participant === userId, played: row.played, wins: row.wins, draws: row.draws, losses: row.losses, goalsFor: row.goals_for, goalsAgainst: row.goals_against, points: row.points, position: row.table_position })).sort((a, b) => a.position - b.position);
 }
 
 function toFixture(row: FixtureRow, names: Map<string, string>, userId: string, unknown: string): SeasonFixture {
@@ -63,7 +64,7 @@ export async function getAiSeason(userId: string, clubName: string | Promise<str
   const nextFixture = nextFor(mine);
   return {
     id: season.id, seasonNumber: season.season_number, arena: season.arena ?? 1, division: season.division, teams,
-    table: toTable((standings ?? []) as StandingRow[], names, userId, fallback.unknown),
+    table: toTable((standings ?? []) as StandingRow[], names, userId, fallback.unknown, new Map(teams.filter((team) => team.manager).map((team) => [team.key, team.manager!]))),
     fixtures: mine, nextFixture, played: mine.filter((fixture) => !fixture.playoff && fixture.status === "completed").length, inPlayoff: nextFixture?.playoff ?? false,
     previous: previous?.outcome ? { arena: previous.arena ?? 1, division: previous.division, position: previous.final_position, outcome: previous.outcome } : null,
     highestArena: highest?.arena ?? season.arena ?? 1, championTitles: championTitles ?? 0,

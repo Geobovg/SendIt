@@ -16,7 +16,7 @@ export const seasons = {
     next: (opponent: string) => `Spela nästa match mot ${opponent} →`,
   },
   ai: {
-    eyebrow: (season: number) => `AI SEASON ${season}`,
+    eyebrow: (season: number) => `SÄSONG ${season}`,
     matchOf: (match: number, total: number) => `Matcha ${match} av ${total}`,
     place: (position: number, points: number) => `${ordinal(position)} plats · ${points} poäng`,
     promotionRule: (spots: number) => spots === 0 ? "Högsta divisionen" : spots === 1 ? "Bara vinnaren går upp" : `Topp ${spots} går upp`,
