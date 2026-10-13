@@ -824,3 +824,38 @@ body:has(.manager-bottom-nav) .audio-fab {
   60% { opacity: 1; transform: translateY(-50%) scale(1.08); }
   100% { opacity: 1; transform: translateY(-50%) scale(1); }
 }
+
+/* Forsiden: kjøttboller som regner, en matmaskin som svever og en blinkende lysrekke. */
+.meatball-splash .meatball-fall {
+  animation: meatball-fall 6s linear infinite;
+}
+.meatball-splash .meatball-machine {
+  animation: meatball-hover 3.2s ease-in-out infinite alternate;
+}
+.meatball-splash .meatball-blink {
+  animation: meatball-blink 1s steps(2, jump-none) infinite;
+}
+.meatball-title {
+  -webkit-text-stroke: 3px #2b1a10;
+  paint-order: stroke fill;
+  text-shadow: 0 6px 0 #2b1a10, 0 10px 30px rgba(43, 26, 16, 0.45);
+}
+@keyframes meatball-fall {
+  from { transform: translateY(-140px); }
+  to { transform: translateY(1040px); }
+}
+@keyframes meatball-hover {
+  from { transform: translateY(0); }
+  to { transform: translateY(-14px); }
+}
+@keyframes meatball-blink {
+  from { opacity: 1; }
+  to { opacity: 0.35; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .meatball-splash .meatball-fall,
+  .meatball-splash .meatball-machine,
+  .meatball-splash .meatball-blink {
+    animation: none;
+  }
+}
