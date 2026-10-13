@@ -87,30 +87,30 @@ export function MeatballSplash({ enterHref, enterLabel, title }: { enterHref: st
         <rect y="296" width="1600" height="3" fill="#ffd08a" opacity="0.5" />
 
         {/* Lebrun Jamie og Mikkel Jorda koser seg med lapskaus */}
-        <g transform="translate(1030 320) scale(1.32)">
+        <g transform="translate(1062 320) scale(1.32)">
           <path d="M32 -44 L35 -104 Q56 -113 77 -104 L80 -44 Z" fill="#1fa6a6" />
           <path d="M40 -104 Q56 -96 72 -104" fill="none" stroke="#fff" strokeWidth="3" />
           <text x="56" y="-70" textAnchor="middle" fontSize="22" fontWeight="900" fill="#fff" fontFamily="Arial Black, Impact, sans-serif">7</text>
-          <path d="M37 -100 L26 -68 L36 -52" fill="none" stroke="#e0b08c" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M74 -100 L90 -84 L80 -102" fill="none" stroke="#e0b08c" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M37 -100 L26 -68 L36 -52" fill="none" stroke="#7a4a2e" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M74 -100 L90 -84 L80 -102" fill="none" stroke="#7a4a2e" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
           <path d="M82 -104 L86 -112" stroke="#c9ccd2" strokeWidth="3" strokeLinecap="round" />
-          <circle cx="56" cy="-122" r="12" fill="#e0b08c" />
-          <path d="M44 -126 Q56 -140 68 -126 Q56 -131 44 -126 Z" fill="#2a2018" />
+          <circle cx="56" cy="-122" r="12" fill="#7a4a2e" />
+          <path d="M44 -126 Q56 -140 68 -126 Q56 -131 44 -126 Z" fill="#140c07" />
           <rect x="44" y="-128" width="24" height="4" fill="#fff" />
-          <circle cx="52" cy="-120" r="1.6" fill="#2a2018" /><circle cx="61" cy="-120" r="1.6" fill="#2a2018" />
-          <path d="M51 -114 Q56 -111 61 -114" fill="none" stroke="#7a4a30" strokeWidth="1.6" strokeLinecap="round" />
+          <circle cx="52" cy="-120" r="2.4" fill="#fff" /><circle cx="61" cy="-120" r="2.4" fill="#fff" /><circle cx="52.4" cy="-120" r="1.2" fill="#140c07" /><circle cx="61.4" cy="-120" r="1.2" fill="#140c07" />
+          <path d="M51 -114 Q56 -111 61 -114" fill="none" stroke="#f4d9c6" strokeWidth="1.6" strokeLinecap="round" />
           <text x="56" y="-146" textAnchor="middle" fontSize="12" fontWeight="800" fill="#fff" stroke="#3a1a10" strokeWidth="2.5" paintOrder="stroke" fontFamily="Arial Black, Impact, sans-serif">Lebrun Jamie</text>
 
           <path d="M118 -44 L121 -104 Q142 -113 163 -104 L166 -44 Z" fill="#f08a1c" />
           <path d="M126 -104 Q142 -96 158 -104" fill="none" stroke="#1d2b4f" strokeWidth="3" />
           <text x="142" y="-70" textAnchor="middle" fontSize="22" fontWeight="900" fill="#1d2b4f" fontFamily="Arial Black, Impact, sans-serif">9</text>
-          <path d="M123 -100 L112 -68 L122 -52" fill="none" stroke="#e0b08c" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M160 -100 L176 -84 L166 -102" fill="none" stroke="#e0b08c" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M123 -100 L112 -68 L122 -52" fill="none" stroke="#7a4a2e" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M160 -100 L176 -84 L166 -102" fill="none" stroke="#7a4a2e" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
           <path d="M168 -104 L172 -112" stroke="#c9ccd2" strokeWidth="3" strokeLinecap="round" />
-          <circle cx="142" cy="-122" r="12" fill="#e0b08c" />
-          <path d="M130 -128 Q142 -140 154 -128 Q142 -133 130 -128 Z" fill="#2a2018" />
-          <circle cx="138" cy="-120" r="1.6" fill="#2a2018" /><circle cx="147" cy="-120" r="1.6" fill="#2a2018" />
-          <path d="M137 -114 Q142 -111 147 -114" fill="none" stroke="#7a4a30" strokeWidth="1.6" strokeLinecap="round" />
+          <circle cx="142" cy="-122" r="12" fill="#7a4a2e" />
+          <path d="M130 -128 Q142 -140 154 -128 Q142 -133 130 -128 Z" fill="#140c07" />
+          <circle cx="138" cy="-120" r="2.4" fill="#fff" /><circle cx="147" cy="-120" r="2.4" fill="#fff" /><circle cx="138.4" cy="-120" r="1.2" fill="#140c07" /><circle cx="147.4" cy="-120" r="1.2" fill="#140c07" />
+          <path d="M137 -114 Q142 -111 147 -114" fill="none" stroke="#f4d9c6" strokeWidth="1.6" strokeLinecap="round" />
           <text x="142" y="-146" textAnchor="middle" fontSize="12" fontWeight="800" fill="#fff" stroke="#3a1a10" strokeWidth="2.5" paintOrder="stroke" fontFamily="Arial Black, Impact, sans-serif">Mikkel Jorda</text>
 
           <rect x="-4" y="-44" width="204" height="7" rx="2" fill="#8a5a2b" />
@@ -148,7 +148,7 @@ export function MeatballSplash({ enterHref, enterLabel, title }: { enterHref: st
       {/* Tittelen */}
       <div className="pointer-events-none relative flex h-full flex-col items-center px-4 pt-[34vh] text-center">
         <h1 className={`${display.className} meatball-title text-[clamp(3.2rem,11.5vw,10rem)] uppercase leading-[0.94]`}>{title}</h1>
-        <p className="meatball-sub mt-5 max-w-[34rem] text-balance text-base font-semibold leading-snug sm:text-xl">Ikje gløm da graset e graunt au skjermen e blå. Da e viktig for deg å røra litt au</p>
+        <p className="meatball-sub mt-5 max-w-[33rem] text-balance rounded-lg px-4 py-2 text-lg font-bold leading-snug sm:text-2xl">Ikje gløm da graset e graunt au skjermen e blå. Da e viktig for deg å røra litt au</p>
       </div>
 
       {/* Filmkorn og vignett */}
