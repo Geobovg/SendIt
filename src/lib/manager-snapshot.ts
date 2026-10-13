@@ -1,6 +1,7 @@
 import "server-only";
 
 import { dbErrorMessage } from "@/i18n/server";
+import { replaceAcademyLineups } from "./auto-pick";
 import { anyPosition, formationNames, formations, pickBestLineup, type Formation } from "./lineup";
 import type { ManagerPlayerSnapshot, ManagerTeamSnapshot } from "./manager-match";
 import type { supabaseAdmin } from "./supabase/server";
@@ -32,6 +33,8 @@ const isAcademy = (card: CardRow) => !card.catalog_id && !card.special_card_id &
  * har aldri byttet det ut. Brukes når andre ser laget eller møter det i AI-sesongen, ikke i brukerens egne kamper.
  */
 export async function managerTeamSnapshots(db: Db, userIds: string[], { realPlayers = false } = {}): Promise<Map<string, ManagerTeamSnapshot> | { error: string }> {
+  // Står laget fortsatt som Academy-troppen, byttes det ut med det beste laget før kampen eller visningen.
+  await replaceAcademyLineups(db, userIds);
   const { data: lineups, error: lineupsError } = await db.from("manager_lineups").select("user_id, formation, starters, bench").in("user_id", userIds);
   if (lineupsError) return { error: await dbErrorMessage(lineupsError) };
   const allIds = (lineups ?? []).flatMap((lineup) => [...uniqueIds(lineup.starters), ...uniqueIds(lineup.bench)]);

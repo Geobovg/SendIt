@@ -5,10 +5,10 @@ import { dbErrorMessage, getT } from "@/i18n/server";
 import type { ActionState } from "./actions";
 import type { TeamView } from "./ai-opponent";
 import { requireUser } from "./auth";
+import { autoPickBestSquad } from "./auto-pick";
 import { getCatalogPage, listCatalogClubs, type CatalogCard } from "./career";
 import type { CatalogFilters } from "./catalog-filters";
-import { canPlayPosition, formationNames, formations, pickBestSquad, type Formation } from "./lineup";
-import { squadCapacity } from "./manager-limits";
+import { canPlayPosition, formationNames, formations, type Formation } from "./lineup";
 import { managerTeamSnapshots } from "./manager-snapshot";
 import type { SpecialKind } from "./special-cards";
 import { supabaseAdmin } from "./supabase/server";
@@ -114,33 +114,13 @@ export async function quickSellPackCardsAction(_prev: QuickSellPackState, formDa
   return { ok: soldIds.length > 0, payout, soldIds, error: firstError };
 }
 
-// «Velg beste tropp» på troppsiden. Den plukker det beste laget fra hele
-// klubben – lageret inkludert – henter kortene inn i troppen og lagrer
-// elleveren i samme slengen. Kortene som må vike, går motsatt vei til lageret.
+// «Velg beste tropp» på troppsiden (se autoPickBestSquad).
 export async function autoPickBestSquadAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const user = await requireUser();
   const formation = String(formData.get("formation") ?? "4-3-3") as Formation;
   if (!formationNames.includes(formation)) return { error: (await getT()).career.errors.invalidFormation };
-  const db = supabaseAdmin();
-  const [{ data: cards, error: cardsError }, { data: listings, error: listingsError }] = await Promise.all([
-    db.from("manager_cards").select("id, catalog_id, position, overall, location").eq("owner_id", user.id),
-    db.from("market_listings").select("card_id").eq("seller_id", user.id).eq("status", "active"),
-  ]);
-  if (cardsError || listingsError) return { error: await dbErrorMessage((cardsError ?? listingsError)!) };
-  // Kort som ligger ute på markedet, kan ikke spilles.
-  const listed = new Set((listings ?? []).map((listing) => listing.card_id));
-  // Bare ett kort per spiller kan være i troppen. Har man flere (f.eks. vanlig-kortet og informen),
-  // velges det beste, og ved lik rating det som allerede ligger der.
-  const oneCopyEach = new Map<string, NonNullable<typeof cards>[number]>();
-  const candidates = (cards ?? []).filter((card) => !listed.has(card.id));
-  for (const card of candidates.sort((a, b) => b.overall - a.overall || Number(b.location === "squad") - Number(a.location === "squad"))) {
-    const key = card.catalog_id ?? card.id;
-    if (!oneCopyEach.has(key)) oneCopyEach.set(key, card);
-  }
-  const best = pickBestSquad([...oneCopyEach.values()], formation, squadCapacity);
-  if (best.starters.length !== 11 || best.bench.length !== 7) return { error: (await getT()).career.errors.notEnoughCards };
-  const { error } = await db.rpc("auto_pick_manager_squad", { target_user: user.id, next_formation: formation, next_squad: best.squad, next_starters: best.starters, next_bench: best.bench });
-  if (error) return { error: await dbErrorMessage(error, { stripPrefix: true }) };
+  const failed = await autoPickBestSquad(supabaseAdmin(), user.id, formation);
+  if (failed) return failed;
   revalidatePath("/managerkarriere");
   return { ok: true };
 }

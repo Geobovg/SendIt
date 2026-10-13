@@ -2,6 +2,7 @@ import "server-only";
 
 import { getT } from "@/i18n/server";
 import type { AiTeam } from "./ai-opponent";
+import { replaceAcademyLineups } from "./auto-pick";
 import { formationNames, pickBestLineup, type Formation } from "./lineup";
 import { catalogPageSize, type CatalogFilters } from "./catalog-filters";
 import { catalogBuyMaxOverall } from "./manager-limits";
@@ -106,6 +107,8 @@ const packColumns = "key, name, description, price, card_count, guarantee_min, g
 type RatingSquadCard = { id: string; position: string; overall: number };
 export async function getManagerRating(userId: string): Promise<{ formation: string | null; starters: string[]; squad: RatingSquadCard[] }> {
   const db = supabaseAdmin();
+  // Brukes på alle managersider, så et lag som fortsatt er Academy-troppen byttes ut første gang man kommer inn.
+  await replaceAcademyLineups(db, [userId]);
   const [{ data: lineup, error: lineupError }, { data: squad, error: squadError }] = await Promise.all([
     db.from("manager_lineups").select("formation, starters").eq("user_id", userId).maybeSingle(),
     db.from("manager_cards").select("id, position, overall").eq("owner_id", userId).eq("location", "squad"),
@@ -136,6 +139,7 @@ export async function getManagerHome(userId: string): Promise<{ formation: strin
 // Kortverdien (katalogprisen) følger med egne kort, så sidene slipper å hente hele katalogen.
 export async function getManagerCareer(userId: string): Promise<{ cards: ManagerCard[]; lineup: ManagerLineup | null; packs: ManagerPack[]; listedCardIds: string[]; freePacks: Record<string, number> }> {
   const db = supabaseAdmin();
+  await replaceAcademyLineups(db, [userId]);
   const [{ data: cards, error: cardsError }, { data: lineup, error: lineupError }, { data: packs, error: packsError }, { data: listings, error: listingsError }, { data: inventory, error: inventoryError }, { data: profile, error: profileError }] = await Promise.all([
     db.from("manager_cards").select("id, catalog_id, special_card_id, name, position, overall, tradable, is_starter, acquired_price, attributes, location, player_catalog(slug, accent, club, price), special_cards(kind, price), personal_cards(slug)").eq("owner_id", userId).order("overall", { ascending: false }),
     db.from("manager_lineups").select("formation, starters, bench, updated_at").eq("user_id", userId).maybeSingle(),
