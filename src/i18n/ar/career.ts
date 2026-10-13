@@ -233,6 +233,8 @@ export const career = {
     challengeUnavailable: "هذا التحدي لم يعد متاحا",
     pickLineupFirst: "اختر XI قبل قبول مباراة المدير",
     cannotStart: "لا يمكن بدء المباراة",
+    dailyMatchLimit: (max: number) => `لقد لعبت ${max} مباراة مدرب خلال آخر 24 ساعة. خذ استراحة وعد لاحقًا!`,
+    automatedPlay: "لا يمكن لـ ChatGPT أو أي روبوت آخر لعب المباريات. العب بنفسك!",
     matchNotFound: "لم يتم العثور على تطابق المدير",
     notFinished: "المباراة لم تنته بعد",
     waitingForServer: "في انتظار الخادم لإنهاء المباراة …",

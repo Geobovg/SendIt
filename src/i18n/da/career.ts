@@ -233,6 +233,8 @@ export const career = {
     challengeUnavailable: "Denne udfordring er ikke længere tilgængelig",
     pickLineupFirst: "Vælg en XI, før du accepterer managerkampen",
     cannotStart: "Kampen kan ikke startes",
+    dailyMatchLimit: (max: number) => `Du har spillet ${max} managerkampe det seneste døgn. Hold en pause og kom tilbage senere!`,
+    automatedPlay: "Kampe kan ikke spilles af ChatGPT eller andre robotter. Spil selv!",
     matchNotFound: "Managermatch blev ikke fundet",
     notFinished: "Kampen er ikke slut endnu",
     waitingForServer: "Venter på, at serveren afslutter kampen …",

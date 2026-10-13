@@ -11,6 +11,7 @@ import { recordFailedInviteCode, tooManyFailedInviteCodes } from "./data";
 import { friendshipId } from "./friends";
 import { validInviteCode } from "./invite-code";
 import { MANAGER_KICKOFF_VERSION, planManagerTimeline, type ManagerKickoffEvent } from "./manager-match";
+import { managerMatchLimitError } from "./match-limit";
 import { managerTeamSnapshots } from "./manager-snapshot";
 import { getFriendSeasonByCode } from "./seasons";
 import { supabaseAdmin } from "./supabase/server";
@@ -55,6 +56,8 @@ export async function playAiSeasonMatchAction(_prev: ActionState, _formData: For
   const next = (fixtures ?? []).find((fixture) => fixture.status === "scheduled");
   const errors = (await getT()).seasons.errors;
   if (!season || !next) return { error: errors.noMoreMatches };
+  const limitError = await managerMatchLimitError(db, user.id);
+  if (limitError) return { error: limitError };
   const team = ((season.teams ?? []) as AiTeam[]).find((entry) => entry.key === (next.home_ai_key ?? next.away_ai_key));
   if (!team) return { error: errors.opponentNotFound };
   const snapshots = await managerTeamSnapshots(db, [user.id]);
@@ -82,6 +85,8 @@ export async function playFriendSeasonMatchAction(_prev: ActionState, formData: 
   const { data: liveFixtures, error: liveError } = await db.from("career_season_matches").select("id").not("friend_season_id", "is", null).eq("status", "live").or(`home_user_id.eq.${user.id},away_user_id.eq.${user.id}`).limit(1);
   if (liveError) return { error: await dbErrorMessage(liveError) };
   if (liveFixtures?.length) return { error: errors.finishLiveMatchFirst };
+  const limitError = await managerMatchLimitError(db, user.id);
+  if (limitError) return { error: limitError };
   const snapshots = await managerTeamSnapshots(db, [fixture.home_user_id, fixture.away_user_id]);
   if ("error" in snapshots) return { error: snapshots.error };
   const home = snapshots.get(fixture.home_user_id); const away = snapshots.get(fixture.away_user_id);

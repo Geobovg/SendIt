@@ -7,6 +7,7 @@ import { friendshipId } from "./friends";
 import type { ActionState } from "./actions";
 import { autoShotCell, getManagerKickoff, isAiTeam, keeperIsManager, MANAGER_KICKOFF_VERSION, MAX_SUBSTITUTIONS, getManagerShots, matchClock, NO_EXTENSION, planManagerTimeline, plannedDurationMs, playersById, resolveShot, SHOT_CHOICE_MS, shootingOf, shotKeeperRating, shotMinutesOf, matchExtension, squadAtSubWindow, SUB_WINDOW_MAX_MS, SUB_WINDOW_MINUTE, subReadySides, subWindowClosed, subWindowMs, type ManagerKickoffEvent, type ManagerMatchEvent, type MatchClock, type MatchSide, type ShotResult } from "./manager-match";
 import { managerTeamSnapshots } from "./manager-snapshot";
+import { managerMatchLimitError } from "./match-limit";
 import { supabaseAdmin } from "./supabase/server";
 
 function profilePaths() { revalidatePath("/profile"); revalidatePath("/managerkarriere"); }
@@ -46,6 +47,8 @@ export async function startCareerMatchAction(_prev: ActionState, formData: FormD
   if (!match || (match.home_user_id !== user.id && match.away_user_id !== user.id) || match.status !== "lobby") return { error: (await getT()).career.errors.cannotStart };
   const startedAt = new Date().toISOString();
   if (match.mode !== "manager") return { error: (await getT()).career.errors.cannotStart };
+  const limitError = await managerMatchLimitError(db, user.id);
+  if (limitError) return { error: limitError };
   const kickoff = await createManagerKickoff(db, match.home_user_id, match.away_user_id);
   if ("error" in kickoff) return { error: kickoff.error };
   const managerEvents = planManagerTimeline(match.id, [kickoff]);
