@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 // Filene i public får ellers «max-age=0», så nettleseren spør Vercel på nytt hver gang et bilde vises.
 // Bildene byttes sjelden, så de kan caches et døgn (og brukes mens de hentes på nytt i en uke).
 const STATIC_ASSET_CACHE = "public, max-age=86400, stale-while-revalidate=604800";
-const STATIC_ASSET_FOLDERS = ["players", "fantasy-players", "fantasy-kits", "crests", "flags", "personal", "audio"];
+const STATIC_ASSET_FOLDERS = ["players", "crests", "flags", "personal", "audio"];
 
 const nextConfig: NextConfig = {
   async headers() {

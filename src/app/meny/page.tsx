@@ -14,7 +14,6 @@ export default async function MenuPage() {
   const modes = [
     { href: "/managerkarriere", ...menu.career, tone: "from-sky-500/35 via-sky-950 to-slate-950" },
     { href: "/femmer", ...t.femmer.menu, tone: "from-fuchsia-500/35 via-rose-950 to-slate-950" },
-    { href: "/fantasy", ...menu.fantasy, tone: "from-emerald-400/35 via-emerald-950 to-slate-950" },
     { href: "/turneringer", ...menu.tournaments, tone: "from-amber-400/35 via-amber-950 to-slate-950" },
     { href: "/quiz", ...t.quiz.menu, tone: "from-violet-500/35 via-indigo-950 to-slate-950" },
   ];

@@ -54,7 +54,7 @@ Et kort av en spiller som er bedre enn spillerens vanlige kort og har eget utsee
 _Avoid_: Spesialutgave, Event-kort
 
 **Inform**:
-Spesialkortet for en spiller som er i form denne uken, som Team of the Week i FC. Hver fredag kl. 18:00 velges 23 spillere (en **inform-runde**) etter ekte form: kampkarakterene fra Fantasy-dataene (API-Football) siste uke, først en startellever (1 keeper, 4 forsvarere, 3 midtbane, 3 angrep) og så de 12 beste av resten. Mangler det kampdata, fylles runden med tilfeldige spillere blant topp 400. Kortet er 1–3 bedre (9,0+ i karakter gir +3, 8,0+ gir +2), men alltid mellom 82 og 90: lavere kort løftes til 82, og spillere som er 90 får ikke inform. Har spilleren hatt inform før, bygger det på forrige inform. Jo høyere rating, jo sjeldnere er informen i pakker (vektene ligger i `inform_tiers`; en 90 er omtrent 20 ganger sjeldnere enn en 82). Runden fra 9. oktober 2026 ble valgt for hånd etter FC 27 TOTW 2–4 (migrering 0086). Informs fra før migrering 0082 teller ikke.
+Spesialkortet for en spiller som er i form denne uken, som Team of the Week i FC. Hver fredag kl. 18:00 velges 23 spillere (en **inform-runde**) etter ekte form: kampkarakterene fra Fantasy-dataene (API-Football) siste uke, først en startellever (1 keeper, 4 forsvarere, 3 midtbane, 3 angrep) og så de 12 beste av resten. Mangler det kampdata, fylles runden med tilfeldige spillere blant topp 400. Fantasy og API-Football er fjernet (oktober 2026), så det kommer ikke nye kampdata, og rundene blir tilfeldige. Kortet er 1–3 bedre (9,0+ i karakter gir +3, 8,0+ gir +2), men alltid mellom 82 og 90: lavere kort løftes til 82, og spillere som er 90 får ikke inform. Har spilleren hatt inform før, bygger det på forrige inform. Jo høyere rating, jo sjeldnere er informen i pakker (vektene ligger i `inform_tiers`; en 90 er omtrent 20 ganger sjeldnere enn en 82). Runden fra 9. oktober 2026 ble valgt for hånd etter FC 27 TOTW 2–4 (migrering 0086). Informs fra før migrering 0082 teller ikke.
 _Avoid_: TOTW, Ukens lag
 
 **TOTS**:
@@ -82,22 +82,3 @@ En egen modus utenfor Managerkarrieren der lagene bare består av **personlige k
 _Avoid_: Futsal, 5-er-karriere, Managerkarriere (det er noe annet)
 
 
-**Fantasy**:
-En egen modus utenfor Managerkarrieren, som Premier League Fantasy, men for spillere fra alle de fem store ligaene. Du velger et lag av ekte spillere innenfor et budsjett og får poeng etter hva de gjør i ekte kamper. Kampdataene hentes fra API-Football; appen simulerer ingenting her.
-_Avoid_: Managerkarriere, Draft
-
-**Liga** (i Fantasy):
-En av de fem ekte ligaene spillerne hentes fra: Premier League, La Liga, Serie A, Bundesliga og Ligue 1. Hvilken liga en klubb spiller i står i `football_clubs`.
-_Avoid_: Divisjon (det er AI-sesongens nivåer)
-
-**Fantasy-liga**:
-En tabell der du og venner sammenligner fantasy-poengene deres. Du blir med via invitasjonskode eller -lenke, som i turneringer.
-_Avoid_: Liga alene (det er de ekte ligaene), Vennesesong
-
-**Runde**:
-Én uke i Fantasy, fra tirsdag til og med mandag (norsk tid), på tvers av alle fem ligaene, så mandagskampene avslutter helgerunden. Fristen er 90 minutter før rundens første kamp; da låses laget, og poengene for runden kommer fra alle ligakampene den uka.
-_Avoid_: Gameweek, Kamp, Kalenderuke (uka starter tirsdag, ikke mandag)
-
-**Chip**:
-Et engangsvalg i Fantasy som gjelder én runde: Wildcard, Free Hit, Bench Boost eller Triple Captain. Hver kan brukes én gang i hver halvdel av sesongen.
-_Avoid_: Kort (det er spillerkortene i Managerkarrieren), Bonus
