@@ -7,9 +7,8 @@ import { supabaseAdmin } from "./supabase/server";
 /**
  * Hvor mange kamper én bruker kan starte i løpet av et døgn, i Managerkarrieren og i Femmer hver for seg.
  * Noen lot ChatGPT spille kamp etter kamp for seg, og hver kamp koster serverkall hos Vercel.
- * 30 kamper er mer enn halvannen times spill.
  */
-export const DAILY_MATCHES = 30;
+export const DAILY_MATCHES = 40;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 // ChatGPT-agenten signerer forespørslene sine med Signature-Agent: "https://chatgpt.com".

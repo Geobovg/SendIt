@@ -233,7 +233,7 @@ export const career = {
     challengeUnavailable: "Diese Herausforderung ist nicht mehr verfügbar",
     pickLineupFirst: "Wählen Sie eine XI aus, bevor Sie das Managerspiel annehmen",
     cannotStart: "Das Spiel kann nicht gestartet werden",
-    dailyMatchLimit: (max: number) => `Du hast in den letzten 24 Stunden ${max} Managerspiele gespielt. Mach eine Pause und komm später wieder!`,
+    dailyMatchLimit: (max: number) => `Du hast in den letzten 24 Stunden ${max} Managerspiele gespielt. Geh mal Gras anfassen, Kumpel!`,
     automatedPlay: "Spiele können nicht von ChatGPT oder anderen Bots gespielt werden. Spiel selbst!",
     matchNotFound: "Manager-Übereinstimmung nicht gefunden",
     notFinished: "Das Spiel ist noch nicht vorbei",

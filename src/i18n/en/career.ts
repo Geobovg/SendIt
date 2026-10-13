@@ -233,7 +233,7 @@ export const career = {
     challengeUnavailable: "This challenge is no longer available",
     pickLineupFirst: "Pick an XI before accepting the manager match",
     cannotStart: "The match can't be started",
-    dailyMatchLimit: (max: number) => `You've played ${max} manager matches in the last 24 hours. Take a break and come back later!`,
+    dailyMatchLimit: (max: number) => `You've played ${max} manager matches in the last 24 hours. Touch grass pal!`,
     automatedPlay: "Matches can't be played by ChatGPT or other bots. Play yourself!",
     matchNotFound: "Manager match not found",
     notFinished: "The match isn't over yet",
