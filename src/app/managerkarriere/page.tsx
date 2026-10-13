@@ -16,7 +16,7 @@ export default async function ManagerCareerPage() {
   const userId = await sessionUserId();
   if (!userId) redirect("/login");
   const careerPromise = getCareerProfile(userId);
-  const [user, career, manager, challenges, matches, friendSeasons, season] = await Promise.all([currentUser(), careerPromise, getManagerHome(userId), getCareerChallenges(userId), listManagerMatchHistory(userId), getFriendSeasons(userId), getAiSeason(userId, careerPromise.then((profile) => profile.club_name))]);
+  const [user, career, manager, challenges, matches, friendSeasons, season] = await Promise.all([currentUser(), careerPromise, getManagerHome(userId), getCareerChallenges(userId), listManagerMatchHistory(userId), getFriendSeasons(userId), getAiSeason(userId)]);
   if (!user) redirect("/login");
   const t = await getT();
   return <div className="mx-auto grid w-full max-w-[1600px] gap-4">

@@ -72,7 +72,8 @@ export async function getCareerMatch(matchId: string, userId: string) {
   // Er motstanderen en annen brukers lag, vises brukernavnet og klubbnavnet som i en vanlig kamp.
   const opponentKey = fixture?.away_ai_key ?? fixture?.home_ai_key;
   const userTeam = ((aiSeason?.teams ?? []) as AiTeam[]).find((team) => team.key === opponentKey && team.manager);
-  const aiSide = userTeam?.manager ? { userId: "ai", username: userTeam.manager, clubName: userTeam.name } : { userId: "ai", username: data.away_ai_name ?? fallback.aiClub, clubName: fallback.aiOpponent };
+  const { data: userTeamClub } = userTeam?.user_id ? await db.from("player_profiles").select("club_name").eq("user_id", userTeam.user_id).maybeSingle() : { data: null };
+  const aiSide = userTeam?.manager ? { userId: "ai", username: userTeam.manager, clubName: clubName(userTeamClub?.club_name ?? "") } : { userId: "ai", username: data.away_ai_name ?? fallback.aiClub, clubName: fallback.aiOpponent };
   return {
     ...data,
     home: sideFor(data.home_user_id),
