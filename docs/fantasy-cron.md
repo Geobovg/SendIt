@@ -1,5 +1,7 @@
 # Den automatiske Fantasy-jobben
 
+> **Skrudd av.** Jobben ble stoppet i `0089_skru_av_fantasy_jobben.sql` fordi den brukte for mye av gratisplanen hos Vercel. Fantasy-poeng, frister og priser oppdateres ikke før jobben settes opp igjen med steg 2 under.
+
 Fantasy trenger en jobb som kjører hele tiden: den henter terminlista, låser lagene ved fristen, henter kamper som pågår, regner ut poeng, avslutter runder og endrer prisene. Koden ligger i `src/lib/fantasy/tick.ts`, og den kjøres ved å kalle `POST /api/fantasy/tick`.
 
 Supabase kaller den hvert andre minutt med `pg_cron` (planlegger) og `pg_net` (sender forespørselen). Begge er gratis i Supabase, så det trengs ingen betalt Vercel-plan.

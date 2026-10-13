@@ -16,6 +16,7 @@ import {
   getManagerShots,
   getShootout,
   getManagerTimeline,
+  isAiTeam,
   keeperIsManager,
   keeperZone,
   KICK_REVEAL_AFTER_MS,
@@ -405,12 +406,19 @@ export function LiveManagerMatch({ match, userId, returnAfterComplete = true, he
     const interval = setInterval(() => setNow(Date.now() + serverOffset), 200);
     return () => clearInterval(interval);
   }, [serverOffset]);
+  // Hele kampen er planlagt på forhånd, så motstanderen kan bare endre noe under en sjanse og i
+  // byttevinduet. Bare da følges motstanderen tett; ellers holder det med en sjelden sjekk, så hver
+  // kamp ikke koster hundrevis av serverkall. Mot en AI-klubb endres kampen bare av dine egne trykk,
+  // og de svarer med ny kampdata selv.
+  const vsAi = kickoff ? isAiTeam(kickoff.home) || isAiTeam(kickoff.away) : false;
   useEffect(() => {
     if (match.status !== "live") return;
     // I byttevinduet følges motstanderen tettere, så kampen går videre straks begge er ferdige.
-    const refresh = setInterval(() => router.refresh(), activeShot ? 800 : subWindowOpen ? 1500 : 3000);
+    const ms = vsAi ? 10_000 : activeShot ? 800 : subWindowOpen ? 1500 : 10_000;
+    // En skjult fane trenger ingen oppdateringer; den hentes på nytt når den vises igjen.
+    const refresh = setInterval(() => { if (document.visibilityState === "visible") router.refresh(); }, ms);
     return () => clearInterval(refresh);
-  }, [match.status, router, activeShot, subWindowOpen]);
+  }, [match.status, router, activeShot, subWindowOpen, vsAi]);
 
   const visible = timeline.filter((event) => {
     if (event.minute > shownMinute) return false;

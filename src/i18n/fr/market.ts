@@ -143,26 +143,10 @@ export const market = {
     sendToClubConfirm: (name: string) => `Envoyer ${name} au club ? La carte ne sera pas vendue.`,
     sentToClub: "✓ Envoyée au club",
   },
-  chat: {
-    title: "Discussion sur le marché",
-    unreadLabel: (count: number, mentioned: boolean) => `${count} non lu ${count === 1 ? "message" : "messages"}${mentioned ? ", you were mentioned" : ""}`,
-    you: "Vous",
-    deleteMessage: "Supprimer le message",
-    delete: "Supprimer",
-    mentionManager: "Mentionner un manager",
-    placeholder: "Envoyez un message au marché… (@ pour mentionner)",
-    message: "Message",
-    send: "Envoyer",
-    subtitle: "Tous les managers · les messages sont supprimés après 7 jours",
-    close: "Fermer",
-    empty: "Personne n'a encore rien dit. Lancez le chat !",
-  },
   errors: {
     invalidPrices: "Entrez des prix valides",
     invalidBid: "Entrez une enchère valide",
     listingNotFound: "Annonce introuvable",
-    emptyMessage: "Écrivez d'abord un message",
-    messageTooLong: (max: number) => `Les messages peuvent contenir au maximum ${max} caractères.`,
   },
 };
 

@@ -143,26 +143,10 @@ export const market = {
     sendToClubConfirm: (name: string) => `إرسال ${name} إلى النادي؟ لن تُباع البطاقة.`,
     sentToClub: "✓ أُرسلت إلى النادي",
   },
-  chat: {
-    title: "دردشة السوق",
-    unreadLabel: (count: number, mentioned: boolean) => `${count} غير مقروءة ${count === 1 ? "message" : "messages"}${mentioned ? ", you were mentioned" : ""}`,
-    you: "أنت",
-    deleteMessage: "حذف الرسالة",
-    delete: "حذف",
-    mentionManager: "اذكر مديرا",
-    placeholder: "مراسلة السوق… (@ للذكر)",
-    message: "رسالة",
-    send: "أرسل",
-    subtitle: "جميع المديرين · يتم حذف الرسائل بعد 7 أيام",
-    close: "إغلاق",
-    empty: "لم يقل أحد أي شيء حتى الآن. ابدأ الدردشة!",
-  },
   errors: {
     invalidPrices: "أدخل أسعار صالحة",
     invalidBid: "أدخل عرضًا صالحًا",
     listingNotFound: "لم يتم العثور على القائمة",
-    emptyMessage: "اكتب رسالة أولاً",
-    messageTooLong: (max: number) => `يمكن أن تتكون الرسائل من ${max} حرفًا على الأكثر`,
   },
 };
 
