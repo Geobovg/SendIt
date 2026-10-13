@@ -5,6 +5,12 @@ import type { ManagerPlayerSnapshot, ManagerTeamSnapshot } from "./manager-match
  * `bonus` er den skjulte styrken AI-klubbene får fra arena 2 (se arenas.ts). Eldre sesonger har den ikke.
  * Er motstanderen en annen brukers lag, har den `user_id` og `manager` (brukernavnet), og `name` er klubbnavnet.
  */
+/**
+ * Et lag slik det vises i lagvinduet. `kind` sier hvor ratingene kommer fra: `real` er brukerens ekte lag,
+ * `scaled` er et brukerlag justert til divisjonen i AI-sesongen, og `ai` er oppdiktede spillere.
+ */
+export type TeamView = { name: string; subtitle: string | null; formation: string; starters: ManagerPlayerSnapshot[]; bench: ManagerPlayerSnapshot[]; kind: "real" | "scaled" | "ai" };
+
 export type AiTeam = { key: string; name: string; rating: number; bonus?: number; user_id?: string; manager?: string };
 
 const firstNames = ["James", "Liam", "Oliver", "Harry", "Jack", "Charlie", "Thomas", "George", "Oscar", "William", "Noah", "Ethan", "Leo", "Mason", "Lucas", "Ryan", "Callum", "Daniel", "Joe", "Kieran"];

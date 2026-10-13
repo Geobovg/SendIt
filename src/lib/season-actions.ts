@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { dbErrorMessage, getT } from "@/i18n/server";
 import type { ActionState } from "./actions";
-import { aiTeamSnapshot, userTeamAsOpponent, type AiTeam } from "./ai-opponent";
+import { aiTeamSnapshot, userTeamAsOpponent, type AiTeam, type TeamView } from "./ai-opponent";
 import { aiPlayerMaxOverall } from "./arenas";
 import { requireUser } from "./auth";
 import { recordFailedInviteCode, tooManyFailedInviteCodes } from "./data";
@@ -75,6 +75,22 @@ export async function playAiSeasonMatchAction(_prev: ActionState, _formData: For
   if ("error" in result) return { error: result.error };
   seasonPaths();
   redirect(`/managerkarriere/kamp/${result.matchId}`);
+}
+
+/** Laget til en motstander i AI-sesongen din, med ratingene du møter i kampen. */
+export async function seasonOpponentTeamAction(key: string): Promise<TeamView | { error: string }> {
+  const user = await requireUser(); const db = supabaseAdmin();
+  const errors = (await getT()).seasons.errors;
+  const { data: season, error } = await db.from("career_ai_seasons").select("id, arena, teams").eq("user_id", user.id).eq("status", "active").maybeSingle();
+  if (error) return { error: await dbErrorMessage(error) };
+  const team = ((season?.teams ?? []) as AiTeam[]).find((entry) => entry.key === key);
+  if (!season || !team) return { error: errors.opponentNotFound };
+  const snapshots = team.user_id ? await managerTeamSnapshots(db, [team.user_id]) : new Map();
+  if ("error" in snapshots) return { error: snapshots.error };
+  const maxOverall = aiPlayerMaxOverall(season.arena ?? 1);
+  const theirs = team.user_id ? snapshots.get(team.user_id) : undefined;
+  const snapshot = theirs ? userTeamAsOpponent(theirs, team, maxOverall) : aiTeamSnapshot(season.id, team, maxOverall);
+  return { name: team.name, subtitle: null, formation: snapshot.formation, starters: snapshot.starters, bench: snapshot.bench, kind: theirs ? "scaled" : "ai" };
 }
 
 export async function playFriendSeasonMatchAction(_prev: ActionState, formData: FormData): Promise<ActionState> {

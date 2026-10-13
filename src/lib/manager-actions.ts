@@ -3,11 +3,13 @@
 import { revalidatePath } from "next/cache";
 import { dbErrorMessage, getT } from "@/i18n/server";
 import type { ActionState } from "./actions";
+import type { TeamView } from "./ai-opponent";
 import { requireUser } from "./auth";
 import { getCatalogPage, listCatalogClubs, type CatalogCard } from "./career";
 import type { CatalogFilters } from "./catalog-filters";
 import { canPlayPosition, formationNames, formations, pickBestSquad, type Formation } from "./lineup";
 import { squadCapacity } from "./manager-limits";
+import { managerTeamSnapshots } from "./manager-snapshot";
 import type { SpecialKind } from "./special-cards";
 import { supabaseAdmin } from "./supabase/server";
 
@@ -163,4 +165,19 @@ export async function saveManagerLineupAction(_prev: ActionState, formData: Form
   if (error) return { error: await dbErrorMessage(error, { stripPrefix: true }) };
   revalidatePath("/managerkarriere");
   return { ok: true };
+}
+
+/** Det ekte laget til en bruker, med de faktiske ratingene, f.eks. når du trykker på en venn. */
+export async function managerTeamAction(userId: string): Promise<TeamView | { error: string }> {
+  await requireUser(); const db = supabaseAdmin();
+  const [snapshots, { data: profile }, { data: career }] = await Promise.all([
+    managerTeamSnapshots(db, [userId]),
+    db.from("profiles").select("username").eq("id", userId).maybeSingle(),
+    db.from("player_profiles").select("club_name").eq("user_id", userId).maybeSingle(),
+  ]);
+  if ("error" in snapshots) return { error: snapshots.error };
+  const t = await getT();
+  const team = snapshots.get(userId);
+  if (!profile || !team) return { error: t.seasons.team.none };
+  return { name: profile.username, subtitle: career?.club_name ? t.career.clubName(career.club_name) : null, formation: team.formation, starters: team.starters, bench: team.bench, kind: "real" };
 }

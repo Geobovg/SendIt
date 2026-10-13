@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useCallback, useState } from "react";
 import {
   acceptFriendRequestAction,
   removeFriendRequestAction,
@@ -11,10 +11,22 @@ import {
 import type { ActionState } from "@/lib/actions";
 import type { Friend, PendingRequest, ProfileLike } from "@/lib/friends";
 import { useT } from "@/i18n/client";
+import { TeamDialog } from "./team-dialog";
 import { buttonClass, cardClass, secondaryButtonClass } from "./ui";
 
 const initialAction: ActionState = {};
 const initialSearch: SearchState = { query: "", results: [] };
+
+/** Brukernavnet som knapp: trykker du, åpnes det ekte laget til brukeren med de faktiske ratingene. */
+function UserName({ user }: { user: { id: string; username: string } }) {
+  const view = useT().seasons.team.view;
+  const [open, setOpen] = useState(false);
+  const close = useCallback(() => setOpen(false), []);
+  return <>
+    <button type="button" onClick={() => setOpen(true)} title={view} className="truncate text-left font-medium underline decoration-current/25 underline-offset-2 hover:decoration-current">{user.username}</button>
+    {open ? <TeamDialog source={{ user: user.id }} onClose={close} /> : null}
+  </>;
+}
 
 function AddFriendButton({ recipientId }: { recipientId: string }) {
   const [state, action, pending] = useActionState(sendFriendRequestAction, initialAction);
@@ -34,7 +46,7 @@ function RequestRow({ request, mode }: { request: PendingRequest; mode: "incomin
   const t = useT().friends;
   return (
     <li className="flex items-center justify-between gap-3 rounded-lg border border-border p-3">
-      <span className="font-medium">{request.user.username}</span>
+      <UserName user={request.user} />
       <div className="flex items-center gap-2">
         {mode === "incoming" ? (
           <form action={acceptAction}>
@@ -59,7 +71,7 @@ function FriendRow({ friend }: { friend: Friend }) {
   const t = useT().friends;
   return (
     <li className="flex items-center justify-between gap-3 rounded-lg border border-border p-3">
-      <span className="font-medium">{friend.username}</span>
+      <UserName user={friend} />
       <form action={action} className="flex items-center gap-2">
         <input type="hidden" name="request_id" value={friend.requestId} />
         <button className={secondaryButtonClass} disabled={pending}>{pending ? "…" : t.remove}</button>
@@ -73,7 +85,7 @@ function SearchResultRow({ result, status }: { result: ProfileLike; status: "fri
   const t = useT().friends;
   return (
     <li className="flex items-center justify-between gap-3 rounded-lg border border-border p-3">
-      <span className="font-medium">{result.username}</span>
+      <UserName user={result} />
       {status === "friends" ? <span className="text-sm text-muted">{t.status.friends}</span>
         : status === "outgoing" ? <span className="text-sm text-muted">{t.status.requestSent}</span>
         : status === "incoming" ? <span className="text-sm text-muted">{t.status.sentYouRequest}</span>

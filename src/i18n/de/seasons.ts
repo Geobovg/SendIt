@@ -4,6 +4,7 @@ export const seasons = {
   division: (division: number) => `Abteilung ${division}`,
   outcome: { promoted: "Gefördert", relegated: "Abgestiegen", stayed: "Bin oben geblieben", champion: "Meister" },
   table: { club: "CLUB", played: "P", wins: "W", draws: "D", losses: "L", goalDifference: "GD", points: "PTS" },
+  team: { bench: "BANK", close: "Schließen", loading: "Team wird geladen …", scaled: "Die Wertungen sind an die Division angepasst, so wie du ihnen begegnest.", ai: "Computergenerierter Verein.", view: "Team anzeigen", none: "Hat noch kein Team aufgestellt.", real: "Echte Wertungen." },
   fixture: {
     round: (round: number) => `R${round}`,
     playoff: "RL",
