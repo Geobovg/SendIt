@@ -49,7 +49,7 @@ export function MeatballSplash({ enterHref, enterLabel, title }: { enterHref: st
   return (
     <div className="meatball-splash fixed inset-0 z-[100] overflow-hidden bg-[#1c2230]" style={{ backgroundImage: "url(/forside/himmel.jpg)", backgroundSize: "cover", backgroundPosition: "center" }}>
       {/* Solgløden bak skyene */}
-      <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(60% 45% at 78% 72%, rgba(255,214,140,.55), rgba(255,160,70,.18) 55%, transparent 75%)" }} />
+      <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(60% 45% at 78% 72%, rgba(255,228,160,.7), rgba(255,170,90,.28) 55%, transparent 78%)" }} />
 
       {/* Alt som faller */}
       {fallers.map((item, index) => (
@@ -66,38 +66,40 @@ export function MeatballSplash({ enterHref, enterLabel, title }: { enterHref: st
       <svg className="pointer-events-none absolute inset-x-0 bottom-0 h-[36vh] w-full" viewBox="0 0 1600 340" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
         <defs>
           <linearGradient id="dis" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#6b5f66" stopOpacity="0.85" />
-            <stop offset="1" stopColor="#2c2f3b" />
+            <stop offset="0" stopColor="#e7a58a" stopOpacity="0.9" />
+            <stop offset="1" stopColor="#8d6f9a" />
           </linearGradient>
           <linearGradient id="naer" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#1b1e29" />
-            <stop offset="1" stopColor="#07080c" />
+            <stop offset="0" stopColor="#5a4a86" />
+            <stop offset="1" stopColor="#2a2350" />
           </linearGradient>
           <linearGradient id="vei" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#1a1a22" />
-            <stop offset="1" stopColor="#050509" />
+            <stop offset="0" stopColor="#3b3560" />
+            <stop offset="1" stopColor="#1e1a3c" />
           </linearGradient>
         </defs>
         <g fill="url(#dis)">{SKYLINE_FAR.map((b, i) => <rect key={i} x={b.x} y={286 - b.h} width={b.w} height={b.h + 40} />)}</g>
         <g fill="url(#naer)">{SKYLINE_NEAR.map((b, i) => <rect key={i} x={b.x} y={296 - b.h} width={b.w} height={b.h + 40} />)}</g>
         <g fill="#ffcf85">{WINDOWS.map((w, i) => <rect key={i} x={w.x} y={w.y} width="3" height="4" opacity={w.o} />)}</g>
         <rect y="296" width="1600" height="60" fill="url(#vei)" />
-        <rect y="296" width="1600" height="3" fill="#ff9a4a" opacity="0.28" />
+        <rect y="296" width="1600" height="3" fill="#ffd08a" opacity="0.5" />
 
-        {/* Mannen med paraply og dokumentmappe */}
-        <g transform="translate(470 318) scale(1.5)" fill="#050509">
-          <rect x="-9" y="-48" width="8" height="48" />
-          <rect x="1" y="-48" width="8" height="48" />
-          <path d="M-15 -46 L-13 -90 Q0 -98 13 -90 L15 -46 Z" />
-          <circle cx="0" cy="-102" r="8.5" />
-          <path d="M-13 -86 L-20 -58 L-16 -56 L-9 -80 Z" />
-          <rect x="-26" y="-58" width="14" height="11" rx="1.5" />
-          <path d="M12 -86 L24 -104 L27 -101 L16 -80 Z" />
-          <rect x="24" y="-134" width="2.4" height="32" />
-          <path d="M-34 -132 Q 25 -168 84 -132 Q 50 -140 25 -138 Q 0 -140 -34 -132 Z" />
+        {/* Mannen i gul regnfrakk, med rød paraply og dokumentmappe */}
+        <g transform="translate(470 318) scale(1.5)">
+          <rect x="-9" y="-48" width="8" height="48" fill="#2a2f4a" />
+          <rect x="1" y="-48" width="8" height="48" fill="#2a2f4a" />
+          <path d="M-15 -46 L-13 -90 Q0 -98 13 -90 L15 -46 Z" fill="#f2b632" />
+          <path d="M0 -94 L0 -46" stroke="#c98d17" strokeWidth="1.5" />
+          <circle cx="0" cy="-102" r="8.5" fill="#e9b894" />
+          <path d="M-8 -108 Q0 -116 8 -108 Q0 -111 -8 -108 Z" fill="#3a2a1a" />
+          <path d="M-13 -86 L-20 -58 L-16 -56 L-9 -80 Z" fill="#f2b632" />
+          <rect x="-26" y="-58" width="14" height="11" rx="1.5" fill="#7a4a24" />
+          <path d="M12 -86 L24 -104 L27 -101 L16 -80 Z" fill="#f2b632" />
+          <rect x="24" y="-134" width="2.4" height="32" fill="#2a2f4a" />
+          <path d="M-34 -132 Q 25 -168 84 -132 Q 50 -140 25 -138 Q 0 -140 -34 -132 Z" fill="#d1352b" />
+          <path d="M25 -150 L25 -138 M-6 -140 L8 -136 M56 -140 L42 -136" stroke="#8f1d17" strokeWidth="1.5" />
         </g>
-        <path d="M486 296 L492 290 L498 296 Z" fill="#ff9a4a" opacity="0" />
-      </svg>
+        </svg>
 
       {/* Tittelen */}
       <div className="pointer-events-none relative flex h-full flex-col items-center px-4 pt-[34vh] text-center">
@@ -110,16 +112,18 @@ export function MeatballSplash({ enterHref, enterLabel, title }: { enterHref: st
 
       {/* Nyhetsstripe og knapp */}
       <div className="absolute inset-x-0 bottom-0 flex flex-col-reverse items-end gap-3 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:flex-row sm:items-end sm:justify-between sm:gap-4">
-        <div className="flex w-full items-stretch sm:w-auto sm:max-w-[min(66vw,780px)] overflow-hidden rounded-sm text-xs shadow-[0_6px_24px_rgba(0,0,0,.55)] sm:text-sm">
-          <span className={`${display.className} shrink-0 bg-[#c4161c] px-3 py-2 uppercase tracking-widest text-white`}>Siste nytt</span>
-          <div className="meatball-ticker min-w-0 flex-1 overflow-hidden bg-[#0c0e14]/90 px-3 py-2 text-white/90">
-            <div className="meatball-ticker-track whitespace-nowrap">
-              Kjøttbollene har falt uavbrutt siden tirsdag · Myndighetene anbefaler å holde seg innendørs · Ordføreren: «Vi hadde ikke planlagt dette» · Forsker: «Det er ikke min avdeling» · Paraplyer utsolgt, parmesan på vei · Mannen i frakken har ikke kommentert saken &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              Kjøttbollene har falt uavbrutt siden tirsdag · Myndighetene anbefaler å holde seg innendørs · Ordføreren: «Vi hadde ikke planlagt dette» · Forsker: «Det er ikke min avdeling» · Paraplyer utsolgt, parmesan på vei · Mannen i frakken har ikke kommentert saken
-            </div>
-          </div>
+        <div className="w-full overflow-hidden rounded-sm text-xs shadow-[0_6px_24px_rgba(40,20,60,.45)] sm:w-auto sm:max-w-[min(66vw,760px)] sm:text-sm">
+          <div className={`${display.className} bg-[#c4161c] px-3 py-1 text-sm uppercase tracking-widest text-white`}>Siste nytt</div>
+          <ul className="grid gap-0.5 bg-[#1d1838]/90 px-3 py-2 leading-snug text-white">
+            <li>Kjøttbollene har falt uavbrutt siden tirsdag.</li>
+            <li>Myndighetene anbefaler å holde seg innendørs.</li>
+            <li>Ordføreren: «Vi hadde ikke planlagt dette.»</li>
+            <li>Forsker: «Det er ikke min avdeling.»</li>
+            <li>Paraplyer utsolgt, parmesan på vei.</li>
+            <li>Mannen i gul frakk har ikke kommentert saken.</li>
+          </ul>
         </div>
-        <Link href={enterHref} className={`${display.className} shrink-0 rounded-sm border border-white/60 bg-black/55 px-6 py-3 text-xl uppercase tracking-[0.12em] text-white shadow-[0_8px_26px_rgba(0,0,0,.6)] backdrop-blur-sm transition hover:bg-white hover:text-black active:scale-95 sm:text-2xl`}>
+        <Link href={enterHref} className={`${display.className} shrink-0 rounded-sm border border-white/70 bg-[#e8461f] px-6 py-3 text-xl uppercase tracking-[0.12em] text-white shadow-[0_8px_24px_rgba(60,20,10,.45)] transition hover:bg-[#ff5a30] active:scale-95 sm:text-2xl`}>
           {enterLabel} →
         </Link>
       </div>
