@@ -9,6 +9,7 @@ export const common: CommonDict = {
   manifestDescription: "Turneringsapp for FIFA og NHL",
   logIn: "Logg inn",
   logOut: "Logg ut",
+  enterGame: "Til spillet",
   language: "Språk",
   languageDescription: "Velg hvilket språk appen skal vises på. Valget lagres på kontoen din.",
   // Navnene på språkene, skrevet på språket appen vises på nå.
