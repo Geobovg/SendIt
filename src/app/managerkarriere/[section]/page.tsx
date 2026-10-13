@@ -46,7 +46,7 @@ export default async function ManagerCareerSectionPage({ params, searchParams }:
     active === "spillermarked" && !marketTab ? getCatalogPage(defaultCatalogFilters) : undefined,
     marketTab ? listTransferMarket() : [],
     active === "sesong" && tab === "venner" ? Promise.all([getFriendSeasons(userId), listFriends(userId), getCareerChallenges(userId)]) : null,
-    active === "sesong" && tab !== "venner" ? getAiSeason(userId, careerPromise.then((profile) => profile.club_name)) : null,
+    active === "sesong" && tab !== "venner" ? getAiSeason(userId) : null,
     active === "karrierehistorikk" ? listManagerMatchHistory(userId) : null,
     active === "sbc" ? getSbcData(userId) : null,
     active === "pakker" ? getPackShop(userId) : null,

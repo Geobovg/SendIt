@@ -41,9 +41,8 @@ async function usernames(ids: string[]) {
   return new Map((data ?? []).map((profile) => [profile.id, profile.username]));
 }
 
-/** Brukerens aktive AI-sesong. Finnes den ikke, startes en ny med én gang. */
-// Klubbnavnet kan komme som et løfte, så sesongen kan hentes samtidig med profilen.
-export async function getAiSeason(userId: string, clubName: string | Promise<string>): Promise<AiSeason> {
+/** Brukerens aktive AI-sesong. Finnes den ikke, startes en ny med én gang. Alle lagene heter det brukeren heter. */
+export async function getAiSeason(userId: string): Promise<AiSeason> {
   const db = supabaseAdmin();
   const fallback = (await getT()).seasons.fallback;
   const { data: seasonId, error: ensureError } = await db.rpc("ensure_ai_season", { target_user: userId });
@@ -58,13 +57,13 @@ export async function getAiSeason(userId: string, clubName: string | Promise<str
   ]);
   if (seasonError || fixturesError || standingsError) throw new Error(seasonError?.message ?? fixturesError?.message ?? standingsError?.message);
   const teams = (season.teams ?? []) as AiTeam[];
-  const names = new Map<string, string>([[userId, (await clubName) || fallback.yourClub], ...teams.map((team) => [team.key, team.name] as [string, string])]);
+  const names = new Map<string, string>([[userId, (await usernames([userId])).get(userId) || fallback.yourClub], ...teams.map((team) => [team.key, team.name] as [string, string])]);
   const all = ((fixtures ?? []) as FixtureRow[]).map((row) => toFixture(row, names, userId, fallback.unknown));
   const mine = all.filter((fixture) => fixture.homeIsMe || fixture.awayIsMe);
   const nextFixture = nextFor(mine);
   return {
     id: season.id, seasonNumber: season.season_number, arena: season.arena ?? 1, division: season.division, teams,
-    table: toTable((standings ?? []) as StandingRow[], names, userId, fallback.unknown, new Map(teams.filter((team) => team.manager).map((team) => [team.key, team.manager!]))),
+    table: toTable((standings ?? []) as StandingRow[], names, userId, fallback.unknown, new Map(teams.filter((team) => team.manager && team.manager !== team.name).map((team) => [team.key, team.manager!]))),
     fixtures: mine, nextFixture, played: mine.filter((fixture) => !fixture.playoff && fixture.status === "completed").length, inPlayoff: nextFixture?.playoff ?? false,
     previous: previous?.outcome ? { arena: previous.arena ?? 1, division: previous.division, position: previous.final_position, outcome: previous.outcome } : null,
     highestArena: highest?.arena ?? season.arena ?? 1, championTitles: championTitles ?? 0,
