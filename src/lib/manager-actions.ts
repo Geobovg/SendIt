@@ -171,7 +171,7 @@ export async function saveManagerLineupAction(_prev: ActionState, formData: Form
 export async function managerTeamAction(userId: string): Promise<TeamView | { error: string }> {
   await requireUser(); const db = supabaseAdmin();
   const [snapshots, { data: profile }, { data: career }] = await Promise.all([
-    managerTeamSnapshots(db, [userId]),
+    managerTeamSnapshots(db, [userId], { realPlayers: true }),
     db.from("profiles").select("username").eq("id", userId).maybeSingle(),
     db.from("player_profiles").select("club_name").eq("user_id", userId).maybeSingle(),
   ]);
