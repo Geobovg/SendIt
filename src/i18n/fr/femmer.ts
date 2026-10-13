@@ -157,6 +157,8 @@ export const femmer: Dictionary["femmer"] = {
     penaltyShort: "pén.",
   },
   errors: {
+    dailyMatchLimit: (max: number) => `Tu as joué ${max} matchs de Femmer ces dernières 24 heures. Fais une pause et reviens plus tard !`,
+    automatedPlay: "Les matchs ne peuvent pas être joués par ChatGPT ou d'autres bots. Joue toi-même !",
     invalidFormation: "Formation invalide",
     invalidPack: "Pack invalide",
     invalidPosition: "Poste invalide",

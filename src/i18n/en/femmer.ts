@@ -155,6 +155,8 @@ export const femmer = {
     penaltyShort: "pen.",
   },
   errors: {
+    dailyMatchLimit: (max: number) => `You've played ${max} Femmer matches in the last 24 hours. Take a break and come back later!`,
+    automatedPlay: "Matches can't be played by ChatGPT or other bots. Play yourself!",
     invalidFormation: "Invalid formation",
     invalidPack: "Invalid pack",
     invalidPosition: "Invalid position",
