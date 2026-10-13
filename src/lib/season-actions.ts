@@ -10,7 +10,7 @@ import { requireUser } from "./auth";
 import { recordFailedInviteCode, tooManyFailedInviteCodes } from "./data";
 import { friendshipId } from "./friends";
 import { validInviteCode } from "./invite-code";
-import { MANAGER_KICKOFF_VERSION, planManagerTimeline, type ManagerKickoffEvent } from "./manager-match";
+import { MANAGER_KICKOFF_VERSION, planManagerTimeline, type ManagerKickoffEvent, type ManagerPlayerSnapshot } from "./manager-match";
 import { managerMatchLimitError } from "./match-limit";
 import { managerTeamSnapshots } from "./manager-snapshot";
 import { getFriendSeasonByCode } from "./seasons";
@@ -75,6 +75,25 @@ export async function playAiSeasonMatchAction(_prev: ActionState, _formData: For
   if ("error" in result) return { error: result.error };
   seasonPaths();
   redirect(`/managerkarriere/kamp/${result.matchId}`);
+}
+
+/** `userTeam` er sann når laget er en annen brukers ekte lag, ikke oppdiktede spillere. */
+export type SeasonOpponentTeam = { name: string; manager: string | null; formation: string; starters: ManagerPlayerSnapshot[]; bench: ManagerPlayerSnapshot[]; userTeam: boolean };
+
+/** Laget til en motstander i AI-sesongen din, med ratingene du møter i kampen. */
+export async function seasonOpponentTeamAction(key: string): Promise<SeasonOpponentTeam | { error: string }> {
+  const user = await requireUser(); const db = supabaseAdmin();
+  const errors = (await getT()).seasons.errors;
+  const { data: season, error } = await db.from("career_ai_seasons").select("id, arena, teams").eq("user_id", user.id).eq("status", "active").maybeSingle();
+  if (error) return { error: await dbErrorMessage(error) };
+  const team = ((season?.teams ?? []) as AiTeam[]).find((entry) => entry.key === key);
+  if (!season || !team) return { error: errors.opponentNotFound };
+  const snapshots = team.user_id ? await managerTeamSnapshots(db, [team.user_id]) : new Map();
+  if ("error" in snapshots) return { error: snapshots.error };
+  const maxOverall = aiPlayerMaxOverall(season.arena ?? 1);
+  const theirs = team.user_id ? snapshots.get(team.user_id) : undefined;
+  const snapshot = theirs ? userTeamAsOpponent(theirs, team, maxOverall) : aiTeamSnapshot(season.id, team, maxOverall);
+  return { name: team.name, manager: team.manager ?? null, formation: snapshot.formation, starters: snapshot.starters, bench: snapshot.bench, userTeam: Boolean(theirs) };
 }
 
 export async function playFriendSeasonMatchAction(_prev: ActionState, formData: FormData): Promise<ActionState> {

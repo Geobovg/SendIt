@@ -4,6 +4,7 @@ export const seasons = {
   division: (division: number) => `القسم ${division}`,
   outcome: { promoted: "تمت ترقيته", relegated: "هبط", stayed: "سهر", champion: "بطل" },
   table: { club: "النادي", played: "ص", wins: "دبليو", draws: "د", losses: "ل", goalDifference: "جي دي", points: "نقطة" },
+  team: { bench: "الاحتياط", close: "إغلاق", loading: "جارٍ تحميل الفريق…", scaled: "التقييمات معدّلة حسب الدرجة كما ستواجهها.", ai: "نادٍ من إنشاء الحاسوب.", view: "عرض الفريق" },
   fixture: {
     round: (round: number) => `R${round}`,
     playoff: "مل",

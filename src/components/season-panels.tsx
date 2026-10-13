@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState, useTransition } from "react";
+import { useActionState, useCallback, useState, useTransition } from "react";
 import type { ActionState } from "@/lib/actions";
 import type { Friend } from "@/lib/friends";
 import { createFriendSeasonAction, joinFriendSeasonByCodeAction, playAiSeasonMatchAction, playFriendSeasonMatchAction, respondFriendSeasonAction, startFriendSeasonAction } from "@/lib/season-actions";
@@ -10,6 +10,7 @@ import { directPromotionSpots, isRelegation, playoffPosition } from "@/lib/seaso
 import type { AiSeason, FriendSeason, SeasonFixture, SeasonTableRow } from "@/lib/seasons";
 import { useT } from "@/i18n/client";
 import { arenaBackground, ArenaRoad, ArenaUnlockCelebration, StadiumIllustration } from "./arena-scene";
+import { OpponentTeamDialog } from "./season-opponent-team";
 import { buttonClass, secondaryButtonClass } from "./ui";
 
 const initial: ActionState = {};
@@ -24,19 +25,30 @@ function zone(position: number, division: number | null, arena: number) {
   return "border-l-transparent";
 }
 
-export function SeasonTable({ rows, division = null, arena = 1, compact = false }: { rows: SeasonTableRow[]; division?: number | null; arena?: number; compact?: boolean }) {
+/** `onSelect` gjør de andre lagene i tabellen til knapper, f.eks. for å se laget deres. */
+export function SeasonTable({ rows, division = null, arena = 1, compact = false, onSelect }: { rows: SeasonTableRow[]; division?: number | null; arena?: number; compact?: boolean; onSelect?: (participant: string) => void }) {
   const t = useT();
   const head = t.seasons.table;
   return <div className="overflow-hidden rounded-xl border border-white/10">
     <table className="w-full text-sm tabular-nums">
       <thead className="bg-white/5 text-[10px] font-black tracking-widest text-white/45"><tr><th className="py-2 pl-3 text-left">#</th><th className="text-left">{head.club}</th><th>{head.played}</th>{compact ? null : <><th>{head.wins}</th><th>{head.draws}</th><th>{head.losses}</th></>}<th>{head.goalDifference}</th><th className="pr-3">{head.points}</th></tr></thead>
       <tbody>{rows.map((row) => <tr key={row.participant} className={`border-t border-white/5 border-l-4 ${zone(row.position, division, arena)} ${row.isMe ? "bg-lime-300/10 font-black" : ""}`}>
-        <td className="py-2 pl-3">{row.position}</td><td className="max-w-40 truncate">{row.name}{row.manager && !compact ? <span className="ml-1.5 text-xs font-normal text-white/40">{row.manager}</span> : null}</td><td className="text-center">{row.played}</td>
+        <td className="py-2 pl-3">{row.position}</td><td className="max-w-40 truncate">{onSelect && !row.isMe ? <button type="button" onClick={() => onSelect(row.participant)} title={t.seasons.team.view} className="max-w-full truncate text-left underline decoration-white/25 underline-offset-2 hover:text-cyan-200 hover:decoration-cyan-200">{row.name}</button> : row.name}{row.manager && !compact ? <span className="ml-1.5 text-xs font-normal text-white/40">{row.manager}</span> : null}</td><td className="text-center">{row.played}</td>
         {compact ? null : <><td className="text-center">{row.wins}</td><td className="text-center">{row.draws}</td><td className="text-center">{row.losses}</td></>}
         <td className="text-center">{row.goalsFor - row.goalsAgainst > 0 ? "+" : ""}{row.goalsFor - row.goalsAgainst}</td><td className="pr-3 text-center font-black">{row.points}</td>
       </tr>)}</tbody>
     </table>
   </div>;
+}
+
+/** Tabellen i AI-sesongen. Trykker du på et lag, åpnes laget deres. */
+function AiSeasonTable({ season, rows, compact = false }: { season: AiSeason; rows: SeasonTableRow[]; compact?: boolean }) {
+  const [selected, setSelected] = useState<string | null>(null);
+  const close = useCallback(() => setSelected(null), []);
+  return <>
+    <SeasonTable rows={rows} division={season.division} arena={season.arena} compact={compact} onSelect={setSelected} />
+    {selected ? <OpponentTeamDialog teamKey={selected} onClose={close} /> : null}
+  </>;
 }
 
 function FixtureRow({ fixture, action }: { fixture: SeasonFixture; action?: React.ReactNode }) {
@@ -98,7 +110,7 @@ export function AiSeasonHero({ season }: { season: AiSeason }) {
       </div>
       <div className="grid content-start gap-2">
         <div className="flex items-baseline justify-between"><p className="text-[10px] font-black tracking-widest text-white/45">{t.seasons.ai.tableHeading}</p><Link href="/managerkarriere/sesong" className="text-xs font-black text-cyan-300 hover:underline">{t.seasons.ai.fullTable}</Link></div>
-        <SeasonTable rows={around} division={season.division} arena={season.arena} compact />
+        <AiSeasonTable season={season} rows={around} compact />
       </div>
     </div>
   </section>;
@@ -112,7 +124,7 @@ export function AiSeasonDetails({ season }: { season: AiSeason }) {
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,.9fr)]">
       <section className={`${panelClass} grid content-start gap-3`} style={{ background: arenaBackground(season.arena), borderColor: `${arena.colors.primary}40` }}>
         <div className="flex flex-wrap items-end justify-between gap-2"><div><p className="text-xs font-black tracking-[.22em]" style={{ color: arena.colors.primary }}>{t.seasons.ai.eyebrow(season.seasonNumber)} · {arena.name.toUpperCase()}</p><h2 className="text-2xl font-black">{t.seasons.division(season.division)}</h2></div><p className="text-xs text-white/50">{t.seasons.ai.legend}</p></div>
-        <SeasonTable rows={season.table} division={season.division} arena={season.arena} />
+        <AiSeasonTable season={season} rows={season.table} />
         <p className="text-xs text-white/50">{promotionText(t, season)}{playoffPosition(season.division, season.arena) ? ` · ${season.division === 1 ? t.seasons.arena.playoffInfo(arenaOf(season.arena + 1).name) : t.seasons.ai.playoffInfo}` : ""}</p>
         <p className="text-xs text-white/50">{t.seasons.ai.prizeInfo} {t.seasons.arena.prizeFactor(arena.factor)}</p>
         <PlayAiMatchButton season={season} />

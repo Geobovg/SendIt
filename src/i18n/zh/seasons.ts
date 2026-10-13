@@ -4,6 +4,7 @@ export const seasons = {
   division: (division: number) => `部门${division}`,
   outcome: { promoted: "晋升", relegated: "降级", stayed: "熬夜", champion: "冠军" },
   table: { club: "俱乐部", played: "磷", wins: "瓦", draws: "D", losses: "L", goalDifference: "GD", points: "PTS" },
+  team: { bench: "替补", close: "关闭", loading: "正在加载球队…", scaled: "评分已按分区调整，与你实际面对的一致。", ai: "电脑生成的俱乐部。", view: "查看球队" },
   fixture: {
     round: (round: number) => `R${round}`,
     playoff: "附",
