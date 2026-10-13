@@ -8,7 +8,7 @@ export const seasons = {
   division: (division: number) => `Division ${division}`,
   outcome: { promoted: "Promoted", relegated: "Relegated", stayed: "Stayed up", champion: "Champion" },
   table: { club: "CLUB", played: "P", wins: "W", draws: "D", losses: "L", goalDifference: "GD", points: "PTS" },
-  team: { bench: "BENCH", close: "Close", loading: "Loading team …", scaled: "Ratings are adjusted to the division, as you'll face them.", ai: "Computer-generated club.", view: "Show team" },
+  team: { bench: "BENCH", close: "Close", loading: "Loading team …", scaled: "Ratings are adjusted to the division, as you'll face them.", ai: "Computer-generated club.", view: "Show team", none: "Hasn't set up a team yet.", real: "Actual ratings." },
   fixture: {
     round: (round: number) => `R${round}`,
     playoff: "PO",

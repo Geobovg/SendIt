@@ -10,7 +10,7 @@ import { directPromotionSpots, isRelegation, playoffPosition } from "@/lib/seaso
 import type { AiSeason, FriendSeason, SeasonFixture, SeasonTableRow } from "@/lib/seasons";
 import { useT } from "@/i18n/client";
 import { arenaBackground, ArenaRoad, ArenaUnlockCelebration, StadiumIllustration } from "./arena-scene";
-import { OpponentTeamDialog } from "./season-opponent-team";
+import { TeamDialog } from "./team-dialog";
 import { buttonClass, secondaryButtonClass } from "./ui";
 
 const initial: ActionState = {};
@@ -47,7 +47,7 @@ function AiSeasonTable({ season, rows, compact = false }: { season: AiSeason; ro
   const close = useCallback(() => setSelected(null), []);
   return <>
     <SeasonTable rows={rows} division={season.division} arena={season.arena} compact={compact} onSelect={setSelected} />
-    {selected ? <OpponentTeamDialog teamKey={selected} onClose={close} /> : null}
+    {selected ? <TeamDialog source={{ season: selected }} onClose={close} /> : null}
   </>;
 }
 

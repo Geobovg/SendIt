@@ -5,7 +5,7 @@ export const seasons: SeasonsDict = {
   division: (division: number) => `Divisjon ${division}`,
   outcome: { promoted: "Opprykk", relegated: "Nedrykk", stayed: "Beholdt plassen", champion: "Mester" },
   table: { club: "KLUBB", played: "K", wins: "S", draws: "U", losses: "T", goalDifference: "MF", points: "P" },
-  team: { bench: "BENK", close: "Lukk", loading: "Henter laget …", scaled: "Ratingene er justert til divisjonen, slik du møter dem.", ai: "Datagenerert klubb.", view: "Vis laget" },
+  team: { bench: "BENK", close: "Lukk", loading: "Henter laget …", scaled: "Ratingene er justert til divisjonen, slik du møter dem.", ai: "Datagenerert klubb.", view: "Vis laget", none: "Har ikke satt opp et lag ennå.", real: "Faktiske ratinger." },
   fixture: {
     round: (round: number) => `R${round}`,
     playoff: "KV",

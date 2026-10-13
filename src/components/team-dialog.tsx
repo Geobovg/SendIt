@@ -2,11 +2,14 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useT } from "@/i18n/client";
 import { anyPosition, formationNames, formations, type Formation } from "@/lib/lineup";
 import type { ManagerPlayerSnapshot } from "@/lib/manager-match";
 import { playerPhoto } from "@/lib/player-photos";
-import { seasonOpponentTeamAction, type SeasonOpponentTeam } from "@/lib/season-actions";
+import type { TeamView } from "@/lib/ai-opponent";
+import { managerTeamAction } from "@/lib/manager-actions";
+import { seasonOpponentTeamAction } from "@/lib/season-actions";
 import { PitchMarkings, slotPoint } from "./squad-pitch";
 import { useScrollLock } from "./use-scroll-lock";
 
@@ -26,26 +29,33 @@ function TeamCard({ player }: { player: ManagerPlayerSnapshot }) {
   </div>;
 }
 
-/** Vinduet som viser laget til en motstander i AI-sesongen, slik du møter det i kampen. */
-export function OpponentTeamDialog({ teamKey, onClose }: { teamKey: string; onClose: () => void }) {
+type Loaded = TeamView | { error: string };
+/** `season` er en motstander i AI-sesongen din (justert til divisjonen), `user` er det ekte laget til en bruker. */
+export type TeamSource = { season: string } | { user: string };
+
+/** Vinduet som viser et lag på banen med benken under. */
+export function TeamDialog({ source, onClose }: { source: TeamSource; onClose: () => void }) {
   const t = useT();
-  const [team, setTeam] = useState<SeasonOpponentTeam | { error: string } | null>(null);
+  const [team, setTeam] = useState<Loaded | null>(null);
+  const seasonKey = "season" in source ? source.season : null; const userId = "user" in source ? source.user : null;
   useScrollLock();
   useEffect(() => {
     let current = true;
-    seasonOpponentTeamAction(teamKey).then((result) => { if (current) setTeam(result); }).catch(() => { if (current) setTeam({ error: t.seasons.errors.opponentNotFound }); });
+    const load = seasonKey ? seasonOpponentTeamAction(seasonKey) : managerTeamAction(userId ?? "");
+    load.then((result) => { if (current) setTeam(result); }).catch(() => { if (current) setTeam({ error: t.seasons.team.none }); });
     const onKey = (event: KeyboardEvent) => { if (event.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
     return () => { current = false; window.removeEventListener("keydown", onKey); };
-  }, [teamKey, onClose, t]);
+  }, [seasonKey, userId, onClose, t]);
   const loaded = team && !("error" in team) ? team : null;
   const slots = loaded ? formations[formationNames.includes(loaded.formation as Formation) ? (loaded.formation as Formation) : "4-3-3"] : [];
-  return <div className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-black/75 p-4" onClick={onClose}>
+  // Vinduet legges rett i body, så det ikke arver farger eller plassering fra raden det åpnes fra.
+  return createPortal(<div className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-black/75 p-4 text-left text-white" onClick={onClose}>
     <div role="dialog" aria-modal="true" className="grid w-full max-w-2xl gap-3 rounded-2xl border border-white/10 bg-slate-900 p-4 sm:p-5" onClick={(event) => event.stopPropagation()}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="truncate text-xl font-black">{loaded?.name ?? ""}</h3>
-          {loaded ? <p className="text-xs text-white/50">{loaded.formation} · {loaded.userTeam ? t.seasons.team.scaled : t.seasons.team.ai}</p> : null}
+          {loaded ? <p className="text-xs text-white/50">{[loaded.subtitle, loaded.formation, t.seasons.team[loaded.kind]].filter(Boolean).join(" · ")}</p> : null}
         </div>
         <button type="button" onClick={onClose} className="shrink-0 rounded-lg bg-white/10 px-3 py-1.5 text-sm font-black hover:bg-white/20">{t.seasons.team.close}</button>
       </div>
@@ -60,5 +70,5 @@ export function OpponentTeamDialog({ teamKey, onClose }: { teamKey: string; onCl
         </div> : null}
       </>}
     </div>
-  </div>;
+  </div>, document.body);
 }

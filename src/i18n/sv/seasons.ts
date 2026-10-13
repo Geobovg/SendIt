@@ -4,7 +4,7 @@ export const seasons = {
   division: (division: number) => `Division ${division}`,
   outcome: { promoted: "Befordrad", relegated: "Nedflyttad", stayed: "Stannade uppe", champion: "Mästare" },
   table: { club: "KLUBB", played: "P", wins: "W", draws: "D", losses: "L", goalDifference: "GD", points: "PTS" },
-  team: { bench: "BÄNK", close: "Stäng", loading: "Hämtar laget …", scaled: "Betygen är justerade efter divisionen, så som du möter dem.", ai: "Datorgenererad klubb.", view: "Visa laget" },
+  team: { bench: "BÄNK", close: "Stäng", loading: "Hämtar laget …", scaled: "Betygen är justerade efter divisionen, så som du möter dem.", ai: "Datorgenererad klubb.", view: "Visa laget", none: "Har inte satt upp ett lag ännu.", real: "Faktiska betyg." },
   fixture: {
     round: (round: number) => `R${round}`,
     playoff: "KV",

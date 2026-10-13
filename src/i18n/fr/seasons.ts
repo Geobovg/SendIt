@@ -4,7 +4,7 @@ export const seasons = {
   division: (division: number) => `Division ${division}`,
   outcome: { promoted: "Promu", relegated: "Relégué", stayed: "Je suis resté debout", champion: "Champion" },
   table: { club: "CLUB", played: "P.", wins: "W", draws: "D", losses: "L", goalDifference: "DG", points: "SPT" },
-  team: { bench: "BANC", close: "Fermer", loading: "Chargement de l'équipe …", scaled: "Les notes sont ajustées à la division, telles que tu les affronteras.", ai: "Club généré par ordinateur.", view: "Voir l'équipe" },
+  team: { bench: "BANC", close: "Fermer", loading: "Chargement de l'équipe …", scaled: "Les notes sont ajustées à la division, telles que tu les affronteras.", ai: "Club généré par ordinateur.", view: "Voir l'équipe", none: "N'a pas encore composé d'équipe.", real: "Notes réelles." },
   fixture: {
     round: (round: number) => `R${round}`,
     playoff: "BA",

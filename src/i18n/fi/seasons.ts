@@ -4,7 +4,7 @@ export const seasons = {
   division: (division: number) => `Division ${division}`,
   outcome: { promoted: "ylennetty", relegated: "Pudotettu", stayed: "Pysyi pystyssä", champion: "Mestari" },
   table: { club: "KLUBIA", played: "P", wins: "W", draws: "D", losses: "L", goalDifference: "GD", points: "PTS" },
-  team: { bench: "PENKKI", close: "Sulje", loading: "Haetaan joukkuetta …", scaled: "Luokitukset on sovitettu divisioonaan, kuten kohtaat ne.", ai: "Tietokoneen luoma seura.", view: "Näytä joukkue" },
+  team: { bench: "PENKKI", close: "Sulje", loading: "Haetaan joukkuetta …", scaled: "Luokitukset on sovitettu divisioonaan, kuten kohtaat ne.", ai: "Tietokoneen luoma seura.", view: "Näytä joukkue", none: "Ei ole vielä koonnut joukkuetta.", real: "Todelliset luokitukset." },
   fixture: {
     round: (round: number) => `R${round}`,
     playoff: "KA",
