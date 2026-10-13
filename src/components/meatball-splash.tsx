@@ -86,22 +86,37 @@ export function MeatballSplash({ enterHref, enterLabel, title }: { enterHref: st
         <rect y="296" width="1600" height="60" fill="url(#vei)" />
         <rect y="296" width="1600" height="3" fill="#ffd08a" opacity="0.5" />
 
-        {/* To svært høye herrer spiser lapskaus */}
-        <g transform="translate(1010 318) scale(1.4)">
-          <path d="M26 -44 L29 -100 Q46 -108 63 -100 L66 -44 Z" fill="#2f6fd1" />
-          <path d="M32 -98 L60 -98" stroke="#fff" strokeWidth="3" />
-          <circle cx="46" cy="-114" r="10" fill="#e0b08c" />
-          <path d="M36 -118 Q46 -128 56 -118 Q46 -122 36 -118 Z" fill="#2a2018" />
-          <path d="M30 -96 L44 -50" stroke="#2f6fd1" strokeWidth="9" strokeLinecap="round" />
-          <path d="M106 -44 L109 -100 Q126 -108 143 -100 L146 -44 Z" fill="#2fa86b" />
-          <path d="M112 -98 L140 -98" stroke="#fff" strokeWidth="3" />
-          <circle cx="126" cy="-114" r="10" fill="#e0b08c" />
-          <path d="M116 -118 Q126 -128 136 -118 Q126 -122 116 -118 Z" fill="#2a2018" />
-          <path d="M142 -96 L128 -50" stroke="#2fa86b" strokeWidth="9" strokeLinecap="round" />
-          <rect x="-4" y="-44" width="174" height="7" rx="2" fill="#8a5a2b" />
-          <rect x="6" y="-37" width="7" height="37" fill="#6b4220" />
-          <rect x="157" y="-37" width="7" height="37" fill="#6b4220" />
-          {[62, 108].map((x) => (
+        {/* Lebrun Jamie og Mikkel Jorda koser seg med lapskaus */}
+        <g transform="translate(1030 320) scale(1.32)">
+          <path d="M32 -44 L35 -104 Q56 -113 77 -104 L80 -44 Z" fill="#1fa6a6" />
+          <path d="M40 -104 Q56 -96 72 -104" fill="none" stroke="#fff" strokeWidth="3" />
+          <text x="56" y="-70" textAnchor="middle" fontSize="22" fontWeight="900" fill="#fff" fontFamily="Arial Black, Impact, sans-serif">7</text>
+          <path d="M37 -100 L26 -68 L36 -52" fill="none" stroke="#e0b08c" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M74 -100 L90 -84 L80 -102" fill="none" stroke="#e0b08c" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M82 -104 L86 -112" stroke="#c9ccd2" strokeWidth="3" strokeLinecap="round" />
+          <circle cx="56" cy="-122" r="12" fill="#e0b08c" />
+          <path d="M44 -126 Q56 -140 68 -126 Q56 -131 44 -126 Z" fill="#2a2018" />
+          <rect x="44" y="-128" width="24" height="4" fill="#fff" />
+          <circle cx="52" cy="-120" r="1.6" fill="#2a2018" /><circle cx="61" cy="-120" r="1.6" fill="#2a2018" />
+          <path d="M51 -114 Q56 -111 61 -114" fill="none" stroke="#7a4a30" strokeWidth="1.6" strokeLinecap="round" />
+          <text x="56" y="-146" textAnchor="middle" fontSize="12" fontWeight="800" fill="#fff" stroke="#3a1a10" strokeWidth="2.5" paintOrder="stroke" fontFamily="Arial Black, Impact, sans-serif">Lebrun Jamie</text>
+
+          <path d="M118 -44 L121 -104 Q142 -113 163 -104 L166 -44 Z" fill="#f08a1c" />
+          <path d="M126 -104 Q142 -96 158 -104" fill="none" stroke="#1d2b4f" strokeWidth="3" />
+          <text x="142" y="-70" textAnchor="middle" fontSize="22" fontWeight="900" fill="#1d2b4f" fontFamily="Arial Black, Impact, sans-serif">9</text>
+          <path d="M123 -100 L112 -68 L122 -52" fill="none" stroke="#e0b08c" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M160 -100 L176 -84 L166 -102" fill="none" stroke="#e0b08c" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M168 -104 L172 -112" stroke="#c9ccd2" strokeWidth="3" strokeLinecap="round" />
+          <circle cx="142" cy="-122" r="12" fill="#e0b08c" />
+          <path d="M130 -128 Q142 -140 154 -128 Q142 -133 130 -128 Z" fill="#2a2018" />
+          <circle cx="138" cy="-120" r="1.6" fill="#2a2018" /><circle cx="147" cy="-120" r="1.6" fill="#2a2018" />
+          <path d="M137 -114 Q142 -111 147 -114" fill="none" stroke="#7a4a30" strokeWidth="1.6" strokeLinecap="round" />
+          <text x="142" y="-146" textAnchor="middle" fontSize="12" fontWeight="800" fill="#fff" stroke="#3a1a10" strokeWidth="2.5" paintOrder="stroke" fontFamily="Arial Black, Impact, sans-serif">Mikkel Jorda</text>
+
+          <rect x="-4" y="-44" width="204" height="7" rx="2" fill="#8a5a2b" />
+          <rect x="8" y="-37" width="7" height="37" fill="#6b4220" />
+          <rect x="185" y="-37" width="7" height="37" fill="#6b4220" />
+          {[48, 134].map((x) => (
             <g key={x}>
               <path d={`M${x - 20} -48 Q${x} -26 ${x + 20} -48 Z`} fill="#f4f1ea" stroke="#9aa0aa" strokeWidth="1.5" />
               <ellipse cx={x} cy="-48" rx="20" ry="4" fill="#9a6a45" />
@@ -113,7 +128,7 @@ export function MeatballSplash({ enterHref, enterLabel, title }: { enterHref: st
           ))}
         </g>
 
-                {/* Mannen i gul regnfrakk, med rød paraply og dokumentmappe */}
+        {/* Mannen i gul regnfrakk, med rød paraply og dokumentmappe */}
         <g transform="translate(700 318) scale(1.5)">
           <rect x="-9" y="-48" width="8" height="48" fill="#2a2f4a" />
           <rect x="1" y="-48" width="8" height="48" fill="#2a2f4a" />
@@ -150,7 +165,7 @@ export function MeatballSplash({ enterHref, enterLabel, title }: { enterHref: st
             <li>Ordføreren: «Vi hadde ikke planlagt dette.»</li>
             <li>Forsker: «Det er ikke min avdeling.»</li>
             <li>Paraplyer utsolgt, parmesan på vei.</li>
-            <li>To svært høye herrer spiser lapskaus og vil ikke kommentere.</li>
+            <li>Lebrun Jamie og Mikkel Jorda koser seg med lapskaus i det store hav.</li>
             <li>Mannen i gul frakk har ikke kommentert saken.</li>
           </ul>
         </div>
