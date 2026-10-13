@@ -28,8 +28,10 @@ const fallers: Faller[] = [
   }),
   { src: "/forside/burger.webp", w: 560, h: 373, x: 14, size: 210, delay: -3, duration: 9, rot: -140, drift: 4, blur: 0, y: 28 },
   { src: "/forside/burger.webp", w: 560, h: 373, x: 74, size: 130, delay: -8, duration: 12, rot: 200, drift: -5, blur: 1, y: 60 },
-  { src: "/forside/pancakes.webp", w: 460, h: 352, x: 46, size: 170, delay: -1, duration: 10.5, rot: 160, drift: 6, blur: 0, y: 12 },
-  { src: "/forside/pancakes.webp", w: 460, h: 352, x: 88, size: 250, delay: -6, duration: 6.5, rot: -120, drift: -4, blur: 6, y: 48 },
+  // Pannekaker i alle størrelser
+  ...[[46, 170, -1, 10.5, 160, 6, 0, 12], [88, 250, -6, 6.5, -120, -4, 6, 48], [8, 120, -4, 9, 220, 3, 0, 70], [30, 90, -9, 12, -260, -2, 0, 20], [62, 200, -2, 7.5, 140, 5, 2, 56], [80, 110, -7, 10, -180, -6, 0, 8], [22, 280, -5, 5.8, 100, 4, 7, 36], [54, 140, -10, 9.5, -210, 2, 0, 64]].map(([x, size, delay, duration, rot, drift, blur, y]): Faller => ({ src: "/forside/pancakes.webp", w: 460, h: 352, x, size, delay, duration, rot, drift, blur, y })),
+  // Spagetti, med og uten saus
+  ...[[0, 18, 130, -2, 9, 120, 4, 0, 18], [1, 70, 100, -6, 11, -150, -3, 0, 44], [2, 38, 170, -4, 8, 200, 5, 1, 66], [3, 84, 220, -8, 6.2, -90, -4, 5, 30], [0, 52, 80, -1, 12, 260, 2, 0, 80], [2, 4, 110, -9, 10.5, -170, 3, 0, 52], [1, 94, 150, -5, 8.5, 110, -5, 2, 10]].map(([n, x, size, delay, duration, rot, drift, blur, y]): Faller => ({ src: `/forside/spag${n}.webp`, w: 300, h: 300, x, size, delay, duration, rot, drift, blur, y })),
 ];
 
 const sky = seeded(77);
@@ -84,8 +86,35 @@ export function MeatballSplash({ enterHref, enterLabel, title }: { enterHref: st
         <rect y="296" width="1600" height="60" fill="url(#vei)" />
         <rect y="296" width="1600" height="3" fill="#ffd08a" opacity="0.5" />
 
-        {/* Mannen i gul regnfrakk, med rød paraply og dokumentmappe */}
-        <g transform="translate(470 318) scale(1.5)">
+        {/* To svært høye herrer spiser lapskaus */}
+        <g transform="translate(1010 318) scale(1.4)">
+          <path d="M26 -44 L29 -100 Q46 -108 63 -100 L66 -44 Z" fill="#2f6fd1" />
+          <path d="M32 -98 L60 -98" stroke="#fff" strokeWidth="3" />
+          <circle cx="46" cy="-114" r="10" fill="#e0b08c" />
+          <path d="M36 -118 Q46 -128 56 -118 Q46 -122 36 -118 Z" fill="#2a2018" />
+          <path d="M30 -96 L44 -50" stroke="#2f6fd1" strokeWidth="9" strokeLinecap="round" />
+          <path d="M106 -44 L109 -100 Q126 -108 143 -100 L146 -44 Z" fill="#2fa86b" />
+          <path d="M112 -98 L140 -98" stroke="#fff" strokeWidth="3" />
+          <circle cx="126" cy="-114" r="10" fill="#e0b08c" />
+          <path d="M116 -118 Q126 -128 136 -118 Q126 -122 116 -118 Z" fill="#2a2018" />
+          <path d="M142 -96 L128 -50" stroke="#2fa86b" strokeWidth="9" strokeLinecap="round" />
+          <rect x="-4" y="-44" width="174" height="7" rx="2" fill="#8a5a2b" />
+          <rect x="6" y="-37" width="7" height="37" fill="#6b4220" />
+          <rect x="157" y="-37" width="7" height="37" fill="#6b4220" />
+          {[62, 108].map((x) => (
+            <g key={x}>
+              <path d={`M${x - 20} -48 Q${x} -26 ${x + 20} -48 Z`} fill="#f4f1ea" stroke="#9aa0aa" strokeWidth="1.5" />
+              <ellipse cx={x} cy="-48" rx="20" ry="4" fill="#9a6a45" />
+              <circle cx={x - 8} cy="-49" r="2.5" fill="#d9a066" />
+              <circle cx={x + 3} cy="-50" r="2.5" fill="#6fa04a" />
+              <circle cx={x + 10} cy="-48" r="2" fill="#e08a3c" />
+              <path d={`M${x - 6} -56 Q${x - 10} -66 ${x - 4} -74 M${x + 6} -56 Q${x + 10} -66 ${x + 4} -74`} stroke="#fff" strokeOpacity="0.55" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+            </g>
+          ))}
+        </g>
+
+                {/* Mannen i gul regnfrakk, med rød paraply og dokumentmappe */}
+        <g transform="translate(700 318) scale(1.5)">
           <rect x="-9" y="-48" width="8" height="48" fill="#2a2f4a" />
           <rect x="1" y="-48" width="8" height="48" fill="#2a2f4a" />
           <path d="M-15 -46 L-13 -90 Q0 -98 13 -90 L15 -46 Z" fill="#f2b632" />
@@ -104,6 +133,7 @@ export function MeatballSplash({ enterHref, enterLabel, title }: { enterHref: st
       {/* Tittelen */}
       <div className="pointer-events-none relative flex h-full flex-col items-center px-4 pt-[34vh] text-center">
         <h1 className={`${display.className} meatball-title text-[clamp(3.2rem,11.5vw,10rem)] uppercase leading-[0.94]`}>{title}</h1>
+        <p className="meatball-sub mt-5 max-w-[34rem] text-balance text-base font-semibold leading-snug sm:text-xl">Ikje gløm da graset e graunt au skjermen e blå. Da e viktig for deg å røra litt au</p>
       </div>
 
       {/* Filmkorn og vignett */}
@@ -120,6 +150,7 @@ export function MeatballSplash({ enterHref, enterLabel, title }: { enterHref: st
             <li>Ordføreren: «Vi hadde ikke planlagt dette.»</li>
             <li>Forsker: «Det er ikke min avdeling.»</li>
             <li>Paraplyer utsolgt, parmesan på vei.</li>
+            <li>To svært høye herrer spiser lapskaus og vil ikke kommentere.</li>
             <li>Mannen i gul frakk har ikke kommentert saken.</li>
           </ul>
         </div>
