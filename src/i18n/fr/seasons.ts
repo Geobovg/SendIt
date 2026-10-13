@@ -16,7 +16,7 @@ export const seasons = {
     next: (opponent: string) => `Jouer le prochain match contre ${opponent} →`,
   },
   ai: {
-    eyebrow: (season: number) => `SAISON IA ${season}`,
+    eyebrow: (season: number) => `SAISON ${season}`,
     matchOf: (match: number, total: number) => `Correspond à ${match} sur ${total}`,
     place: (position: number, points: number) => `${ordinal(position)} place · ${points} pts`,
     promotionRule: (spots: number) => spots === 0 ? "Division d’élite" : spots === 1 ? "Seul le premier monte" : `Le top ${spots} monte`,

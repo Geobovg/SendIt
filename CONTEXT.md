@@ -21,7 +21,7 @@ En avgrenset periode i Managerkarrieren med en tabell og et sluttresultat/premie
 _Avoid_: Liga (brukes ikke som eget begrep ennå), Karriere
 
 **AI-sesong**:
-En sesong der alle kampene spilles mot datamotstandere satt sammen av appen selv. Fungerer for én enkelt spiller uten venner. Har en **divisjon**: klarer du deg godt nok gjennom sesongen, rykker du opp til en vanskeligere divisjon neste sesong.
+En sesong der motstanderne er de andre brukernes lag (klubbnavn og spillere), skalert til styrken divisjonen krever. Lave nivåer møter de svakeste lagene, de høyeste nivåene de beste. Er det for få brukere med gyldig ellever, fylles resten med oppdiktede AI-klubber. Motstanderen merker ingenting: ingen premie, ingen kamp i historikken. Fungerer for én enkelt spiller. Har en **divisjon**: klarer du deg godt nok gjennom sesongen, rykker du opp til en vanskeligere divisjon neste sesong.
 _Avoid_: Karrieresesong, Solo-sesong
 
 **Vennesesong**:

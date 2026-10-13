@@ -31,7 +31,7 @@ export function SeasonTable({ rows, division = null, arena = 1, compact = false 
     <table className="w-full text-sm tabular-nums">
       <thead className="bg-white/5 text-[10px] font-black tracking-widest text-white/45"><tr><th className="py-2 pl-3 text-left">#</th><th className="text-left">{head.club}</th><th>{head.played}</th>{compact ? null : <><th>{head.wins}</th><th>{head.draws}</th><th>{head.losses}</th></>}<th>{head.goalDifference}</th><th className="pr-3">{head.points}</th></tr></thead>
       <tbody>{rows.map((row) => <tr key={row.participant} className={`border-t border-white/5 border-l-4 ${zone(row.position, division, arena)} ${row.isMe ? "bg-lime-300/10 font-black" : ""}`}>
-        <td className="py-2 pl-3">{row.position}</td><td className="max-w-40 truncate">{row.name}</td><td className="text-center">{row.played}</td>
+        <td className="py-2 pl-3">{row.position}</td><td className="max-w-40 truncate">{row.name}{row.manager && !compact ? <span className="ml-1.5 text-xs font-normal text-white/40">{row.manager}</span> : null}</td><td className="text-center">{row.played}</td>
         {compact ? null : <><td className="text-center">{row.wins}</td><td className="text-center">{row.draws}</td><td className="text-center">{row.losses}</td></>}
         <td className="text-center">{row.goalsFor - row.goalsAgainst > 0 ? "+" : ""}{row.goalsFor - row.goalsAgainst}</td><td className="pr-3 text-center font-black">{row.points}</td>
       </tr>)}</tbody>

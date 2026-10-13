@@ -16,7 +16,7 @@ export const seasons = {
     next: (opponent: string) => `العب المباراة القادمة ضد ${opponent} →`,
   },
   ai: {
-    eyebrow: (season: number) => `موسم الذكاء الاصطناعي ${season}`,
+    eyebrow: (season: number) => `الموسم ${season}`,
     matchOf: (match: number, total: number) => `مطابقة ${match} لـ ${total}`,
     place: (position: number, points: number) => `${ordinal(position)} المكان · ${points} نقطة`,
     promotionRule: (spots: number) => spots === 0 ? "الدرجة الأعلى" : spots === 1 ? "الفائز فقط يصعد" : `أول ${spots} يصعدون`,

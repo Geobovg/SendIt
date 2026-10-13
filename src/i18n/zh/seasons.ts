@@ -16,7 +16,7 @@ export const seasons = {
     next: (opponent: string) => `与 ${opponent} 进行下一场比赛 →`,
   },
   ai: {
-    eyebrow: (season: number) => `AI 季节 ${season}`,
+    eyebrow: (season: number) => `第 ${season} 赛季`,
     matchOf: (match: number, total: number) => `匹配 ${total} 中的 ${match}`,
     place: (position: number, points: number) => `${ordinal(position)} 名 · ${points} 分`,
     promotionRule: (spots: number) => spots === 0 ? "顶级联赛" : spots === 1 ? "只有冠军升级" : `前${spots}名升级`,

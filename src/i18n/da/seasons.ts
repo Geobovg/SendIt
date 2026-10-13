@@ -16,7 +16,7 @@ export const seasons = {
     next: (opponent: string) => `Spil næste kamp mod ${opponent} →`,
   },
   ai: {
-    eyebrow: (season: number) => `AI SÆSON ${season}`,
+    eyebrow: (season: number) => `SÆSON ${season}`,
     matchOf: (match: number, total: number) => `Match ${match} af ${total}`,
     place: (position: number, points: number) => `${ordinal(position)} sted · ${points} pkt`,
     promotionRule: (spots: number) => spots === 0 ? "Topdivisionen" : spots === 1 ? "Kun vinderen rykker op" : `Top ${spots} rykker op`,

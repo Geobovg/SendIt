@@ -1,6 +1,7 @@
 import "server-only";
 
 import { getT } from "@/i18n/server";
+import type { AiTeam } from "./ai-opponent";
 import { formationNames, pickBestLineup, type Formation } from "./lineup";
 import { catalogPageSize, type CatalogFilters } from "./catalog-filters";
 import { catalogBuyMaxOverall } from "./manager-limits";
@@ -60,7 +61,7 @@ export async function getCareerMatch(matchId: string, userId: string) {
     db.from("player_profiles").select("user_id, club_name").in("user_id", userIds),
     db.from("career_match_shots").select("minute, kind, side, shooter_cell, keeper_cell, outcome").eq("match_id", matchId).order("minute", { ascending: true }),
     // Kamper i AI-sesongen spilles i en arena, og kampskjermen får arenaens stadion og farger.
-    db.from("career_season_matches").select("friend_season_id, career_ai_seasons(arena)").eq("match_id", matchId).maybeSingle(),
+    db.from("career_season_matches").select("friend_season_id, home_ai_key, away_ai_key, career_ai_seasons(arena, teams)").eq("match_id", matchId).maybeSingle(),
   ]);
   const aiSeason = fixture ? (Array.isArray(fixture.career_ai_seasons) ? fixture.career_ai_seasons[0] : fixture.career_ai_seasons) : null;
   const names = new Map((profiles ?? []).map((profile) => [profile.id, profile.username]));
@@ -68,7 +69,10 @@ export async function getCareerMatch(matchId: string, userId: string) {
   const { fallback, clubName } = (await getT()).career;
   const sideFor = (id: string) => ({ userId: id, username: names.get(id) ?? fallback.unknown, clubName: clubName(clubs.get(id) ?? "") });
   // AI-klubben har ingen bruker. Den får samme id som i laguttaket, så den aldri blir forvekslet med deg.
-  const aiSide = { userId: "ai", username: data.away_ai_name ?? fallback.aiClub, clubName: fallback.aiOpponent };
+  // Er motstanderen en annen brukers lag, vises brukernavnet og klubbnavnet som i en vanlig kamp.
+  const opponentKey = fixture?.away_ai_key ?? fixture?.home_ai_key;
+  const userTeam = ((aiSeason?.teams ?? []) as AiTeam[]).find((team) => team.key === opponentKey && team.manager);
+  const aiSide = userTeam?.manager ? { userId: "ai", username: userTeam.manager, clubName: userTeam.name } : { userId: "ai", username: data.away_ai_name ?? fallback.aiClub, clubName: fallback.aiOpponent };
   return {
     ...data,
     home: sideFor(data.home_user_id),

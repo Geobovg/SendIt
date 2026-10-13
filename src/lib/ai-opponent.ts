@@ -1,8 +1,11 @@
 import { formations } from "./lineup";
 import type { ManagerPlayerSnapshot, ManagerTeamSnapshot } from "./manager-match";
 
-/** `bonus` er den skjulte styrken AI-klubbene får fra arena 2 (se arenas.ts). Eldre sesonger har den ikke. */
-export type AiTeam = { key: string; name: string; rating: number; bonus?: number };
+/**
+ * `bonus` er den skjulte styrken AI-klubbene får fra arena 2 (se arenas.ts). Eldre sesonger har den ikke.
+ * Er motstanderen en annen brukers lag, har den `user_id` og `manager` (brukernavnet), og `name` er klubbnavnet.
+ */
+export type AiTeam = { key: string; name: string; rating: number; bonus?: number; user_id?: string; manager?: string };
 
 const firstNames = ["James", "Liam", "Oliver", "Harry", "Jack", "Charlie", "Thomas", "George", "Oscar", "William", "Noah", "Ethan", "Leo", "Mason", "Lucas", "Ryan", "Callum", "Daniel", "Joe", "Kieran"];
 const lastNames = ["Carter", "Walsh", "Bennett", "Hughes", "Turner", "Parker", "Collins", "Morgan", "Reid", "Foster", "Hayes", "Barnes", "Cooper", "Ward", "Fletcher", "Doyle", "Murphy", "Price", "Shaw", "Holloway"];
@@ -35,4 +38,23 @@ export function aiTeamSnapshot(seasonId: string, team: AiTeam, maxOverall = 95):
   const starters = formations["4-3-3"].map((slot, index) => player(index, slot.position));
   const bench = ["GK", "CB", "CM", "ST"].map((position, index) => player(11 + index, position));
   return { userId: `ai:${team.key}`, formation: "4-3-3", starters, bench, ...(team.bonus ? { bonus: team.bonus } : {}) };
+}
+
+const average = (players: ManagerPlayerSnapshot[]) => players.reduce((sum, player) => sum + player.overall, 0) / players.length;
+
+/**
+ * En annen brukers lag som motstander i sesongen: samme spillere og formasjon, men alle ratingene flyttes like mye
+ * så snittet av de elleve som starter blir klubbens rating. Da er laget like vanskelig som en AI-klubb i samme
+ * divisjon, uansett hvor godt laget egentlig er. Siden heter `ai:` så den byttes og venter som en AI-klubb.
+ */
+export function userTeamAsOpponent(source: ManagerTeamSnapshot, team: AiTeam, maxOverall = 95): ManagerTeamSnapshot {
+  let shift = team.rating - average(source.starters);
+  const scale = (player: ManagerPlayerSnapshot): ManagerPlayerSnapshot => ({ ...player, id: `ai:${team.key}:${player.id}`, overall: Math.max(45, Math.min(maxOverall, Math.round(player.overall + shift))) });
+  // Taket og gulvet kan kutte de beste og de svakeste, så forskyvningen justeres til snittet treffer.
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const missing = team.rating - average(source.starters.map(scale));
+    if (Math.abs(missing) < 0.5) break;
+    shift += missing;
+  }
+  return { userId: `ai:${team.key}`, formation: source.formation, starters: source.starters.map(scale), bench: source.bench.map(scale), ...(team.bonus ? { bonus: team.bonus } : {}) };
 }
