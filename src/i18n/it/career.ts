@@ -233,7 +233,7 @@ export const career = {
     challengeUnavailable: "Questa sfida non è più disponibile",
     pickLineupFirst: "Scegli un XI prima di accettare la partita dell'allenatore",
     cannotStart: "La partita non può essere avviata",
-    dailyMatchLimit: (max: number) => `Hai giocato ${max} partite da manager nelle ultime 24 ore. Fai una pausa e torna più tardi!`,
+    dailyMatchLimit: (max: number) => `Hai giocato ${max} partite da manager nelle ultime 24 ore. Vai a toccare l'erba, amico!`,
     automatedPlay: "Le partite non possono essere giocate da ChatGPT o altri bot. Gioca tu!",
     matchNotFound: "Corrispondenza manager non trovata",
     notFinished: "La partita non è ancora finita",
