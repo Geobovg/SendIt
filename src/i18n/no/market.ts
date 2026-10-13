@@ -146,26 +146,10 @@ export const market: MarketDict = {
     sendToClubConfirm: (name: string) => `Sende ${name} til klubben? Kortet blir ikke med i hurtigsalget.`,
     sentToClub: "✓ Sendt til klubben",
   },
-  chat: {
-    title: "Markedschat",
-    unreadLabel: (count: number, mentioned: boolean) => `${count} uleste meldinger${mentioned ? ", du er nevnt" : ""}`,
-    you: "Du",
-    deleteMessage: "Slett meldingen",
-    delete: "Slett",
-    mentionManager: "Nevn en manager",
-    placeholder: "Skriv til markedet… (@ for å nevne)",
-    message: "Melding",
-    send: "Send",
-    subtitle: "Alle managere · meldinger slettes etter 7 dager",
-    close: "Lukk",
-    empty: "Ingen har skrevet noe ennå. Start praten!",
-  },
   errors: {
     invalidPrices: "Fyll inn gyldige priser",
     invalidBid: "Skriv inn et gyldig bud",
     listingNotFound: "Fant ikke annonsen",
-    emptyMessage: "Skriv en melding først",
-    messageTooLong: (max: number) => `Meldingen kan være maks ${max} tegn`,
   },
 };
 

@@ -143,26 +143,10 @@ export const market = {
     sendToClubConfirm: (name: string) => `Skicka ${name} till klubben? Kortet snabbsäljs inte.`,
     sentToClub: "✓ Skickad till klubben",
   },
-  chat: {
-    title: "Market Chat",
-    unreadLabel: (count: number, mentioned: boolean) => `${count} oläst ${count === 1 ? "message" : "messages"}${mentioned ? ", you were mentioned" : ""}`,
-    you: "Du",
-    deleteMessage: "Ta bort meddelande",
-    delete: "Ta bort",
-    mentionManager: "Nämn en chef",
-    placeholder: "Skicka meddelanden till marknaden... (@ för att nämna)",
-    message: "Meddelande",
-    send: "Skicka",
-    subtitle: "Alla chefer · meddelanden raderas efter 7 dagar",
-    close: "Stäng",
-    empty: "Ingen har sagt något än. Få igång chatten!",
-  },
   errors: {
     invalidPrices: "Ange giltiga priser",
     invalidBid: "Ange ett giltigt bud",
     listingNotFound: "Listan hittades inte",
-    emptyMessage: "Skriv ett meddelande först",
-    messageTooLong: (max: number) => `Meddelanden kan vara högst ${max} tecken`,
   },
 };
 

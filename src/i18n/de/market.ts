@@ -143,26 +143,10 @@ export const market = {
     sendToClubConfirm: (name: string) => `${name} in den Verein schicken? Die Karte wird nicht schnellverkauft.`,
     sentToClub: "✓ Im Verein",
   },
-  chat: {
-    title: "Markt-Chat",
-    unreadLabel: (count: number, mentioned: boolean) => `${count} ungelesen ${count === 1 ? "message" : "messages"}${mentioned ? ", you were mentioned" : ""}`,
-    you: "Du",
-    deleteMessage: "Nachricht löschen",
-    delete: "Löschen",
-    mentionManager: "Erwähnen Sie einen Manager",
-    placeholder: "Schreiben Sie dem Markt eine Nachricht … (@zur Erwähnung)",
-    message: "Nachricht",
-    send: "Senden",
-    subtitle: "Alle Manager-Nachrichten werden nach 7 Tagen gelöscht",
-    close: "Schließen",
-    empty: "Noch hat niemand etwas gesagt. Bringen Sie den Chat in Gang!",
-  },
   errors: {
     invalidPrices: "Geben Sie gültige Preise ein",
     invalidBid: "Geben Sie ein gültiges Gebot ein",
     listingNotFound: "Eintrag nicht gefunden",
-    emptyMessage: "Schreiben Sie zunächst eine Nachricht",
-    messageTooLong: (max: number) => `Nachrichten können höchstens ${max} Zeichen lang sein`,
   },
 };
 

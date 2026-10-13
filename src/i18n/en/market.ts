@@ -143,26 +143,10 @@ export const market = {
     sendToClubConfirm: (name: string) => `Send ${name} to your club? The card won't be quick sold.`,
     sentToClub: "✓ Sent to club",
   },
-  chat: {
-    title: "Market Chat",
-    unreadLabel: (count: number, mentioned: boolean) => `${count} unread ${count === 1 ? "message" : "messages"}${mentioned ? ", you were mentioned" : ""}`,
-    you: "You",
-    deleteMessage: "Delete message",
-    delete: "Delete",
-    mentionManager: "Mention a manager",
-    placeholder: "Message the market… (@ to mention)",
-    message: "Message",
-    send: "Send",
-    subtitle: "All managers · messages are deleted after 7 days",
-    close: "Close",
-    empty: "Nobody has said anything yet. Get the chat going!",
-  },
   errors: {
     invalidPrices: "Enter valid prices",
     invalidBid: "Enter a valid bid",
     listingNotFound: "Listing not found",
-    emptyMessage: "Write a message first",
-    messageTooLong: (max: number) => `Messages can be at most ${max} characters`,
   },
 };
 

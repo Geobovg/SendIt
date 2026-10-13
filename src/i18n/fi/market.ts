@@ -143,26 +143,10 @@ export const market = {
     sendToClubConfirm: (name: string) => `Lähetetäänkö ${name} seuraan? Korttia ei pikamyydä.`,
     sentToClub: "✓ Lähetetty seuraan",
   },
-  chat: {
-    title: "Market Chat",
-    unreadLabel: (count: number, mentioned: boolean) => `${count} lukematon ${count === 1 ? "message" : "messages"}${mentioned ? ", you were mentioned" : ""}`,
-    you: "sinä",
-    deleteMessage: "Poista viesti",
-    delete: "Poista",
-    mentionManager: "Mainitse esimies",
-    placeholder: "Viesti markkinoille… (@ mainitaksesi)",
-    message: "Viesti",
-    send: "Lähetä",
-    subtitle: "Kaikki johtajat · viestit poistetaan 7 päivän kuluttua",
-    close: "Sulje",
-    empty: "Kukaan ei ole vielä sanonut mitään. Aloita keskustelu!",
-  },
   errors: {
     invalidPrices: "Anna voimassa olevat hinnat",
     invalidBid: "Anna kelvollinen tarjous",
     listingNotFound: "Tietoa ei löydy",
-    emptyMessage: "Kirjoita ensin viesti",
-    messageTooLong: (max: number) => `Viestit voivat olla enintään ${max} merkin pituisia`,
   },
 };
 

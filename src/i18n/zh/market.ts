@@ -143,26 +143,10 @@ export const market = {
     sendToClubConfirm: (name: string) => `将 ${name} 送入俱乐部？该卡不会被快速出售。`,
     sentToClub: "✓ 已送入俱乐部",
   },
-  chat: {
-    title: "市场聊天",
-    unreadLabel: (count: number, mentioned: boolean) => `${count} 未读 ${count === 1 ? "message" : "messages"}${mentioned ? ", you were mentioned" : ""}`,
-    you: "你",
-    deleteMessage: "删除留言",
-    delete: "删除",
-    mentionManager: "提及经理",
-    placeholder: "给市场留言……（@提）",
-    message: "留言",
-    send: "发送",
-    subtitle: "所有管理员·消息将在 7 天后删除",
-    close: "关闭",
-    empty: "还没人说什么。开始聊天吧！",
-  },
   errors: {
     invalidPrices: "输入有效价格",
     invalidBid: "输入有效出价",
     listingNotFound: "未找到列表",
-    emptyMessage: "先写留言",
-    messageTooLong: (max: number) => `消息最多可以有 ${max} 个字符`,
   },
 };
 
