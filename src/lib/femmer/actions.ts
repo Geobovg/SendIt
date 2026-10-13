@@ -6,6 +6,7 @@ import { dbErrorMessage, getT } from "@/i18n/server";
 import type { ActionState } from "../actions";
 import { requireUser } from "../auth";
 import { friendshipId } from "../friends";
+import { fiveMatchLimitError } from "../match-limit";
 import { supabaseAdmin } from "../supabase/server";
 import { getFiveMatch, getFiveState, getLiveFiveMatchId, listFivePeople } from "./data";
 import { aiTeam, createLiveMatch, resolveShot, settleIfFinished, shotChoiceOpen, teamFromState } from "./live";
@@ -66,6 +67,8 @@ export async function playFiveAiAction(): Promise<ActionState> {
   const t = (await getT()).femmer;
   const blocking = await liveMatchBlocking(user.id);
   if (blocking) redirect(`/femmer/kamp/${blocking}`);
+  const limitError = await fiveMatchLimitError(user.id);
+  if (limitError) return { error: limitError };
   const [people, state] = await Promise.all([listFivePeople(), getFiveState(user.id)]);
   if (!state) return { error: t.errors.notStarted };
   const home = teamFromState(state, user.username, user.id);
@@ -86,6 +89,8 @@ export async function playFiveFriendAction(_prev: ActionState, formData: FormDat
   if (!opponentId || opponentId === user.id || !(await friendshipId(user.id, opponentId))) return { error: t.errors.onlyFriends };
   const blocking = await liveMatchBlocking(user.id);
   if (blocking) redirect(`/femmer/kamp/${blocking}`);
+  const limitError = await fiveMatchLimitError(user.id);
+  if (limitError) return { error: limitError };
   const [state, opponentState, opponentProfile] = await Promise.all([getFiveState(user.id), getFiveState(opponentId), supabaseAdmin().from("profiles").select("username").eq("id", opponentId).maybeSingle()]);
   if (!state) return { error: t.errors.notStarted };
   const home = teamFromState(state, user.username, user.id);
@@ -112,6 +117,8 @@ export async function playFiveFixtureAction(_prev: ActionState, formData: FormDa
   if (fixture.status !== "scheduled") return { error: t.errors.fixtureUnavailable };
   const blocking = await liveMatchBlocking(user.id);
   if (blocking) redirect(`/femmer/kamp/${blocking}`);
+  const limitError = await fiveMatchLimitError(user.id);
+  if (limitError) return { error: limitError };
   const { data: profiles } = await db.from("profiles").select("id, username").in("id", [fixture.home_user_id, fixture.away_user_id]);
   const name = (id: string) => profiles?.find((profile) => profile.id === id)?.username ?? "?";
   const [homeState, awayState] = await Promise.all([getFiveState(fixture.home_user_id), getFiveState(fixture.away_user_id)]);

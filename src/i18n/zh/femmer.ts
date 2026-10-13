@@ -157,6 +157,8 @@ export const femmer: Dictionary["femmer"] = {
     penaltyShort: "点球",
   },
   errors: {
+    dailyMatchLimit: (max: number) => `你在过去 24 小时内已经踢了 ${max} 场五人制比赛。休息一下，稍后再来！`,
+    automatedPlay: "比赛不能由 ChatGPT 或其他机器人代踢。请自己来踢！",
     invalidFormation: "阵型无效",
     invalidPack: "卡包无效",
     invalidPosition: "位置无效",
