@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { SplashEnter } from "./splash-enter";
 import { Anton } from "next/font/google";
 import type { CSSProperties } from "react";
 
@@ -169,9 +169,9 @@ export function MeatballSplash({ enterHref, enterLabel, title }: { enterHref: st
             <li>Mannen i gul frakk har ikke kommentert saken.</li>
           </ul>
         </div>
-        <Link href={enterHref} className={`${display.className} shrink-0 rounded-sm border border-white/70 bg-[#e8461f] px-6 py-3 text-xl uppercase tracking-[0.12em] text-white shadow-[0_8px_24px_rgba(60,20,10,.45)] transition hover:bg-[#ff5a30] active:scale-95 sm:text-2xl`}>
+        <SplashEnter href={enterHref} className={`${display.className} shrink-0 rounded-sm border border-white/70 bg-[#e8461f] px-6 py-3 text-xl uppercase tracking-[0.12em] text-white shadow-[0_8px_24px_rgba(60,20,10,.45)] transition hover:bg-[#ff5a30] active:scale-95 sm:text-2xl`}>
           {enterLabel} →
-        </Link>
+        </SplashEnter>
       </div>
     </div>
   );
