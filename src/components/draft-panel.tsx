@@ -7,8 +7,8 @@ import { useT } from "@/i18n/client";
 import type { ActionState } from "@/lib/actions";
 import type { TeamView } from "@/lib/ai-opponent";
 import type { DraftFixture, DraftPageData, DraftRoom, DraftView } from "@/lib/draft";
-import { abandonDraftAction, chooseDraftFormationAction, createDraftRoomAction, inviteToDraftRoomAction, leaveDraftRoomAction, openDraftSlotAction, pickDraftPlayerAction, playDraftFixtureAction, respondDraftInviteAction, setDraftFormationAction, startDraftRoomAction, startSoloDraftAction, swapDraftPlayersAction } from "@/lib/draft-actions";
-import { ALL_SLOT_KEYS, BENCH_KEYS, CAPTAIN_KEY, draftChemistry, draftChemistryByKey, draftChemistryGain, RESERVE_KEYS, ROOM_ROUNDS, ROOM_SIZE, slotLabel, SOLO_ROUNDS, STARTER_KEYS, type DraftPlayer, type DraftReward } from "@/lib/draft-core";
+import { abandonDraftAction, autoPickDraftAction, chooseDraftFormationAction, createDraftRoomAction, inviteToDraftRoomAction, leaveDraftRoomAction, openDraftSlotAction, pickDraftPlayerAction, playDraftFixtureAction, respondDraftInviteAction, setDraftFormationAction, startDraftRoomAction, startSoloDraftAction, swapDraftPlayersAction } from "@/lib/draft-actions";
+import { ALL_SLOT_KEYS, BENCH_KEYS, CAPTAIN_KEY, draftChemistry, draftChemistryByKey, draftChemistryGain, RESERVE_KEYS, ROOM_ROUNDS, ROOM_SIZE, slotLabel, SOLO_ROUNDS, STARTER_KEYS, swapBlocker, type DraftPlayer, type DraftReward } from "@/lib/draft-core";
 import { formationNames, formations, type Formation } from "@/lib/lineup";
 import { ChemDots, TeamChemistry } from "./chemistry-badge";
 import { ConfirmDialog } from "./confirm-dialog";
@@ -43,6 +43,14 @@ export function DraftPanel({ data, budget }: { data: DraftPageData; budget: numb
   useAutoRefresh(Boolean(roomLive || data.friends.length || data.fixtures.some((fixture) => fixture.status === "live")));
   const canBringTeam = current?.mode === "solo" && current.wins === 0 && !data.fixtures.some((fixture) => fixture.status === "live" || fixture.status === "completed");
 
+  // Når siste plass er fylt, går draften over til turneringen. Da skal laget stå øverst, ikke langt nede på siden.
+  const status = current?.status;
+  const previousStatus = useRef(status);
+  useEffect(() => {
+    if (previousStatus.current === "drafting" && status === "active") window.scrollTo({ top: 0, behavior: "smooth" });
+    previousStatus.current = status;
+  }, [status]);
+
   if (current?.status === "drafting") {
     return <div className="grid gap-4">
       <DraftWallet tokens={data.tokens} />
@@ -55,11 +63,11 @@ export function DraftPanel({ data, budget }: { data: DraftPageData; budget: numb
   }
   if (current?.status === "active") {
     return <div className="grid gap-4">
-      <DraftWallet tokens={data.tokens} />
+      <LineupEditor draft={current} locked={data.fixtures.some((fixture) => fixture.mine && fixture.status === "live")} />
       {inRoom && room ? room.status === "open" ? <RoomLobby room={room} data={data} /> : <RoomBracket room={room} /> : <SoloRun draft={current} fixtures={data.fixtures} />}
       {current.mode === "solo" ? <DraftInvites data={data} budget={budget} canBringTeam={Boolean(canBringTeam)} /> : null}
       {canBringTeam ? <FriendsDraft data={data} budget={budget} bringTeam /> : null}
-      <LineupEditor draft={current} locked={data.fixtures.some((fixture) => fixture.mine && fixture.status === "live")} />
+      <DraftWallet tokens={data.tokens} />
     </div>;
   }
   return <div className="grid gap-4">
@@ -362,29 +370,38 @@ function DraftPitch({ formation, players, captainId, onSlot, selected = null, hi
 
 function LineupEditor({ draft, locked }: { draft: DraftView; locked: boolean }) {
   const t = useT().draft;
+  const squad = useT().career.squad;
   const router = useRouter();
   const [selected, setSelected] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const [picking, setPicking] = useState(false);
   if (!draft.formation) return null;
+  const formation = draft.formation;
+  const run = (action: () => Promise<ActionState>) => startTransition(async () => { const result = await action(); setError(result.error ?? null); router.refresh(); });
   const onSlot = (key: string) => {
     if (locked || pending) return;
     if (!selected) { setSelected(key); return; }
     if (selected === key) { setSelected(null); return; }
     const first = selected; setSelected(null);
-    startTransition(async () => { const result = await swapDraftPlayersAction(first, key); setError(result.error ?? null); router.refresh(); });
+    // Samme regel som i vanlig tropp: i elleveren må spilleren kunne spille posisjonen. Serveren sjekker det også.
+    const blocked = swapBlocker(draft.players, formation, first, key);
+    if (blocked) { setError(squad.cannotPlay(blocked.player.name, blocked.position)); return; }
+    setError(null);
+    run(() => swapDraftPlayersAction(first, key));
   };
   return <section className="grid gap-3">
     <div className={`${panelClass} flex flex-wrap items-center gap-3`}>
       <div className="min-w-0 flex-1"><h3 className="text-lg font-black">{t.lineup.title}</h3><p className="text-sm text-white/60">{locked ? t.lineup.locked : selected ? t.lineup.pickSecond : t.lineup.hint}</p></div>
       <p className="text-sm font-black text-lime-300">{t.build.rating} {draft.rating ?? "—"}</p>
       <TeamChemistry total={draftChemistry(draft.players)} />
-      <select value={draft.formation} disabled={locked || pending} onChange={(event) => { const formation = event.target.value; startTransition(async () => { const result = await setDraftFormationAction(formation); setError(result.error ?? null); router.refresh(); }); }} className="rounded-lg border border-white/15 bg-slate-950 px-3 py-2 text-sm font-black">
-        {formationNames.map((formation) => <option key={formation} value={formation}>{formation}</option>)}
+      <button type="button" disabled={locked || pending} onClick={() => { setSelected(null); setPicking(true); startTransition(async () => { const result = await autoPickDraftAction(); setError(result.error ?? null); router.refresh(); setPicking(false); }); }} className={ghostButton}>{picking ? squad.pickingBest : squad.pickBest}</button>
+      <select value={formation} disabled={locked || pending} onChange={(event) => { const next = event.target.value; setSelected(null); run(() => setDraftFormationAction(next)); }} className="rounded-lg border border-white/15 bg-slate-950 px-3 py-2 text-sm font-black">
+        {formationNames.map((name) => <option key={name} value={name}>{name}</option>)}
       </select>
     </div>
     <ErrorText error={error} />
-    <DraftPitch formation={draft.formation} players={draft.players} captainId={draft.captainId} onSlot={onSlot} selected={selected} />
+    <DraftPitch formation={formation} players={draft.players} captainId={draft.captainId} onSlot={onSlot} selected={selected} />
   </section>;
 }
 

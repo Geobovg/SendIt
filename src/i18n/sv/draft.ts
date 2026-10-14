@@ -140,6 +140,7 @@ export const draft: DraftDict = {
     alreadyPicked: "Den spelaren finns redan i ditt lag.",
     notActive: "Du har inget draftlag i en turnering.",
     matchLive: "Vänta tills matchen är slut.",
+    formationNoFit: "Laget har inte spelare till alla positioner i den formationen.",
     matchNotFound: "Hittade inte matchen.",
     matchNotReady: "Matchen kan inte spelas än.",
     pickFriends: "Välj minst en vän att bjuda in.",

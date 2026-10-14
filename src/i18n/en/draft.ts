@@ -138,6 +138,7 @@ export const draft = {
     alreadyPicked: "That player is already in your team.",
     notActive: "You don't have a draft team in a tournament.",
     matchLive: "Wait until the match is finished.",
+    formationNoFit: "Your team doesn't have players for every position in that formation.",
     matchNotFound: "Couldn't find the match.",
     matchNotReady: "The match can't be played yet.",
     pickFriends: "Choose at least one friend to invite.",

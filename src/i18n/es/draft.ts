@@ -140,6 +140,7 @@ export const draft: DraftDict = {
     alreadyPicked: "Ese jugador ya está en tu equipo.",
     notActive: "No tienes un equipo de draft en ningún torneo.",
     matchLive: "Espera a que termine el partido.",
+    formationNoFit: "Tu equipo no tiene jugadores para todas las posiciones de esa formación.",
     matchNotFound: "No se encontró el partido.",
     matchNotReady: "El partido todavía no se puede jugar.",
     pickFriends: "Elige al menos un amigo para invitar.",

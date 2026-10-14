@@ -1,7 +1,7 @@
 // Draft i managerkarrieren (migrering 0095). Denne fila brukes både på serveren og i nettleseren:
 // plassene i laget, premietabellen og hvordan en draft blir til et lag i kampmotoren.
 import { chemistryOf, teamChemistry } from "./chemistry";
-import { canPlayPosition, formationNames, formations, type Formation } from "./lineup";
+import { canPlayPosition, formationNames, formations, pickBestLineupWithChemistry, rearrangeLineup, type Formation } from "./lineup";
 import type { ManagerPlayerSnapshot, ManagerTeamSnapshot } from "./manager-match";
 import type { SpecialKind } from "./special-cards";
 
@@ -105,4 +105,71 @@ export function draftTeamSnapshot(userId: string, formationValue: string | null,
   if (starters.some((player) => !player)) return null;
   const bench = BENCH_KEYS.map((key) => players[key]).filter((player): player is DraftPlayer => Boolean(player));
   return { userId, formation, starters: starters.map(toSnapshot), bench: bench.map(toSnapshot) };
+}
+
+// ---------------------------------------------------------------------------
+// Laget mellom kampene: bare elleveren har posisjonskrav, som i vanlig tropp
+// ---------------------------------------------------------------------------
+
+/** Hvem som står på feil plass i elleveren (for en spiller som ikke kan spille posisjonen plassen har). */
+export function outOfPosition(players: Record<string, DraftPlayer>, formation: Formation): { player: DraftPlayer; position: string } | null {
+  for (const [index, key] of STARTER_KEYS.entries()) {
+    const player = players[key];
+    const position = formations[formation][index].position;
+    if (player && !canPlayPosition(player.position, position)) return { player, position };
+  }
+  return null;
+}
+
+/** Hvorfor to plasser ikke kan bytte, eller null. Benken og reservene kan ha hvem som helst, bare elleveren krever posisjon. */
+export function swapBlocker(players: Record<string, DraftPlayer>, formation: Formation, first: string, second: string): { player: DraftPlayer; position: string } | null {
+  const next = { ...players, [first]: players[second], [second]: players[first] };
+  return outOfPosition(next, formation);
+}
+
+/** Legger spillerne på plassene: elleveren i formasjonens rekkefølge, så benken, så reservene. */
+function layout(starters: DraftPlayer[], rest: DraftPlayer[]): Record<string, DraftPlayer> {
+  const players: Record<string, DraftPlayer> = {};
+  starters.forEach((player, index) => { players[STARTER_KEYS[index]] = player; });
+  [...BENCH_KEYS, ...RESERVE_KEYS].forEach((key, index) => { if (rest[index]) players[key] = rest[index]; });
+  return players;
+}
+
+function inLayout(players: Record<string, DraftPlayer>, ids: string[]): DraftPlayer[] {
+  const byId = new Map(Object.values(players).map((player) => [player.id, player]));
+  return ids.flatMap((id) => (byId.has(id) ? [byId.get(id)!] : []));
+}
+
+/**
+ * «Velg beste tropp» i draft: den beste elleveren blant alle spillerne dine (rating pluss kjemi, og alle på sin posisjon),
+ * så de beste på benken med en keeper blant dem, og resten som reserver. null hvis elleveren ikke kan fylles i posisjon.
+ */
+export function bestDraftLayout(players: Record<string, DraftPlayer>, formation: Formation): Record<string, DraftPlayer> | null {
+  const all = Object.values(players);
+  if (all.length !== ALL_SLOT_KEYS.length) return null;
+  const { starters: starterIds } = pickBestLineupWithChemistry(all, formation);
+  const starters = inLayout(players, starterIds);
+  const chosen = new Set(starterIds);
+  const rest = all.filter((player) => !chosen.has(player.id)).sort((a, b) => b.overall - a.overall || a.id.localeCompare(b.id));
+  // Benken skal ha en reservekeeper hvis laget har en: den beste keeperen tar plassen til den svakeste på benken.
+  const keeper = rest.findIndex((player) => player.position === "GK");
+  if (keeper >= BENCH_KEYS.length) rest.splice(BENCH_KEYS.length - 1, 0, ...rest.splice(keeper, 1));
+  const next = layout(starters, rest);
+  return starters.length === STARTER_KEYS.length && !outOfPosition(next, formation) ? next : null;
+}
+
+/**
+ * Laget i en annen formasjon: spillerne som starter nå får beholde plassen i elleveren så langt de passer,
+ * resten fylles med de beste. null hvis laget ikke har spillere til alle posisjonene i formasjonen.
+ */
+export function formationDraftLayout(players: Record<string, DraftPlayer>, formation: Formation): Record<string, DraftPlayer> | null {
+  const all = Object.values(players);
+  if (all.length !== ALL_SLOT_KEYS.length) return null;
+  const ids = (keys: string[]) => keys.flatMap((key) => (players[key] ? [players[key].id] : []));
+  const { starters: starterIds, bench: benchIds } = rearrangeLineup(all, formation, ids(STARTER_KEYS), ids(BENCH_KEYS));
+  const starters = inLayout(players, starterIds);
+  const placed = new Set(starterIds);
+  const rest = [...inLayout(players, benchIds), ...all.filter((player) => !placed.has(player.id) && !benchIds.includes(player.id))];
+  const next = layout(starters, rest);
+  return starters.length === STARTER_KEYS.length && !outOfPosition(next, formation) ? next : null;
 }

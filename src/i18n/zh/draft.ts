@@ -140,6 +140,7 @@ export const draft: DraftDict = {
     alreadyPicked: "该球员已在你的球队中。",
     notActive: "你在赛事中没有选秀球队。",
     matchLive: "请等待比赛结束。",
+    formationNoFit: "你的球队没有该阵型每个位置所需的球员。",
     matchNotFound: "找不到该比赛。",
     matchNotReady: "该比赛暂时无法进行。",
     pickFriends: "请至少选择一位好友进行邀请。",

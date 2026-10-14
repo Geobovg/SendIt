@@ -11,7 +11,8 @@
     "test:special-pick": "node scripts/test-special-pick.mjs",
     "test:draft": "node scripts/test-draft-generation.mjs && node scripts/test-draft.mjs && node scripts/test-draft-rewards.mjs",
     "test:match-limits": "node scripts/test-match-limits.mjs",
-    "test:chemistry": "node scripts/test-chemistry.mjs"
+    "test:chemistry": "node scripts/test-chemistry.mjs",
+    "sim:arenas": "node scripts/simulate-arenas.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",
