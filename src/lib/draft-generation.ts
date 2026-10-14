@@ -21,6 +21,20 @@ const SPECIAL_CHANCE = 0.04;
 const CAPTAIN_SPECIAL_CHANCE = 0.15;
 const CAPTAIN_MIN = 85;
 
+/**
+ * Nøklene som sier at en spiller allerede er i laget: katalog-id-en (vanlig-kortet og spesialkortene hans deler den)
+ * og navnet uten aksenter, så en spiller som står to ganger i katalogen ikke kan trekkes begge ganger.
+ */
+const nameKey = (name: string) => `name:${name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim()}`;
+export function takenKeys(players: Iterable<Pick<PoolCard, "catalogId" | "name">>): Set<string> {
+  const keys = new Set<string>();
+  for (const player of players) { keys.add(player.catalogId); keys.add(nameKey(player.name)); }
+  return keys;
+}
+export function isTaken(taken: Set<string>, card: Pick<PoolCard, "catalogId" | "name">): boolean {
+  return taken.has(card.catalogId) || taken.has(nameKey(card.name));
+}
+
 const pick = <T,>(list: T[]): T | undefined => list[Math.floor(Math.random() * list.length)];
 
 function rollBand() {
@@ -37,7 +51,7 @@ function rollBand() {
 export function drawOptions(pool: { normal: PoolCard[]; special: PoolCard[] }, key: string, formation: Formation, taken: Set<string>): DraftPlayer[] {
   const used = new Set(taken);
   const captain = key === CAPTAIN_KEY;
-  const fits = (card: PoolCard) => !used.has(card.catalogId) && slotAccepts(key, formation, card.position);
+  const fits = (card: PoolCard) => !isTaken(used, card) && slotAccepts(key, formation, card.position);
   const options: DraftPlayer[] = [];
   for (let index = 0; index < OPTIONS_PER_PICK; index += 1) {
     let chosen: PoolCard | undefined;
@@ -49,7 +63,7 @@ export function drawOptions(pool: { normal: PoolCard[]; special: PoolCard[] }, k
         ?? pick(pool.normal.filter(fits));
     }
     if (!chosen) break;
-    used.add(chosen.catalogId);
+    for (const key of takenKeys([chosen])) used.add(key);
     options.push({ ...chosen, id: crypto.randomUUID() });
   }
   return options;

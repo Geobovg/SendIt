@@ -5,9 +5,9 @@ import { redirect } from "next/navigation";
 import { dbErrorMessage, getT } from "@/i18n/server";
 import type { ActionState } from "./actions";
 import { requireUser } from "./auth";
-import { aiDraftTeam, draftColumns, draftPool, drawOptions, type DraftAiSide, type DraftRow, type FixtureRow } from "./draft";
+import { aiDraftTeam, draftColumns, draftPool, drawOptions, isTaken, takenKeys, type DraftAiSide, type DraftRow, type FixtureRow } from "./draft";
 import { AI_CHEMISTRY_RATING } from "./chemistry";
-import { ALL_SLOT_KEYS, CAPTAIN_KEY, captainSlot, draftComplete, draftFormation, draftRating, draftTeamSnapshot, DRAFT_RATING_WEIGHT, ROOM_SIZE, type DraftPlayer } from "./draft-core";
+import { ALL_SLOT_KEYS, CAPTAIN_KEY, captainSlot, draftComplete, draftFormation, draftRating, draftTeamSnapshot, DRAFT_RATING_WEIGHT, OPTIONS_PER_PICK, ROOM_SIZE, type DraftPlayer } from "./draft-core";
 import { friendshipId } from "./friends";
 import { formationNames, type Formation } from "./lineup";
 import { MANAGER_KICKOFF_VERSION, planManagerTimeline, type ManagerTeamSnapshot } from "./manager-match";
@@ -73,9 +73,13 @@ export async function openDraftSlotAction(key: string): Promise<{ options: Draft
     if (key !== CAPTAIN_KEY && !ALL_SLOT_KEYS.includes(key)) return { error: errors.invalidSlot };
     if (key === CAPTAIN_KEY ? draft.captain_id : players[key]) return { error: errors.slotFilled };
     if (key !== CAPTAIN_KEY && !draft.captain_id) return { error: errors.captainFirst };
-    if (offers[key]?.length) return { options: offers[key] };
-    const taken = new Set(Object.values(players).map((player) => player.catalogId));
-    const options = drawOptions(await draftPool(db), key, formation, taken);
+    const taken = takenKeys(Object.values(players));
+    const cached = offers[key] ?? [];
+    // Et lagret tilbud kan inneholde en spiller som siden er kommet i laget. Da byttes bare de kortene ut.
+    if (cached.length && !cached.some((entry) => isTaken(taken, entry))) return { options: cached };
+    const kept = cached.filter((entry) => !isTaken(taken, entry));
+    const excluded = new Set([...taken, ...takenKeys(kept)]);
+    const options = [...kept, ...drawOptions(await draftPool(db), key, formation, excluded).slice(0, OPTIONS_PER_PICK - kept.length)];
     if (!options.length) return { error: errors.noOptions };
     const error = await saveDraft(db, draft, { offers: { ...offers, [key]: options } });
     if (!error) return { options };
@@ -93,7 +97,7 @@ export async function pickDraftPlayerAction(key: string, optionId: string): Prom
   const players = { ...(draft.players ?? {}) };
   const option = (draft.offers ?? {})[key]?.find((entry) => entry.id === optionId);
   if (!option) return { error: errors.invalidSlot };
-  if (Object.values(players).some((player) => player.catalogId === option.catalogId)) return { error: errors.alreadyPicked };
+  if (isTaken(takenKeys(Object.values(players)), option)) return { error: errors.alreadyPicked };
   let target = key; let captain = draft.captain_id;
   if (key === CAPTAIN_KEY) {
     if (draft.captain_id) return { error: errors.slotFilled };
@@ -106,13 +110,13 @@ export async function pickDraftPlayerAction(key: string, optionId: string): Prom
   // Et tilbud på en annen plass kan inneholde spilleren som nettopp ble valgt.
   // Behold de øvrige alternativene og erstatt bare kort som nå er i laget.
   const offers = { ...(draft.offers ?? {}) };
-  const taken = new Set(Object.values(players).map((player) => player.catalogId));
-  const staleKeys = Object.keys(offers).filter((offerKey) => offerKey !== CAPTAIN_KEY && !players[offerKey] && offers[offerKey].some((entry) => taken.has(entry.catalogId)));
+  const taken = takenKeys(Object.values(players));
+  const staleKeys = Object.keys(offers).filter((offerKey) => offerKey !== CAPTAIN_KEY && !players[offerKey] && offers[offerKey].some((entry) => isTaken(taken, entry)));
   if (staleKeys.length) {
     const pool = await draftPool(db);
     for (const offerKey of staleKeys) {
-      const kept = offers[offerKey].filter((entry) => !taken.has(entry.catalogId));
-      const excluded = new Set([...taken, ...kept.map((entry) => entry.catalogId)]);
+      const kept = offers[offerKey].filter((entry) => !isTaken(taken, entry));
+      const excluded = new Set([...taken, ...takenKeys(kept)]);
       offers[offerKey] = [...kept, ...drawOptions(pool, offerKey, formation, excluded).slice(0, offers[offerKey].length - kept.length)];
     }
   }

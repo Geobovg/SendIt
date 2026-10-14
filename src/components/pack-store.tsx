@@ -11,6 +11,7 @@ import { useLocale, useT } from "@/i18n/client";
 import { INTL_LOCALES, type Locale } from "@/i18n/locales";
 import { PlayerCardFace } from "./player-card-face";
 import { ConfirmDialog } from "./confirm-dialog";
+import { SpecialPick } from "./special-pick";
 import { buttonClass, cardClass, secondaryButtonClass } from "./ui";
 import { useScrollLock } from "./use-scroll-lock";
 
@@ -228,6 +229,8 @@ export function PackStore({ packs, freePacks, budget, shop }: { packs: ManagerPa
       </div>
       <b className="rounded-xl bg-accent-soft px-4 py-3 text-xl text-accent">{budget} MB</b>
     </div>
+
+    {shop.pick ? <SpecialPick pick={shop.pick} /> : null}
 
     {Object.values(freePacks).some(Boolean) ? <p className="rounded-lg border border-accent/40 bg-accent-soft p-3 text-sm font-semibold text-accent">{tp.freePacks(packs.filter((pack) => freePacks[pack.key]).map((pack) => `${freePacks[pack.key]}× ${nameOf(pack)}`).join(", "))}</p> : null}
 

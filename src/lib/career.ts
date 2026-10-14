@@ -126,15 +126,16 @@ export function ratingFromSquad({ formation, starters, squad }: Awaited<ReturnTy
 }
 
 /** Forsiden trenger elleveren, pakkene og gratispakkene, men ikke den fulle spillerkatalogen. */
-export async function getManagerHome(userId: string): Promise<{ formation: string; rating: number | null; squadCount: number; packs: ManagerPack[]; freePacks: Record<string, number> }> {
+export async function getManagerHome(userId: string): Promise<{ formation: string; rating: number | null; squadCount: number; packs: ManagerPack[]; freePacks: Record<string, number>; pendingPick: boolean }> {
   const db = supabaseAdmin();
-  const [ratingInfo, { data: packs, error: packsError }, { data: inventory, error: inventoryError }] = await Promise.all([
+  const [ratingInfo, { data: packs, error: packsError }, { data: inventory, error: inventoryError }, { count: pendingPicks, error: pickError }] = await Promise.all([
     getManagerRating(userId),
     db.from("manager_packs").select(packColumns).eq("active", true).order("sort_order", { ascending: true }),
     db.from("manager_pack_inventory").select("pack_key, quantity").eq("user_id", userId).gt("quantity", 0),
+    db.from("special_picks").select("id", { count: "exact", head: true }).eq("user_id", userId).is("chosen_at", null),
   ]);
-  if (packsError || inventoryError) throw new Error(packsError?.message ?? inventoryError?.message);
-  return { ...ratingFromSquad(ratingInfo), packs: ((packs ?? []) as ManagerPack[]).filter(packAvailableNow), freePacks: Object.fromEntries((inventory ?? []).map((row) => [row.pack_key, row.quantity])) };
+  if (packsError || inventoryError || pickError) throw new Error(packsError?.message ?? inventoryError?.message ?? pickError?.message);
+  return { ...ratingFromSquad(ratingInfo), packs: ((packs ?? []) as ManagerPack[]).filter(packAvailableNow), freePacks: Object.fromEntries((inventory ?? []).map((row) => [row.pack_key, row.quantity])), pendingPick: (pendingPicks ?? 0) > 0 };
 }
 
 // Kortverdien (katalogprisen) følger med egne kort, så sidene slipper å hente hele katalogen.
@@ -165,7 +166,26 @@ export async function getManagerCareer(userId: string): Promise<{ cards: Manager
 }
 
 export type InformCard = { id: string; slug: string; name: string; position: string; overall: number; boost: number; accent: string; club: string; attributes: Record<string, number>; special: SpecialKind };
-export type PackShop = { purchasedThisWeek: Record<string, number>; purchasedToday: Record<string, number>; openedToday: Record<string, number>; informFactor: number; informs: InformCard[]; nextReset: string };
+/** Et ventende spillervalg: fem spesialkort av ulike spillere, hvorav man kan velge ett (migrering 0102). */
+export type SpecialPickView = { id: string; options: InformCard[] };
+export type PackShop = { purchasedThisWeek: Record<string, number>; purchasedToday: Record<string, number>; openedToday: Record<string, number>; informFactor: number; informs: InformCard[]; nextReset: string; pick: SpecialPickView | null };
+
+/** Det eldste spillervalget brukeren ikke har brukt ennå, med de fem kortene i den rekkefølgen de ble lagret. */
+export async function getSpecialPick(userId: string): Promise<SpecialPickView | null> {
+  const db = supabaseAdmin();
+  const { data: pick, error } = await db.from("special_picks").select("id, options").eq("user_id", userId).is("chosen_at", null).order("created_at", { ascending: true }).limit(1).maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!pick) return null;
+  const { data: cards, error: cardsError } = await db.from("special_cards").select("id, kind, overall, boost, attributes, player_catalog(slug, name, position, accent, club)").in("id", pick.options as string[]);
+  if (cardsError) throw new Error(cardsError.message);
+  const byId = new Map((cards ?? []).map((row) => [row.id, row]));
+  const options = (pick.options as string[]).flatMap((id) => {
+    const row = byId.get(id);
+    const catalog = row ? (Array.isArray(row.player_catalog) ? row.player_catalog[0] : row.player_catalog) : null;
+    return row && catalog ? [{ id: row.id, slug: catalog.slug, name: catalog.name, position: catalog.position, overall: row.overall, boost: row.boost, accent: catalog.accent, club: catalog.club, attributes: row.attributes as Record<string, number>, special: row.kind as SpecialKind }] : [];
+  });
+  return options.length ? { id: pick.id as string, options } : null;
+}
 
 /**
  * Det pakkebutikken trenger i tillegg: ukens inform-kort (runden lages her hvis den ikke finnes ennå),
@@ -182,7 +202,8 @@ export async function getPackShop(userId: string): Promise<PackShop> {
     db.rpc("daily_packs_bought", { target_user: userId }),
   ]);
   if (roundError || boundsError || factorError || openedError || boughtError) throw new Error(roundError?.message ?? boundsError?.message ?? factorError?.message ?? openedError?.message ?? boughtError?.message);
-  const [{ data: informs, error: informsError }, { data: openings, error: openingsError }] = await Promise.all([
+  const [pick, { data: informs, error: informsError }, { data: openings, error: openingsError }] = await Promise.all([
+    getSpecialPick(userId),
     db.from("special_cards").select("id, kind, overall, boost, attributes, player_catalog(slug, name, position, accent, club)").eq("round_id", roundId).order("overall", { ascending: false }),
     db.from("pack_openings").select("pack_key").eq("user_id", userId).gt("price", 0).gte("created_at", bounds.week_start),
   ]);
@@ -190,7 +211,7 @@ export async function getPackShop(userId: string): Promise<PackShop> {
   const purchasedThisWeek: Record<string, number> = {};
   for (const row of openings ?? []) purchasedThisWeek[row.pack_key] = (purchasedThisWeek[row.pack_key] ?? 0) + 1;
   return {
-    purchasedThisWeek, purchasedToday: (boughtToday ?? {}) as Record<string, number>, openedToday: (openedToday ?? {}) as Record<string, number>, informFactor: Number(factor ?? 1), nextReset: bounds.next_reset,
+    purchasedThisWeek, purchasedToday: (boughtToday ?? {}) as Record<string, number>, openedToday: (openedToday ?? {}) as Record<string, number>, informFactor: Number(factor ?? 1), nextReset: bounds.next_reset, pick,
     informs: (informs ?? []).flatMap((row) => {
       const catalog = Array.isArray(row.player_catalog) ? row.player_catalog[0] : row.player_catalog;
       return catalog ? [{ id: row.id, slug: catalog.slug, name: catalog.name, position: catalog.position, overall: row.overall, boost: row.boost, accent: catalog.accent, club: catalog.club, attributes: row.attributes as Record<string, number>, special: row.kind as SpecialKind }] : [];

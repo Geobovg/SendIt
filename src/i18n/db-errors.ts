@@ -128,6 +128,11 @@ export const DB_ERROR_RULES: DbErrorRule[] = [
   { pattern: /^Meldingen kan være maks 300 tegn$/, message: (t) => t.dbErrors.messageTooLong },
   { pattern: /^Minst to managere må ha blitt med$/, message: (t) => t.dbErrors.needTwoManagers },
   { pattern: /^Pakken finnes ikke$/, message: (t) => t.dbErrors.packNotFound },
+  // Spillervalg (migrering 0102).
+  { pattern: /^Fant ikke spillervalget$/, message: (t) => t.market.pick.errors.notFound },
+  { pattern: /^Du har allerede valgt et kort her$/, message: (t) => t.market.pick.errors.alreadyChosen },
+  { pattern: /^Kortet er ikke blant de fem$/, message: (t) => t.market.pick.errors.notAmongFive },
+  { pattern: /^Fant ikke kortet$/, message: (t) => t.market.pick.errors.cardNotFound },
   {
     pattern: /^Prisen må være mellom (\d+) og (\d+) managerbudsjett$/,
     message: (t, low, high) => t.dbErrors.priceRange(low, high),

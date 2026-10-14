@@ -60,6 +60,17 @@ export async function openManagerPackAction(_prev: PackActionState, formData: Fo
   return { ok: true, pulls: (data ?? []) as PackPull[], openedAt: Date.now(), packKey };
 }
 
+export type ClaimPickState = ActionState & { pull?: PackPull };
+
+/** Velger ett av de fem kortene i et spillervalg. Kortet havner i klubben. */
+export async function claimSpecialPickAction(pickId: string, cardId: string): Promise<ClaimPickState> {
+  const user = await requireUser();
+  const { data, error } = await supabaseAdmin().rpc("claim_special_pick", { target_user: user.id, target_pick: pickId, target_card: cardId });
+  if (error) return { error: await dbErrorMessage(error, { stripPrefix: true }) };
+  revalidatePath("/managerkarriere");
+  return { ok: true, pull: data as PackPull };
+}
+
 export async function moveManagerCardAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const user = await requireUser();
   const cardId = String(formData.get("card_id") ?? "");
