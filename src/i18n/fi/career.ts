@@ -280,7 +280,7 @@ export const career = {
     empty: "Ei TOTS-kortteja täällä.",
   },
   icons: {
-    intro: (count: number) => `${count} Icon-korttia jalkapallohistorian suurimmista legendoista. Ne ovat paketeissa harvinaisempia kuin TOTS.`,
+    intro: (count: number) => `${count} Icon-korttia jalkapallohistorian suurimmista legendoista. Ne ovat paketeissa hyvin harvinaisia.`,
     empty: "Ei Icon-kortteja täällä.",
   },
   honorable: {

@@ -280,7 +280,7 @@ export const career = {
     empty: "Inga TOTS-kort här.",
   },
   icons: {
-    intro: (count: number) => `${count} Icon-kort med de största legendarerna i fotbollshistorien. De är ovanligare än TOTS i paket.`,
+    intro: (count: number) => `${count} Icon-kort med de största legendarerna i fotbollshistorien. De är mycket ovanliga i paket.`,
     empty: "Inga Icons här.",
   },
   honorable: {

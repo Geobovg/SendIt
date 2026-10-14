@@ -280,7 +280,7 @@ export const career = {
     empty: "No hay cartas TOTS aquí.",
   },
   icons: {
-    intro: (count: number) => `${count} cartas Icon de las mayores leyendas de la historia del fútbol. Son más raras que los TOTS en los sobres.`,
+    intro: (count: number) => `${count} cartas Icon de las mayores leyendas de la historia del fútbol. Son muy raras en los sobres.`,
     empty: "No hay Icons aquí.",
   },
   honorable: {

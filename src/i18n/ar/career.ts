@@ -280,7 +280,7 @@ export const career = {
     empty: "لا توجد بطاقات TOTS هنا.",
   },
   icons: {
-    intro: (count: number) => `${count} بطاقة Icon لأعظم أساطير تاريخ كرة القدم. هي أندر من TOTS في الحزم.`,
+    intro: (count: number) => `${count} بطاقة Icon لأعظم أساطير تاريخ كرة القدم. هي نادرة جدًا في الحزم.`,
     empty: "لا توجد بطاقات Icon هنا.",
   },
   honorable: {
