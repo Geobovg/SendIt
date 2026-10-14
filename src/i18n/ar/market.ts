@@ -17,6 +17,7 @@ const packNames: Record<string, string> = {
   premium_gull: "حزمة ذهبية مميزة",
   sjeldne_spillere: "لاعبون نادرون",
   jumbo_premium_gull: "حزمة ذهبية مميزة عملاقة",
+  skadoosh_dude: "Skadoosh dude",
 };
 
 const packDescriptions: Record<string, string> = {
@@ -37,6 +38,7 @@ const packDescriptions: Record<string, string> = {
   premium_gull: "ست بطاقات، مع ضمان بطاقتين على الأقل بتقييم 80 أو أكثر.",
   sjeldne_spillere: "خمس بطاقات، كلها بتقييم 80 أو أكثر، وواحدة على الأقل 83+. 3 كحد أقصى يوميًا.",
   jumbo_premium_gull: "ثماني بطاقات، كلها بتقييم 79+، مع ضمان ثلاث بتقييم 80+ وواحدة 83+. 3 كحد أقصى يوميًا.",
+  skadoosh_dude: "خمس عشرة بطاقة، كلها بتقييم 80+، مع ضمان واحدة بتقييم 88+ واثنتين 86+ وأربع 84+.",
 };
 
 export const market = {

@@ -17,6 +17,7 @@ const packNames: Record<string, string> = {
   premium_gull: "Premium-guldpakke",
   sjeldne_spillere: "Sjældne spillere",
   jumbo_premium_gull: "Jumbo premium-guld",
+  skadoosh_dude: "Skadoosh dude",
 };
 
 const packDescriptions: Record<string, string> = {
@@ -37,6 +38,7 @@ const packDescriptions: Record<string, string> = {
   premium_gull: "Seks kort, mindst to på 80 eller bedre garanteret.",
   sjeldne_spillere: "Fem kort, alle på 80 eller bedre, og mindst ét på 83+. Maks 3 om dagen.",
   jumbo_premium_gull: "Otte kort, alle 79+, tre på 80+ og ét på 83+ garanteret. Maks 3 om dagen.",
+  skadoosh_dude: "Femten kort, alle 80+, ét på 88+, to på 86+ og fire på 84+ garanteret.",
 };
 
 export const market = {
