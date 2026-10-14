@@ -7,7 +7,7 @@ import type { ActionState } from "./actions";
 import { requireUser } from "./auth";
 import { aiDraftTeam, draftColumns, draftPool, drawOptions, isTaken, takenKeys, type DraftAiSide, type DraftRow, type FixtureRow } from "./draft";
 import { AI_CHEMISTRY_RATING } from "./chemistry";
-import { ALL_SLOT_KEYS, CAPTAIN_KEY, captainSlot, draftComplete, draftFormation, draftRating, draftTeamSnapshot, DRAFT_RATING_WEIGHT, OPTIONS_PER_PICK, ROOM_SIZE, type DraftPlayer } from "./draft-core";
+import { ALL_SLOT_KEYS, bestDraftLayout, CAPTAIN_KEY, captainSlot, draftComplete, draftFormation, draftRating, draftTeamSnapshot, DRAFT_RATING_WEIGHT, formationDraftLayout, OPTIONS_PER_PICK, ROOM_SIZE, swapBlocker, type DraftPlayer } from "./draft-core";
 import { friendshipId } from "./friends";
 import { formationNames, type Formation } from "./lineup";
 import { MANAGER_KICKOFF_VERSION, planManagerTimeline, type ManagerTeamSnapshot } from "./manager-match";
@@ -139,8 +139,29 @@ export async function swapDraftPlayersAction(first: string, second: string): Pro
   if (!draft || draft.status !== "active") return { error: errors.notActive };
   if (first === second || !ALL_SLOT_KEYS.includes(first) || !ALL_SLOT_KEYS.includes(second)) return { error: errors.invalidSlot };
   if (await hasLiveFixture(db, draft.id)) return { error: errors.matchLive };
+  const formation = draftFormation(draft.formation);
+  if (!formation) return { error: errors.notActive };
   const players = { ...(draft.players ?? {}) };
+  // Som i vanlig tropp: en spiller i elleveren må kunne spille posisjonen plassen har.
+  const blocked = swapBlocker(players, formation, first, second);
+  if (blocked) return { error: (await getT()).career.squad.cannotPlay(blocked.player.name, blocked.position) };
   [players[first], players[second]] = [players[second], players[first]];
+  const error = await saveDraft(db, draft, { players });
+  if (error) return { error };
+  draftPaths(); return { ok: true };
+}
+
+/** «Velg beste tropp»: den beste elleveren, benken og reservene av spillerne du har draftet, i formasjonen du har nå. */
+export async function autoPickDraftAction(): Promise<ActionState> {
+  const user = await requireUser(); const db = supabaseAdmin();
+  const errors = (await getT()).draft.errors;
+  const draft = await runningDraft(db, user.id);
+  if (!draft || draft.status !== "active") return { error: errors.notActive };
+  const formation = draftFormation(draft.formation);
+  if (!formation) return { error: errors.notActive };
+  if (await hasLiveFixture(db, draft.id)) return { error: errors.matchLive };
+  const players = bestDraftLayout(draft.players ?? {}, formation);
+  if (!players) return { error: errors.formationNoFit };
   const error = await saveDraft(db, draft, { players });
   if (error) return { error };
   draftPaths(); return { ok: true };
@@ -153,7 +174,10 @@ export async function setDraftFormationAction(formation: string): Promise<Action
   if (!draft || draft.status !== "active") return { error: errors.notActive };
   if (!formationNames.includes(formation as Formation)) return { error: errors.invalidFormation };
   if (await hasLiveFixture(db, draft.id)) return { error: errors.matchLive };
-  const error = await saveDraft(db, draft, { formation });
+  // Elleveren stokkes om så alle står på en posisjon formasjonen har. Mangler laget spillere til den, byttes den ikke.
+  const players = formationDraftLayout(draft.players ?? {}, formation as Formation);
+  if (!players) return { error: errors.formationNoFit };
+  const error = await saveDraft(db, draft, { formation, players });
   if (error) return { error };
   draftPaths(); return { ok: true };
 }

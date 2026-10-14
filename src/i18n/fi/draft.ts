@@ -140,6 +140,7 @@ export const draft: DraftDict = {
     alreadyPicked: "Se pelaaja on jo joukkueessasi.",
     notActive: "Sinulla ei ole draft-joukkuetta turnauksessa.",
     matchLive: "Odota, kunnes ottelu on päättynyt.",
+    formationNoFit: "Joukkueellasi ei ole pelaajia kaikkiin kyseisen pelijärjestelmän paikkoihin.",
     matchNotFound: "Ottelua ei löytynyt.",
     matchNotReady: "Ottelua ei voi vielä pelata.",
     pickFriends: "Valitse vähintään yksi kaveri kutsuttavaksi.",

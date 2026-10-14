@@ -28,6 +28,7 @@ const normal = positions.flatMap((position) => Array.from({ length: 20 }, (_, in
 })));
 const pool = { normal, special: normal.filter((card) => card.overall >= 85).map((card) => ({ ...card, special: "inform" })) };
 const random = Math.random;
+let formationChanges = 0;
 try {
   for (let seed = 1; seed <= 10; seed++) {
     let state = seed;
@@ -53,6 +54,32 @@ try {
       }
       assert.equal(core.draftComplete(players), true);
       assert.equal(taken.size, 23);
+
+      // «Velg beste tropp»: alle 23 er med, elleveren står i posisjon og blir ikke dårligere enn den draftede.
+      const startersOf = (layout) => core.STARTER_KEYS.map((key) => layout[key]);
+      const average = (layout) => startersOf(layout).reduce((sum, card) => sum + card.overall, 0) / 11;
+      const intact = (layout) => assert.deepEqual(Object.values(layout).map((card) => card.id).sort(), Object.values(players).map((card) => card.id).sort());
+      const best = core.bestDraftLayout(players, formation);
+      assert.ok(best, `${formation} best layout`);
+      intact(best);
+      assert.equal(core.outOfPosition(best, formation), null);
+      assert.ok(average(best) >= average(players) - 1e-9, `${formation} best is not worse`);
+      assert.deepEqual(core.bestDraftLayout(best, formation) && startersOf(core.bestDraftLayout(best, formation)).map((card) => card.id), startersOf(best).map((card) => card.id), "best layout is stable");
+      const spareKeepers = Object.values(players).filter((card) => card.position === "GK").length - 1;
+      if (spareKeepers > 0) assert.ok(core.BENCH_KEYS.some((key) => best[key]?.position === "GK"), "a keeper stays on the bench");
+      // Bytter: keeperen kan ikke stå på en utespillers plass, men benk og reserver kan bytte fritt.
+      assert.ok(core.swapBlocker(players, formation, "s0", "s1"));
+      assert.equal(core.swapBlocker(players, formation, "b0", "r0"), null);
+      assert.equal(core.swapBlocker(players, formation, "s1", "b2") === null, canPlayPosition(players.b2.position, formations[formation][1].position));
+      // Ny formasjon: enten et gyldig lag med de samme spillerne, ellers null.
+      for (const next of formationNames.filter((name) => name !== formation)) {
+        const moved = core.formationDraftLayout(players, next);
+        if (!moved) continue;
+        formationChanges += 1;
+        intact(moved);
+        assert.equal(core.outOfPosition(moved, next), null, `${formation} -> ${next}`);
+      }
+      assert.ok(core.formationDraftLayout(players, formation), "same formation keeps a valid layout");
       const team = core.draftTeamSnapshot("manager", formation, players);
       assert.equal(team.starters.length, 11);
       assert.equal(team.bench.length, 7);
@@ -64,6 +91,7 @@ try {
       assert.ok(ai.team.starters.every((card, index) => canPlayPosition(card.position, formations[ai.team.formation][index].position)));
     }
   }
+  assert.ok(formationChanges > 0, "some formation changes are possible");
   assert.deepEqual(core.draftReward(175, null, "sjeldne_spillere", 0), {mb:175,packs:[{key:"sjeldne_spillere",quantity:1}],tokens:0});
   assert.deepEqual(core.draftReward(10, [{key:"gullpakke",quantity:2}], "old-pack", 1), {mb:10,packs:[{key:"gullpakke",quantity:2}],tokens:1});
   assert.equal(core.slotAccepts("b4", "4-3-3", "LM"), true);
