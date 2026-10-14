@@ -8,8 +8,9 @@ import type { ActionState } from "@/lib/actions";
 import type { TeamView } from "@/lib/ai-opponent";
 import type { DraftFixture, DraftPageData, DraftRoom, DraftView } from "@/lib/draft";
 import { abandonDraftAction, chooseDraftFormationAction, createDraftRoomAction, inviteToDraftRoomAction, leaveDraftRoomAction, openDraftSlotAction, pickDraftPlayerAction, playDraftFixtureAction, respondDraftInviteAction, setDraftFormationAction, startDraftRoomAction, startSoloDraftAction, swapDraftPlayersAction } from "@/lib/draft-actions";
-import { ALL_SLOT_KEYS, BENCH_KEYS, CAPTAIN_KEY, RESERVE_KEYS, ROOM_ROUNDS, ROOM_SIZE, slotLabel, SOLO_ROUNDS, STARTER_KEYS, type DraftPlayer, type DraftReward } from "@/lib/draft-core";
+import { ALL_SLOT_KEYS, BENCH_KEYS, CAPTAIN_KEY, draftChemistry, draftChemistryByKey, draftChemistryGain, RESERVE_KEYS, ROOM_ROUNDS, ROOM_SIZE, slotLabel, SOLO_ROUNDS, STARTER_KEYS, type DraftPlayer, type DraftReward } from "@/lib/draft-core";
 import { formationNames, formations, type Formation } from "@/lib/lineup";
+import { ChemDots, TeamChemistry } from "./chemistry-badge";
 import { ConfirmDialog } from "./confirm-dialog";
 import { PlayerCardFace } from "./player-card-face";
 import { PitchMarkings, slotPoint } from "./squad-pitch";
@@ -241,6 +242,7 @@ function FormationPreview({ formation }: { formation: Formation }) {
 
 function DraftBuilder({ draft }: { draft: DraftView }) {
   const t = useT().draft;
+  const chemistryText = useT().chemistry;
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -273,19 +275,21 @@ function DraftBuilder({ draft }: { draft: DraftView }) {
       <div className="flex gap-5">
         <div><p className="text-[10px] font-bold tracking-widest text-white/45">{t.build.picks}</p><p className="text-lg font-black">{picks}/{ALL_SLOT_KEYS.length}</p></div>
         <div className="border-l border-white/15 pl-5"><p className="text-[10px] font-bold tracking-widest text-white/45">{t.build.rating}</p><p className="text-lg font-black text-lime-300">{draft.rating ?? "—"}</p></div>
+        <div className="border-l border-white/15 pl-5"><p className="text-[10px] font-bold tracking-widest text-white/45">{chemistryText.label}</p><p className="text-lg font-black text-lime-300">{draftChemistry(draft.players)}/33</p></div>
         <div className="border-l border-white/15 pl-5"><p className="text-[10px] font-bold tracking-widest text-white/45">{t.build.formation}</p><p className="text-lg font-black">{draft.formation}</p></div>
       </div>
       {needsCaptain ? <button type="button" onClick={() => setOpenKey(CAPTAIN_KEY)} className={`${limeButton} w-full sm:w-auto`}>{t.build.chooseCaptain}</button> : null}
     </section>
     <DraftPitch formation={draft.formation} players={draft.players} captainId={draft.captainId} onSlot={needsCaptain ? () => setOpenKey(CAPTAIN_KEY) : (key) => { if (!draft.players[key]) setOpenKey(key); }} highlightEmpty={!needsCaptain} />
     <ErrorText error={error} />
-    {openKey ? <OptionsDialog slotKey={openKey} formation={draft.formation} drawn={draft.offers[openKey]} onClose={() => setOpenKey(null)} onPicked={() => { setOpenKey(null); router.refresh(); }} /> : null}
+    {openKey ? <OptionsDialog slotKey={openKey} formation={draft.formation} players={draft.players} drawn={draft.offers[openKey]} onClose={() => setOpenKey(null)} onPicked={() => { setOpenKey(null); router.refresh(); }} /> : null}
   </div>;
 }
 
 /** Vinduet med de fem alternativene til en plass. Alternativene hentes (og trekkes første gang) når vinduet åpnes. */
-function OptionsDialog({ slotKey, formation, drawn, onClose, onPicked }: { slotKey: string; formation: Formation; drawn?: DraftPlayer[]; onClose: () => void; onPicked: () => void }) {
+function OptionsDialog({ slotKey, formation, players, drawn, onClose, onPicked }: { slotKey: string; formation: Formation; players: Record<string, DraftPlayer>; drawn?: DraftPlayer[]; onClose: () => void; onPicked: () => void }) {
   const t = useT().draft;
+  const chemistryText = useT().chemistry;
   // Alternativer som allerede er trukket, vises med en gang. Ellers trekkes de på serveren.
   const [options, setOptions] = useState<DraftPlayer[] | null>(drawn?.length ? drawn : null);
   const alreadyDrawn = Boolean(drawn?.length);
@@ -315,7 +319,7 @@ function OptionsDialog({ slotKey, formation, drawn, onClose, onPicked }: { slotK
       <ErrorText error={error} />
       {displayedOptions ? <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:px-0 lg:grid-cols-5">
         {displayedOptions.map((option) => <div key={option.id} className="w-56 shrink-0 snap-center sm:w-auto">
-          <PlayerCardFace player={{ slug: option.slug ?? "", name: option.name, position: option.position, overall: option.overall, accent: option.accent ?? "#35d06a", club: option.club ?? "", attributes: option.attributes, special: option.special }} footer={<button type="button" disabled={pending} onClick={() => startTransition(async () => { const result = await pickDraftPlayerAction(slotKey, option.id); if (result.error) setError(result.error); else onPicked(); })} className={`${limeButton} w-full`}>{t.build.choose}</button>} />
+          <PlayerCardFace player={{ slug: option.slug ?? "", name: option.name, position: option.position, overall: option.overall, accent: option.accent ?? "#35d06a", club: option.club ?? "", attributes: option.attributes, special: option.special }} footer={<div className="grid gap-2">{(() => { const gain = draftChemistryGain(players, formation, slotKey, option); return gain === null ? null : <span className={`rounded-full px-2.5 py-1 text-center text-xs font-black ${gain > 0 ? "bg-lime-300/20 text-lime-200" : "bg-white/10 text-white/60"}`} title={chemistryText.hint}>{gain > 0 ? chemistryText.gain(gain) : chemistryText.none}</span>; })()}<button type="button" disabled={pending} onClick={() => startTransition(async () => { const result = await pickDraftPlayerAction(slotKey, option.id); if (result.error) setError(result.error); else onPicked(); })} className={`${limeButton} w-full`}>{t.build.choose}</button></div>} />
         </div>)}
       </div> : null}
     </div>
@@ -326,6 +330,7 @@ function OptionsDialog({ slotKey, formation, drawn, onClose, onPicked }: { slotK
 function DraftPitch({ formation, players, captainId, onSlot, selected = null, highlightEmpty = false }: { formation: Formation; players: Record<string, DraftPlayer>; captainId: string | null; onSlot: (key: string) => void; selected?: string | null; highlightEmpty?: boolean }) {
   const t = useT().draft;
   const slots = formations[formation];
+  const chemistry = draftChemistryByKey(players);
   const cell = (key: string) => {
     const player = players[key];
     const ring = selected === key ? "ring-4 ring-lime-300" : "";
@@ -333,6 +338,7 @@ function DraftPitch({ formation, players, captainId, onSlot, selected = null, hi
       {player ? <TeamCard player={player} /> : <span className={`grid aspect-[100/136] w-full place-items-center rounded-[9%/7%] border-2 border-dashed text-center ${highlightEmpty ? "border-lime-300/70 bg-lime-300/10 text-lime-200" : "border-white/25 bg-black/20 text-white/50"}`}>
         <span className="grid gap-0.5"><b className="text-lg leading-none">+</b><span className="text-[10px] font-black">{slotLabel(key, formation) ?? (key.startsWith("r") ? t.build.reserveShort : t.build.anyShort)}</span></span>
       </span>}
+      {player && STARTER_KEYS.includes(key) ? <ChemDots points={chemistry[key] ?? 0} className="absolute bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-black/60 px-1.5 py-0.5" /> : null}
       {player && player.id === captainId ? <span className="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full bg-lime-300 text-[10px] font-black text-slate-950">C</span> : null}
     </button>;
   };
@@ -372,6 +378,7 @@ function LineupEditor({ draft, locked }: { draft: DraftView; locked: boolean }) 
     <div className={`${panelClass} flex flex-wrap items-center gap-3`}>
       <div className="min-w-0 flex-1"><h3 className="text-lg font-black">{t.lineup.title}</h3><p className="text-sm text-white/60">{locked ? t.lineup.locked : selected ? t.lineup.pickSecond : t.lineup.hint}</p></div>
       <p className="text-sm font-black text-lime-300">{t.build.rating} {draft.rating ?? "—"}</p>
+      <TeamChemistry total={draftChemistry(draft.players)} />
       <select value={draft.formation} disabled={locked || pending} onChange={(event) => { const formation = event.target.value; startTransition(async () => { const result = await setDraftFormationAction(formation); setError(result.error ?? null); router.refresh(); }); }} className="rounded-lg border border-white/15 bg-slate-950 px-3 py-2 text-sm font-black">
         {formationNames.map((formation) => <option key={formation} value={formation}>{formation}</option>)}
       </select>

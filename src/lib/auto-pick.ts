@@ -13,7 +13,7 @@ type Db = ReturnType<typeof supabaseAdmin>;
  */
 export async function autoPickBestSquad(db: Db, userId: string, formation: Formation): Promise<{ error: string } | null> {
   const [{ data: cards, error: cardsError }, { data: listings, error: listingsError }] = await Promise.all([
-    db.from("manager_cards").select("id, catalog_id, position, overall, location").eq("owner_id", userId),
+    db.from("manager_cards").select("id, catalog_id, position, overall, location, player_catalog(club, league, nation), personal_cards(card_id)").eq("owner_id", userId),
     db.from("market_listings").select("card_id").eq("seller_id", userId).eq("status", "active"),
   ]);
   if (cardsError || listingsError) return { error: await dbErrorMessage((cardsError ?? listingsError)!) };
@@ -27,7 +27,9 @@ export async function autoPickBestSquad(db: Db, userId: string, formation: Forma
     const key = card.catalog_id ?? card.id;
     if (!oneCopyEach.has(key)) oneCopyEach.set(key, card);
   }
-  const best = pickBestSquad([...oneCopyEach.values()], formation, squadCapacity);
+  const relation = <T,>(value: T | T[] | null): T | null => (Array.isArray(value) ? value[0] ?? null : value);
+  const withChemistry = [...oneCopyEach.values()].map((card) => { const catalog = relation(card.player_catalog); return { ...card, club: catalog?.club ?? null, league: catalog?.league ?? null, nation: catalog?.nation ?? null, personal: Boolean(relation(card.personal_cards)) }; });
+  const best = pickBestSquad(withChemistry, formation, squadCapacity);
   if (best.starters.length !== 11 || best.bench.length !== 7) return { error: (await getT()).career.errors.notEnoughCards };
   const { error } = await db.rpc("auto_pick_manager_squad", { target_user: userId, next_formation: formation, next_squad: best.squad, next_starters: best.starters, next_bench: best.bench });
   if (error) return { error: await dbErrorMessage(error, { stripPrefix: true }) };

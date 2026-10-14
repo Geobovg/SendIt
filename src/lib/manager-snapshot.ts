@@ -2,15 +2,15 @@ import "server-only";
 
 import { dbErrorMessage } from "@/i18n/server";
 import { replaceAcademyLineups } from "./auto-pick";
-import { anyPosition, formationNames, formations, pickBestLineup, type Formation } from "./lineup";
+import { anyPosition, formationNames, formations, pickBestLineupWithChemistry, type Formation } from "./lineup";
 import type { ManagerPlayerSnapshot, ManagerTeamSnapshot } from "./manager-match";
 import type { supabaseAdmin } from "./supabase/server";
 
 type Db = ReturnType<typeof supabaseAdmin>;
 type Relation<T> = T | T[] | null;
-type CardRow = { id: string; owner_id: string; name: string; position: string; overall: number; catalog_id: string | null; special_card_id: string | null; player_catalog: Relation<{ slug: string; club: string; accent: string }>; personal_cards: Relation<{ slug: string }> };
+type CardRow = { id: string; owner_id: string; name: string; position: string; overall: number; catalog_id: string | null; special_card_id: string | null; player_catalog: Relation<{ slug: string; club: string; accent: string; league: string | null; nation: string | null }>; personal_cards: Relation<{ slug: string }> };
 
-const cardColumns = "id, owner_id, name, position, overall, catalog_id, special_card_id, player_catalog(slug, club, accent), personal_cards(slug)";
+const cardColumns = "id, owner_id, name, position, overall, catalog_id, special_card_id, player_catalog(slug, club, accent, league, nation), personal_cards(slug)";
 const first = <T,>(value: Relation<T>) => (Array.isArray(value) ? value[0] ?? null : value);
 
 function uniqueIds(value: unknown) { return Array.isArray(value) ? [...new Set(value.filter((id): id is string => typeof id === "string"))] : []; }
@@ -18,7 +18,7 @@ function uniqueIds(value: unknown) { return Array.isArray(value) ? [...new Set(v
 // Katalogdataene blir med i laguttaket slik at kampbildet kan tegne spillerkortene uten flere oppslag.
 function toPlayer(card: CardRow): ManagerPlayerSnapshot {
   const catalog = first(card.player_catalog); const personal = first(card.personal_cards);
-  return { id: card.id, name: card.name, position: card.position, overall: card.overall, slug: catalog?.slug ?? personal?.slug ?? null, club: catalog?.club ?? null, accent: catalog?.accent ?? null };
+  return { id: card.id, name: card.name, position: card.position, overall: card.overall, slug: catalog?.slug ?? personal?.slug ?? null, club: catalog?.club ?? null, accent: catalog?.accent ?? null, league: catalog?.league ?? null, nation: catalog?.nation ?? null, ...(personal ? { personal: true } : {}) };
 }
 
 /** Startkortene alle fikk ved nullstillingen («Academy CB» osv.). De har ingen katalograd, og er ikke spesial- eller personlige kort. */
@@ -54,7 +54,7 @@ export async function managerTeamSnapshots(db: Db, userIds: string[], { realPlay
     let owned = new Map<string, CardRow>([...starters, ...bench].flatMap((id) => { const card = cardById.get(id); return card && card.owner_id === lineup.user_id ? [[id, card] as [string, CardRow]] : []; }));
     const club = ((clubCards ?? []) as unknown as CardRow[]).filter((card) => card.owner_id === lineup.user_id);
     if (club.some((card) => !isAcademy(card))) {
-      const best = pickBestLineup(club, formation);
+      const best = pickBestLineupWithChemistry(club.map((card) => ({ ...card, ...toPlayer(card) })), formation);
       if (best.starters.length === 11) { starters = best.starters; bench = best.bench; owned = new Map(club.map((card) => [card.id, card])); }
     }
     if (starters.length !== 11 || bench.length > 7 || starters.some((id) => bench.includes(id))) continue;

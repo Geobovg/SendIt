@@ -16,7 +16,7 @@ type Db = ReturnType<typeof supabaseAdmin>;
 
 import { aiDraftTeam, soloOpponentRating, type DraftAiSide, type PoolCard } from "./draft-generation";
 export { aiDraftTeam, drawOptions, type DraftAiSide } from "./draft-generation";
-type CatalogRow = { id: string; slug: string; name: string; position: string; overall: number; club: string | null; accent: string | null; attributes: Record<string, number> | null; active: boolean };
+type CatalogRow = { id: string; slug: string; name: string; position: string; overall: number; club: string | null; league: string | null; nation: string | null; accent: string | null; attributes: Record<string, number> | null; active: boolean };
 type SpecialRow = { id: string; kind: string; catalog_id: string; overall: number; attributes: Record<string, number> | null };
 
 /** PostgREST gir høyst 1000 rader om gangen, og katalogen er større enn det. */
@@ -34,12 +34,12 @@ const specialKinds = new Set<SpecialKind>(["inform", "tots", "icon", "honorable"
 
 export async function draftPool(db: Db): Promise<{ normal: PoolCard[]; special: PoolCard[] }> {
   const [catalog, specials] = await Promise.all([
-    allRows<CatalogRow>((from, to) => db.from("player_catalog").select("id, slug, name, position, overall, club, accent, attributes, active").order("id").range(from, to)),
+    allRows<CatalogRow>((from, to) => db.from("player_catalog").select("id, slug, name, position, overall, club, league, nation, accent, attributes, active").order("id").range(from, to)),
     allRows<SpecialRow>((from, to) => db.from("special_cards").select("id, kind, catalog_id, overall, attributes").order("id").range(from, to)),
   ]);
   const byId = new Map(catalog.map((row) => [row.id, row]));
   const card = (row: CatalogRow, overall: number, attributes: Record<string, number> | null, special: SpecialKind | null): PoolCard => ({
-    catalogId: row.id, name: row.name, position: row.position, overall, slug: row.slug, club: row.club ?? null, accent: row.accent ?? null, attributes: attributes ?? {}, special,
+    catalogId: row.id, name: row.name, position: row.position, overall, slug: row.slug, club: row.club ?? null, league: row.league ?? null, nation: row.nation ?? null, accent: row.accent ?? null, attributes: attributes ?? {}, special,
   });
   const normal = catalog.filter((row) => row.active).map((row) => card(row, row.overall, row.attributes, null));
   const special = specials.flatMap((row) => {

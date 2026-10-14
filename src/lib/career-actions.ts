@@ -5,7 +5,7 @@ import { dbErrorMessage, getT } from "@/i18n/server";
 import { requireUser } from "./auth";
 import { friendshipId } from "./friends";
 import type { ActionState } from "./actions";
-import { autoShotCell, getManagerKickoff, isAiTeam, keeperIsManager, MANAGER_KICKOFF_VERSION, MAX_SUBSTITUTIONS, getManagerShots, matchClock, NO_EXTENSION, planManagerTimeline, plannedDurationMs, playersById, resolveShot, SHOT_CHOICE_MS, shootingOf, shotKeeperRating, shotMinutesOf, matchExtension, squadAtSubWindow, SUB_WINDOW_MAX_MS, SUB_WINDOW_MINUTE, subReadySides, subWindowClosed, subWindowMs, type ManagerKickoffEvent, type ManagerMatchEvent, type MatchClock, type MatchSide, type ShotResult } from "./manager-match";
+import { autoShotCell, getManagerKickoff, isAiTeam, keeperIsManager, MANAGER_KICKOFF_VERSION, MAX_SUBSTITUTIONS, getManagerShots, matchClock, NO_EXTENSION, planManagerTimeline, plannedDurationMs, playersById, resolveShot, SHOT_CHOICE_MS, shotKeeperRating, shotTakerShooting, shotMinutesOf, matchExtension, squadAtSubWindow, SUB_WINDOW_MAX_MS, SUB_WINDOW_MINUTE, subReadySides, subWindowClosed, subWindowMs, type ManagerKickoffEvent, type ManagerMatchEvent, type MatchClock, type MatchSide, type ShotResult } from "./manager-match";
 import { managerTeamSnapshots } from "./manager-snapshot";
 import { managerMatchLimitError } from "./match-limit";
 import { supabaseAdmin } from "./supabase/server";
@@ -207,8 +207,7 @@ export async function resolveShotAction(_prev: ActionState, formData: FormData):
   // utfallet her på serveren, så ingen kan regne det ut på forhånd.
   const keeperPick = keeperIsManager(kickoff, shot) ? (row?.keeper_cell ?? autoShotCell(matchId, shot, "keeper")) : null;
   const players = playersById(events);
-  const taker = players.get(shot.takerId);
-  const { outcome, keeperCell } = resolveShot(shot, taker ? shootingOf(taker) : 70, shotKeeperRating(shot, players), shooterCell, keeperPick, Math.random(), Math.random());
+  const { outcome, keeperCell } = resolveShot(shot, shotTakerShooting(shot, players), shotKeeperRating(shot, players), shooterCell, keeperPick, Math.random(), Math.random());
 
   const { error } = await db
     .from("career_match_shots")

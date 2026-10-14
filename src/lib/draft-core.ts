@@ -1,5 +1,6 @@
 // Draft i managerkarrieren (migrering 0095). Denne fila brukes både på serveren og i nettleseren:
 // plassene i laget, premietabellen og hvordan en draft blir til et lag i kampmotoren.
+import { chemistryOf, teamChemistry } from "./chemistry";
 import { canPlayPosition, formationNames, formations, type Formation } from "./lineup";
 import type { ManagerPlayerSnapshot, ManagerTeamSnapshot } from "./manager-match";
 import type { SpecialKind } from "./special-cards";
@@ -69,9 +70,31 @@ export function draftRating(players: Record<string, DraftPlayer>): number | null
   return starters.length ? Math.round(starters.reduce((sum, player) => sum + player.overall, 0) / starters.length) : null;
 }
 
+/** Kjemien til elleveren slik den står nå (0–33). Benk og reserver teller ikke. */
+export function draftChemistry(players: Record<string, DraftPlayer>): number {
+  return teamChemistry(STARTER_KEYS.flatMap((key) => (players[key] ? [players[key]] : [])));
+}
+
+/** Kjemien hver spiller i elleveren har nå, på plassnøkkel. */
+export function draftChemistryByKey(players: Record<string, DraftPlayer>): Record<string, number> {
+  const starters = STARTER_KEYS.flatMap((key) => (players[key] ? [players[key]] : []));
+  const points = chemistryOf(starters);
+  return Object.fromEntries(STARTER_KEYS.flatMap((key) => (players[key] ? [[key, points.get(players[key].id) ?? 0] as const] : [])));
+}
+
+/**
+ * Hvor mange kjemipoeng laget får om `candidate` settes på plassen (eller som kaptein): hans egen kjemi pluss det
+ * han gir de andre. null for benk og reserver, som ikke teller.
+ */
+export function draftChemistryGain(players: Record<string, DraftPlayer>, formation: Formation, key: string, candidate: DraftPlayer): number | null {
+  const target = key === CAPTAIN_KEY ? captainSlot(formation, players, candidate.position) : STARTER_KEYS.includes(key) ? key : null;
+  if (!target) return null;
+  return draftChemistry({ ...players, [target]: candidate }) - draftChemistry(Object.fromEntries(Object.entries(players).filter(([slot]) => slot !== target)));
+}
+
 /** Bare det kampmotoren trenger, så kampplanen ikke blir full av attributter. */
 export function toSnapshot(player: DraftPlayer): ManagerPlayerSnapshot {
-  return { id: player.id, name: player.name, position: player.position, overall: player.overall, slug: player.slug ?? null, club: player.club ?? null, accent: player.accent ?? null };
+  return { id: player.id, name: player.name, position: player.position, overall: player.overall, slug: player.slug ?? null, club: player.club ?? null, accent: player.accent ?? null, league: player.league ?? null, nation: player.nation ?? null };
 }
 
 /** Draften som lag i kampmotoren: elleveren og benken. Reservene spiller ikke. */

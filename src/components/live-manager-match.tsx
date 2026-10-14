@@ -6,6 +6,7 @@ import { startTransition, useActionState, useEffect, useMemo, useRef, useState, 
 import { useRouter } from "next/navigation";
 import type { ActionState } from "@/lib/actions";
 import { chooseShotCellAction, completeManagerMatchAction, resolveShotAction } from "@/lib/career-actions";
+import { teamChemistry } from "@/lib/chemistry";
 import { clubCrest } from "@/lib/club-crests";
 import { playerPhoto } from "@/lib/player-photos";
 import {
@@ -25,7 +26,7 @@ import {
   plannedDurationMs,
   playersById,
   scoreAtMinute,
-  shootingOf,
+  shotTakerShooting,
   shootoutScore,
   shotKeeperRating,
   SHOT_CHOICE_MS,
@@ -42,6 +43,7 @@ import {
 } from "@/lib/manager-match";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { useT } from "@/i18n/client";
+import { TeamChemistry } from "./chemistry-badge";
 import { SubWindowPanel } from "./sub-window-panel";
 import { buttonClass, cardClass } from "./ui";
 import { useScrollLock } from "./use-scroll-lock";
@@ -434,6 +436,10 @@ export function LiveManagerMatch({ match, userId, returnAfterComplete = true, he
 
   const userSide: MatchSide | null = kickoff?.home.userId === userId ? "home" : kickoff?.away.userId === userId ? "away" : match.home.userId === userId ? "home" : match.away.userId === userId ? "away" : null;
   const opponentSide: MatchSide | null = userSide === "home" ? "away" : userSide === "away" ? "home" : null;
+  // Kjemien til elleveren som startet kampen (fra versjon 7). AI-lag har en fast kjemi i stedet.
+  const chemistryOfSide = (side: MatchSide) => (kickoff && kickoff.version >= 7 ? { total: teamChemistry(kickoff[side].starters), fixed: kickoff[side].chemistryBonus ?? null } : null);
+  const homeChemistry = chemistryOfSide("home");
+  const awayChemistry = chemistryOfSide("away");
   const report = getManagerMatchReport(match.id, events, match.shots, shownMinute);
   const yourReport = report && userSide ? report[userSide] : null;
   const opponentReport = report && opponentSide ? report[opponentSide] : null;
@@ -541,6 +547,11 @@ export function LiveManagerMatch({ match, userId, returnAfterComplete = true, he
           </div>
         </div>
 
+        {homeChemistry && awayChemistry ? <div className="flex flex-wrap items-center justify-between gap-2">
+          <TeamChemistry total={homeChemistry.total} fixedRating={homeChemistry.fixed} />
+          <TeamChemistry total={awayChemistry.total} fixedRating={awayChemistry.fixed} />
+        </div> : null}
+
         <GoalStrip goals={goalMarkers} minute={shownMinute} lastMinute={stripMinutes} />
         {match.status === "live" && clock.phase !== "shot" ? (
           <p className="text-center text-sm font-semibold">
@@ -584,7 +595,7 @@ export function LiveManagerMatch({ match, userId, returnAfterComplete = true, he
             <div className="grid min-w-0 flex-1 gap-2">
               <GoalGrid
                 options={activeShot.options}
-                chanceFor={iAmShooting && taker ? (cell) => shotGoalChance(activeShot, shootingOf(taker), cell, keeperRating, guessing) : null}
+                chanceFor={iAmShooting && taker ? (cell) => shotGoalChance(activeShot, shotTakerShooting(activeShot, players), cell, keeperRating, guessing) : null}
                 myCells={myCells}
                 otherCells={otherCells}
                 otherLabel={iAmShooting ? t.match.grid.keeper : t.match.grid.shot}

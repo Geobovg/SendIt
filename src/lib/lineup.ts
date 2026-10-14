@@ -1,3 +1,5 @@
+import { chemistryOf, RATING_PER_CHEMISTRY, type ChemistryPlayer } from "./chemistry";
+
 export type Formation = "4-3-3" | "4-2-3-1" | "4-4-2" | "3-5-2" | "4-3-1-2";
 
 export type FormationSlot = { position: string; x: number; y: number };
@@ -79,6 +81,63 @@ export function pickBestLineup<T extends SelectableCard>(cards: T[], formation: 
   return { starters: lineup.filter((card): card is T => Boolean(card)).map((card) => card.id), bench: rest.slice(0, 7).map((card) => card.id) };
 }
 
+/**
+ * Som `pickBestLineup`, men med kjemi: elleveren som gir høyest rating pluss kjemi (+1 per kjemipoeng, som i kampmotoren).
+ * Starter fra elleveren med best rating og fra elleveren som bygger rundt de største klubbene, ligaene og nasjonene
+ * blant kortene, og bytter inn kort så lenge det gir mer. Har ingen kort kjemi, blir resultatet det samme som før.
+ */
+export function pickBestLineupWithChemistry<T extends SelectableCard & ChemistryPlayer>(cards: T[], formation: Formation) {
+  const base = pickBestLineup(cards, formation);
+  const byId = new Map(cards.map((card) => [card.id, card]));
+  const slots = formations[formation];
+  if (base.starters.length !== 11 || !cards.some((card) => card.club || card.league || card.nation || card.personal)) return base;
+
+  const worth = (lineup: T[]) => {
+    const points = chemistryOf(lineup);
+    return lineup.reduce((sum, card, index) => sum + (canPlayPosition(card.position, slots[index].position) ? card.overall : 0) + (points.get(card.id) ?? 0) * RATING_PER_CHEMISTRY, 0);
+  };
+  const climb = (start: T[]) => {
+    const lineup = [...start];
+    let best = worth(lineup);
+    for (let round = 0; round < 25; round += 1) {
+      let move: { index: number; card: T; value: number } | null = null;
+      const inLineup = new Set(lineup.map((card) => card.id));
+      for (let index = 0; index < lineup.length; index += 1) {
+        for (const card of cards) {
+          if (inLineup.has(card.id) || !canPlayPosition(card.position, slots[index].position)) continue;
+          // Keeperen byttes bare mot en annen keeper; et kort som kan spille alt, tar aldri keeperplassen.
+          if (slots[index].position === "GK" && card.position !== "GK") continue;
+          const value = worth([...lineup.slice(0, index), card, ...lineup.slice(index + 1)]);
+          if (value > best + 1e-9 && (!move || value > move.value)) move = { index, card, value };
+        }
+      }
+      if (!move) break;
+      lineup[move.index] = move.card;
+      best = move.value;
+    }
+    return { lineup, value: best };
+  };
+
+  const fixed = cards.filter((card) => card.position !== anyPosition);
+  const groups = new Map<string, T[]>();
+  for (const card of fixed) {
+    const keys = [card.club && `club:${card.club}`, card.league && card.league !== "other" && `league:${card.league}`, card.nation && `nation:${card.nation}`];
+    for (const key of keys) if (key) groups.set(key, [...(groups.get(key) ?? []), card]);
+  }
+  const seeds: T[][] = [base.starters.map((id) => byId.get(id)!)];
+  const bigGroups = [...groups.values()].filter((group) => group.length >= 3).sort((a, b) => b.length - a.length).slice(0, 10);
+  for (const group of bigGroups) {
+    const ids = new Set(group.map((card) => card.id));
+    const ordered = [...cards].sort((a, b) => Number(ids.has(b.id)) - Number(ids.has(a.id)) || b.overall - a.overall || a.id.localeCompare(b.id));
+    const { lineup } = fillSlots(slots, [ordered.filter((card) => card.position !== anyPosition)]);
+    if (lineup.every(Boolean)) seeds.push(lineup as T[]);
+  }
+  const winner = seeds.map(climb).reduce((best, next) => (next.value > best.value ? next : best));
+  const chosen = new Set(winner.lineup.map((card) => card.id));
+  const rest = cards.filter((card) => !chosen.has(card.id)).sort((a, b) => b.overall - a.overall || a.id.localeCompare(b.id));
+  return { starters: winner.lineup.map((card) => card.id), bench: rest.slice(0, 7).map((card) => card.id) };
+}
+
 export function rearrangeLineup<T extends SelectableCard>(cards: T[], formation: Formation, currentStarters: string[], currentBench: string[]) {
   const byId = new Map(cards.map((card) => [card.id, card]));
   const preferred = currentStarters.map((id) => byId.get(id)).filter((card): card is T => Boolean(card)).sort((a, b) => b.overall - a.overall);
@@ -92,8 +151,8 @@ export function rearrangeLineup<T extends SelectableCard>(cards: T[], formation:
 // «Velg beste tropp» ser på hele klubben, ikke bare kortene som allerede står i
 // troppen: elleveren fylles posisjon for posisjon, benken og reservene tar de
 // nest beste. Resten av kortene hører hjemme på lageret.
-export function pickBestSquad<T extends SelectableCard>(cards: T[], formation: Formation, capacity: number) {
-  const { starters, bench } = pickBestLineup(cards, formation);
+export function pickBestSquad<T extends SelectableCard & ChemistryPlayer>(cards: T[], formation: Formation, capacity: number) {
+  const { starters, bench } = pickBestLineupWithChemistry(cards, formation);
   const chosen = new Set([...starters, ...bench]);
   const reserves = cards
     .filter((card) => !chosen.has(card.id))
