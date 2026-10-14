@@ -112,18 +112,21 @@ function PackReveal({ pulls, packName, jackpot, onClose }: { pulls: PackPull[]; 
   // Et inform-kort får alltid den store animasjonen, uansett rating.
   const walkout = (card?.overall ?? 0) >= walkoutFrom || Boolean(card?.special);
   const glow = card?.special ? specialStyles[card.special].glow : glowFor(card?.overall ?? 0);
+  // De aller største trekkene får lengre oppbygging før kortet vises.
+  const big = (card?.overall ?? 0) >= 90 || card?.special === "icon" || card?.special === "tots";
+  const buildMs = big ? 2400 : 1800;
 
   useEffect(() => {
     if (index !== -1) return;
-    const timer = setTimeout(() => setPhase({ index: 0, revealed: false }), 900);
+    const timer = setTimeout(() => setPhase({ index: 0, revealed: false }), 1500);
     return () => clearTimeout(timer);
   }, [index]);
 
   useEffect(() => {
     if (!card || revealed) return;
-    const timer = setTimeout(() => setPhase((current) => ({ ...current, revealed: true })), walkout ? 1500 : 650);
+    const timer = setTimeout(() => setPhase((current) => ({ ...current, revealed: true })), walkout ? buildMs : 650);
     return () => clearTimeout(timer);
-  }, [card, revealed, walkout]);
+  }, [card, revealed, walkout, buildMs]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => { if (event.key === "Escape") onClose(); };
@@ -166,13 +169,17 @@ function PackReveal({ pulls, packName, jackpot, onClose }: { pulls: PackPull[]; 
       {sellState.soldIds?.length ? <p className="text-center text-sm font-semibold text-white">{tp.quickSoldAll(sellState.soldIds.length, sellState.payout ?? 0)}</p> : null}
       {sellState.error ? <p className="text-center text-sm text-danger">{sellState.error}</p> : null}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {pulls.map((pull) => {
+        {pulls.map((pull, pullIndex) => {
           const sold = soldIds.has(pull.card_id);
+          const bigPull = pull.overall >= walkoutFrom || Boolean(pull.special);
+          const pullGlow = pull.special ? specialStyles[pull.special].glow : glowFor(pull.overall);
           const sent = kept.has(pull.card_id);
           const canSend = !sold && !sent && (pull.tradable || Boolean(pull.special));
           const status = sold ? tp.sold : sent ? tp.sentToClub : <>{pull.location === "storage" ? tp.toStorage : tp.inSquad}{pull.duplicate ? tp.duplicate : ""}{pull.tradable ? "" : tp.untradable}</>;
-          return <div key={pull.card_id} className={`grid gap-1 ${sold ? "opacity-40" : ""}`}>
-            {canSend ? <button type="button" aria-expanded={picked === pull.card_id} onClick={() => setPicked((current) => current === pull.card_id ? null : pull.card_id)} className={`rounded-2xl text-left ${picked === pull.card_id ? "ring-2 ring-accent" : ""}`}><PlayerCardFace player={pull} eager /></button> : <PlayerCardFace player={pull} eager />}
+          return <div key={pull.card_id} className={`pack-label-rise grid gap-1 ${sold ? "opacity-40" : ""}`} style={{ animationDelay: `${Math.min(pullIndex, 11) * 70}ms` }}>
+            <div className="rounded-2xl" style={bigPull && !sold ? { boxShadow: `0 0 1.6rem ${pullGlow}` } : undefined}>
+              {canSend ? <button type="button" aria-expanded={picked === pull.card_id} onClick={() => setPicked((current) => current === pull.card_id ? null : pull.card_id)} className={`rounded-2xl text-left ${picked === pull.card_id ? "ring-2 ring-accent" : ""}`}><PlayerCardFace player={pull} eager /></button> : <PlayerCardFace player={pull} eager />}
+            </div>
             {canSend && picked === pull.card_id ? <button type="button" className={`${buttonClass} justify-self-center`} onClick={() => setConfirmingKeep(pull)}>{tp.sendToClub}</button> : null}
             <p className={`text-center text-xs ${sent ? "font-semibold text-emerald-300" : "text-white/70"}`}>{status}</p>
           </div>;
@@ -180,21 +187,22 @@ function PackReveal({ pulls, packName, jackpot, onClose }: { pulls: PackPull[]; 
       </div>
       {confirmingKeep ? <ConfirmDialog message={tp.sendToClubConfirm(confirmingKeep.name)} onCancel={() => setConfirmingKeep(null)} onConfirm={() => { setKept((current) => new Set(current).add(confirmingKeep.card_id)); setConfirmingKeep(null); setPicked(null); }} /> : null}
     </div> : <button type="button" onClick={next} className="absolute inset-0 grid place-items-center focus:outline-none" aria-label={revealed ? tp.nextCard : tp.openingCard}>
-      <div className={revealed && walkout ? "pack-shake grid place-items-center" : "grid place-items-center"}>
-        {card ? <div className="pack-rays" style={{ "--pack-glow": glow } as CSSProperties} /> : null}
-        {card && !revealed && walkout ? <div className="pack-door" style={{ "--pack-glow": glow } as CSSProperties} /> : null}
-        {card && revealed && walkout ? <div className="pack-flash" /> : null}
+      <div className={revealed && walkout ? "pack-shake grid place-items-center" : "grid place-items-center"} style={{ "--pack-glow": glow, "--pack-build": `${buildMs}ms` } as CSSProperties}>
+        {card ? <div className="pack-rays" /> : null}
+        {card && !revealed && walkout ? <><div className="pack-aura" /><div className="pack-streaks" /><div className="pack-door" /></> : null}
+        {card && revealed && walkout ? <><div className="pack-flash" /><div className="pack-ring" /><div className="pack-ring pack-ring-late" /></> : null}
 
+        {index === -1 ? <div className="pack-burst" /> : null}
         {index === -1 ? <div className="pack-tear grid h-72 w-56 place-items-center rounded-2xl border border-white/25 bg-[linear-gradient(145deg,#12261a,#061009)] text-center text-white shadow-2xl">
           <div><p className="text-xs font-bold tracking-[.3em] text-white/60">{tp.openingBanner}</p><p className="mt-2 px-3 text-xl font-black">{packName}</p>{jackpot ? <p className="mt-3 px-3 text-lg font-black" style={{ color: specialStyles.personal.badge }}>{tp.jackpot(jackpot)}</p> : null}</div>
         </div> : null}
 
-        {card && !revealed ? <div className="relative grid h-[27rem] w-72 place-items-center rounded-2xl border border-white/25 bg-black/50 text-white shadow-2xl">
+        {card && !revealed ? <div className={`relative grid h-[27rem] w-72 place-items-center rounded-2xl border border-white/25 bg-black/50 text-white shadow-2xl ${walkout ? "pack-pulse" : ""}`}>
           <div className="text-center"><p className="text-5xl font-black">{card.position}</p><p className="mt-2 text-xs font-bold tracking-[.3em] text-white/60">{card.special ? `★ ${t.career.special.badge[card.special]}` : walkout ? "…" : tp.cardBanner}</p></div>
         </div> : null}
 
         {card && revealed ? <div className="relative grid gap-2">
-          <div className={walkout ? "pack-card-walkout w-72" : "pack-card-enter w-72"}><PlayerCardFace player={card} eager /></div>
+          <div className={walkout ? "pack-card-walkout w-72" : "pack-card-enter w-72"}><div className={walkout ? "pack-shine" : undefined}><PlayerCardFace player={card} eager /></div></div>
           <p className="pack-label-rise text-center text-sm text-white/75">
             {card.special === "inform" ? tp.informPulled : card.special ? `${t.career.special.badge[card.special]}!` : walkout ? tp.bigCard : ""} {card.location === "storage" ? tp.placedInStorage : tp.placedInSquad}{card.duplicate ? tp.alreadyOwned : ""}
           </p>
