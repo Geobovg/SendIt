@@ -2,6 +2,14 @@ import type { DraftDict } from "../en/draft";
 
 // 经理生涯中的选秀模式：从整个球员目录中选出一支球队，参加淘汰赛。
 export const draft: DraftDict = {
+  tokens: {
+    balance: (count: number) => `选秀令牌：${count}`,
+    hint: "一个令牌可免费参加一次单人或好友选秀。令牌不会过期。",
+    reward: (count: number) => `${count} 个选秀令牌`,
+    start: "使用令牌开始",
+    join: "使用令牌加入",
+    create: "使用令牌创建",
+  },
   hub: {
     eyebrow: "选秀",
     title: "选秀组队，赢得冠军",
@@ -28,6 +36,8 @@ export const draft: DraftDict = {
     createRoom: (fee: number) => `创建并邀请 · ${fee} MB`,
     creating: "正在创建…",
     roomHint: (size: number) => `最多 ${size} 名经理。每个人加入时支付报名费，如果赛事在开始前取消则全额退还。`,
+    randomPrizes: "选秀结束时随机获得其中一组奖励。胜场越多，卡包越好。",
+    minimumValue: (value: number) => `价值至少 ${value} MB`,
     prizes: "奖励",
     prizeWins: (wins: number, max: number) => wins === max ? `${wins} 胜 – 冠军` : `${wins} 胜`,
     invitesTitle: "邀请",
@@ -45,7 +55,7 @@ export const draft: DraftDict = {
     eliminated: (round: string) => `止步${round.toLowerCase()}`,
     wins: (wins: number, total: number) => `${total} 场比赛赢了 ${wins} 场`,
     prize: "奖励",
-    packHint: "卡包已放在“包”中等你领取。",
+    packHint: "你的卡包已存入卡包页面。",
   },
   rounds: {
     final: "决赛",
@@ -116,6 +126,9 @@ export const draft: DraftDict = {
     friendMatchHint: "你们任何一方都可以开始比赛。如果你没有观看，射门和换人将自动选择。",
   },
   errors: {
+    noTokens: "你没有选秀令牌。",
+    invalidResult: "选秀结果无效。",
+    noRewards: "未找到选秀奖励。",
     busy: "选秀同时被其他操作更改了。请重试。",
     notDrafting: "你没有正在进行的选秀。",
     invalidFormation: "未知阵型。",

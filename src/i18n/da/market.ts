@@ -1,5 +1,10 @@
 // Pakkene lagres med norske navn i databasen, så de engelske navnene slås opp på pakkenøkkelen.
 const packNames: Record<string, string> = {
+  draft_bronze: "Draft bronzepakke",
+  draft_silver: "Draft sølvpakke",
+  draft_elite: "Draft elitepakke",
+  draft_champion: "Draft mesterpakke",
+
   bronse: "Bronze pakke",
   solv: "Sølv pakke",
   gull: "Guld pakke",
@@ -15,6 +20,11 @@ const packNames: Record<string, string> = {
 };
 
 const packDescriptions: Record<string, string> = {
+  draft_bronze: "To almindelige kort på 40–74. Kun draftpræmie.",
+  draft_silver: "Tre kort på 50–79, mindst ét på 70+. Kun draftpræmie.",
+  draft_elite: "Seks kort på 80+, mindst to på 84+. Kun draftpræmie.",
+  draft_champion: "Ti kort på 80+, mindst ét på 86+ og to på 84+. Kun draftpræmie.",
+
   bronse: "Tre kort. For det meste stamgæster, men alt kan ske.",
   solv: "Fem kort, med mindst ét 80 eller bedre garanteret.",
   gull: "Otte kort, med mindst ét 83 eller bedre garanteret.",

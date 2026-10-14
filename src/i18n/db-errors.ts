@@ -10,6 +10,9 @@ type DbErrorRule = { pattern: RegExp; message: (t: Dictionary, ...values: string
 export const DB_ERROR_RULES: DbErrorRule[] = [
   // Draft (migrering 0094).
   { pattern: /^Vent til draftkampen er ferdig$/, message: (t) => t.draft.errors.matchLive },
+  { pattern: /^Du har ingen draft tokens$/, message: (t) => t.draft.errors.noTokens },
+  { pattern: /^Ugyldig draftresultat$/, message: (t) => t.draft.errors.invalidResult },
+  { pattern: /^Fant ingen draftpremier$/, message: (t) => t.draft.errors.noRewards },
   { pattern: /^Du har allerede en draft i gang$/, message: (t) => t.draft.errors.alreadyRunning },
   { pattern: /^Draft-turneringen har allerede startet$/, message: (t) => t.draft.errors.roomStarted },
   { pattern: /^Du er ikke invitert til denne draft-turneringen$/, message: (t) => t.draft.errors.notInvited },

@@ -8,7 +8,7 @@ import type { ActionState } from "@/lib/actions";
 import type { TeamView } from "@/lib/ai-opponent";
 import type { DraftFixture, DraftPageData, DraftRoom, DraftView } from "@/lib/draft";
 import { abandonDraftAction, chooseDraftFormationAction, createDraftRoomAction, inviteToDraftRoomAction, leaveDraftRoomAction, openDraftSlotAction, pickDraftPlayerAction, playDraftFixtureAction, respondDraftInviteAction, setDraftFormationAction, startDraftRoomAction, startSoloDraftAction, swapDraftPlayersAction } from "@/lib/draft-actions";
-import { ALL_SLOT_KEYS, BENCH_KEYS, CAPTAIN_KEY, DRAFT_PRIZES, RESERVE_KEYS, ROOM_ROUNDS, ROOM_SIZE, slotLabel, SOLO_ROUNDS, STARTER_KEYS, type DraftPlayer } from "@/lib/draft-core";
+import { ALL_SLOT_KEYS, BENCH_KEYS, CAPTAIN_KEY, RESERVE_KEYS, ROOM_ROUNDS, ROOM_SIZE, slotLabel, SOLO_ROUNDS, STARTER_KEYS, type DraftPlayer, type DraftReward } from "@/lib/draft-core";
 import { formationNames, formations, type Formation } from "@/lib/lineup";
 import { ConfirmDialog } from "./confirm-dialog";
 import { PlayerCardFace } from "./player-card-face";
@@ -44,6 +44,7 @@ export function DraftPanel({ data, budget }: { data: DraftPageData; budget: numb
 
   if (current?.status === "drafting") {
     return <div className="grid gap-4">
+      <DraftWallet tokens={data.tokens} />
       {inRoom && room?.status === "open" ? <RoomLobby room={room} data={data} /> : null}
       {current.mode === "solo" ? <DraftInvites data={data} budget={budget} canBringTeam={Boolean(canBringTeam)} /> : null}
       <DraftBuilder draft={current} />
@@ -53,6 +54,7 @@ export function DraftPanel({ data, budget }: { data: DraftPageData; budget: numb
   }
   if (current?.status === "active") {
     return <div className="grid gap-4">
+      <DraftWallet tokens={data.tokens} />
       {inRoom && room ? room.status === "open" ? <RoomLobby room={room} data={data} /> : <RoomBracket room={room} /> : <SoloRun draft={current} fixtures={data.fixtures} />}
       {current.mode === "solo" ? <DraftInvites data={data} budget={budget} canBringTeam={Boolean(canBringTeam)} /> : null}
       {canBringTeam ? <FriendsDraft data={data} budget={budget} bringTeam /> : null}
@@ -60,6 +62,7 @@ export function DraftPanel({ data, budget }: { data: DraftPageData; budget: numb
     </div>;
   }
   return <div className="grid gap-4">
+      <DraftWallet tokens={data.tokens} />
     {last ? <LastResult draft={last} packNames={data.packNames} /> : null}
     {last?.mode === "room" && room && room.status !== "cancelled" && room.fixtures.length ? <RoomBracket room={room} /> : null}
     {last?.mode === "solo" && data.fixtures.length ? <SoloLadder fixtures={data.fixtures} wins={last.wins} active={false} /> : null}
@@ -71,15 +74,42 @@ export function DraftPanel({ data, budget }: { data: DraftPageData; budget: numb
 // Startsiden: solo, venneturnering, invitasjoner og historikk
 // ---------------------------------------------------------------------------
 
-function PrizeTable({ mode, packNames }: { mode: "solo" | "room"; packNames: Record<string, string> }) {
+function DraftWallet({ tokens }: { tokens: number }) {
+  const t = useT().draft.tokens;
+  return <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-cyan-300/20 bg-cyan-300/5 px-4 py-3">
+    <p className="font-black text-cyan-200">{t.balance(tokens)}</p>
+    <p className="text-xs text-white/60">{t.hint}</p>
+  </div>;
+}
+
+function RewardText({ reward, packNames }: { reward: DraftReward; packNames: Record<string, string> }) {
+  const t = useT();
+  const parts = [
+    ...reward.packs.map((pack) => `${pack.quantity}× ${t.market.packs.name(pack.key, packNames[pack.key] ?? pack.key)}`),
+    ...(reward.tokens ? [t.draft.tokens.reward(reward.tokens)] : []),
+    ...(reward.mb ? [`${reward.mb} MB`] : []),
+  ];
+  return <>{parts.join(" + ") || "—"}</>;
+}
+
+function PrizeTable({ mode, data }: { mode: "solo" | "room"; data: DraftPageData }) {
   const t = useT().draft;
-  const rows = DRAFT_PRIZES[mode];
-  return <div className="grid gap-1 rounded-xl bg-black/25 p-3 text-sm">
+  const total = mode === "solo" ? SOLO_ROUNDS : ROOM_ROUNDS;
+  return <div className="grid gap-2 rounded-xl bg-black/25 p-3 text-sm">
     <p className="text-[10px] font-black tracking-widest text-white/45">{t.home.prizes}</p>
-    {rows.map((prize, wins) => <div key={wins} className={`flex items-center justify-between gap-3 ${wins === rows.length - 1 ? "font-black text-lime-300" : "text-white/75"}`}>
-      <span>{t.home.prizeWins(wins, rows.length - 1)}</span>
-      <span className="text-right">{prize.mb} MB{prize.pack ? ` + ${packNames[prize.pack] ?? prize.pack}` : ""}</span>
-    </div>)}
+    <p className="text-xs text-white/55">{t.home.randomPrizes}</p>
+    {Array.from({ length: total + 1 }, (_, wins) => {
+      const options = data.rewardOptions.filter((option) => option.mode === mode && option.wins === wins);
+      const min = options.length ? Math.min(...options.map((option) => option.value)) : 0;
+      return <details key={wins} className="rounded-lg border border-white/10 p-2" open={wins === total}>
+        <summary className={`cursor-pointer font-black ${wins === total ? "text-lime-300" : "text-white/80"}`}>
+          {t.home.prizeWins(wins, total)}{wins === total ? ` · ${t.home.minimumValue(min)}` : ""}
+        </summary>
+        <ul className="mt-2 grid gap-2 border-t border-white/10 pt-2 text-xs text-white/70">
+          {options.map((option) => <li key={option.id}><RewardText reward={option} packNames={data.packNames} /></li>)}
+        </ul>
+      </details>;
+    })}
   </div>;
 }
 
@@ -94,6 +124,7 @@ function DraftInvites({ data, budget, canBringTeam = false }: { data: DraftPageD
           <input type="hidden" name="room_id" value={invite.roomId} />
           <p className="min-w-0 flex-1 text-sm"><b>{invite.hostName}</b> {t.home.invitedBy(invite.joined)}</p>
           <button name="answer" value="join" disabled={responding || short || Boolean(data.current && !canBringTeam)} className={limeButton}>{canBringTeam ? t.home.joinExisting : t.home.join(data.entryFee)}</button>
+          {!canBringTeam && !data.current && data.tokens > 0 ? <button name="answer" value="join_token" disabled={responding} className={ghostButton}>{t.tokens.join}</button> : null}
           <button name="answer" value="decline" disabled={responding} className={ghostButton}>{t.home.decline}</button>
         </form>)}
       </div>
@@ -108,7 +139,7 @@ function FriendsDraft({ data, budget, bringTeam = false }: { data: DraftPageData
   const short = !bringTeam && budget < data.entryFee;
   return (<section className={`${panelClass} grid content-start gap-3`}>
         <div><p className="text-[10px] font-black tracking-widest text-white/45">{t.home.roomEyebrow}</p><h3 className="text-xl font-black">{t.home.roomTitle}</h3><p className="mt-1 text-sm text-white/65">{t.home.roomText}</p></div>
-        <PrizeTable mode="room" packNames={data.packNames} />
+        <PrizeTable mode="room" data={data} />
         <form action={createRoom} className="grid gap-2">
           {data.friends.length ? <div className="grid max-h-56 gap-1 overflow-y-auto rounded-xl bg-black/25 p-2">
             {data.friends.map((friend) => <label key={friend.id} className="flex cursor-pointer items-center gap-3 rounded-lg px-2 py-1.5 hover:bg-white/5">
@@ -118,6 +149,7 @@ function FriendsDraft({ data, budget, bringTeam = false }: { data: DraftPageData
             </label>)}
           </div> : <p className="text-sm text-white/55">{t.home.noFriends}</p>}
           <button disabled={creatingRoom || short || !data.friends.length} className={limeButton}>{creatingRoom ? t.home.creating : bringTeam ? t.home.createWithTeam : t.home.createRoom(data.entryFee)}</button>
+          {!bringTeam && data.tokens > 0 ? <button name="payment" value="token" disabled={creatingRoom || !data.friends.length} className={ghostButton}>{t.tokens.create}</button> : null}
           <p className="text-xs text-white/45">{bringTeam ? t.home.bringTeamHint : t.home.roomHint(ROOM_SIZE)}</p>
           <ErrorText error={roomState.error} />
         </form>
@@ -140,10 +172,11 @@ function DraftHome({ data, budget }: { data: DraftPageData; budget: number }) {
     <div className="grid gap-4 lg:grid-cols-2">
       <section className={`${panelClass} grid content-start gap-3`}>
         <div><p className="text-[10px] font-black tracking-widest text-white/45">{t.home.soloEyebrow}</p><h3 className="text-xl font-black">{t.home.soloTitle}</h3><p className="mt-1 text-sm text-white/65">{t.home.soloText}</p></div>
-        <PrizeTable mode="solo" packNames={data.packNames} />
+        <PrizeTable mode="solo" data={data} />
         <form action={startSolo} className="grid gap-2">
           <button disabled={startingSolo || short} className={`${limeButton} py-3 text-lg`}>{startingSolo ? t.home.starting : t.home.startSolo(data.entryFee)}</button>
-          {short ? <p className="text-xs text-rose-300">{t.home.notEnough(data.entryFee)}</p> : null}
+          {data.tokens > 0 ? <button name="payment" value="token" disabled={startingSolo} className={ghostButton}>{t.tokens.start}</button> : null}
+          {short && data.tokens === 0 ? <p className="text-xs text-rose-300">{t.home.notEnough(data.entryFee)}</p> : null}
           <ErrorText error={soloState.error} />
         </form>
       </section>
@@ -154,10 +187,10 @@ function DraftHome({ data, budget }: { data: DraftPageData; budget: number }) {
     {data.history.length ? <section className={panelClass}>
       <p className="text-[10px] font-black tracking-widest text-white/45">{t.home.history}</p>
       <div className="mt-2 grid gap-1">
-        {data.history.map((entry) => <div key={entry.id} className="flex items-center justify-between gap-3 border-b border-white/5 py-2 text-sm last:border-0">
+        {data.history.map((entry) => <div key={entry.id} className="grid grid-cols-2 gap-2 border-b border-white/5 py-2 text-sm last:border-0">
           <span className="font-bold">{entry.mode === "solo" ? t.home.soloTitle : t.home.roomTitle}</span>
           <span className={entry.status === "champion" ? "font-black text-lime-300" : "text-white/70"}>{t.result.wins(entry.wins, entry.mode === "solo" ? SOLO_ROUNDS : ROOM_ROUNDS)}</span>
-          <span className="text-right text-white/60">{entry.rewardMb ?? 0} MB{entry.rewardPack ? ` + ${data.packNames[entry.rewardPack] ?? entry.rewardPack}` : ""}</span>
+          <span className="col-span-2 text-right text-white/60"><RewardText reward={entry.reward} packNames={data.packNames} /></span>
         </div>)}
       </div>
     </section> : null}
@@ -174,8 +207,8 @@ function LastResult({ draft, packNames }: { draft: DraftView; packNames: Record<
     <p className="text-[10px] font-black tracking-[.28em] text-white/50">{t.result.eyebrow}</p>
     <h2 className="mt-1 text-2xl font-black">{champion ? t.result.champion : t.result.eliminated(roundName(t, draft.wins + 1, total))}</h2>
     <p className="mt-1 text-white/70">{t.result.wins(draft.wins, total)}</p>
-    <p className="mt-3 inline-flex rounded-xl bg-black/30 px-3 py-2 text-sm font-black text-lime-300">{t.result.prize}: {draft.rewardMb ?? 0} MB{draft.rewardPack ? ` + ${packNames[draft.rewardPack] ?? draft.rewardPack}` : ""}</p>
-    {draft.rewardPack ? <p className="mt-2 text-xs text-white/50">{t.result.packHint}</p> : null}
+    <p className="mt-3 block w-fit max-w-full rounded-xl bg-black/30 px-3 py-2 text-sm font-black text-lime-300">{t.result.prize}: <RewardText reward={draft.reward} packNames={packNames} /></p>
+    {draft.reward.packs.length ? <p className="mt-2 text-xs text-white/50">{t.result.packHint}</p> : null}
   </section>;
 }
 

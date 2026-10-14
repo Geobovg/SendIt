@@ -1,5 +1,10 @@
 // Pakkene lagres med norske navn i databasen, så de engelske navnene slås opp på pakkenøkkelen.
 const packNames: Record<string, string> = {
+  draft_bronze: "Draft-pronssipaketti",
+  draft_silver: "Draft-hopeapaketti",
+  draft_elite: "Draft-eliittipaketti",
+  draft_champion: "Draft-mestaripaketti",
+
   bronse: "Pronssipakkaus",
   solv: "Hopeinen paketti",
   gull: "Kultainen paketti",
@@ -15,6 +20,11 @@ const packNames: Record<string, string> = {
 };
 
 const packDescriptions: Record<string, string> = {
+  draft_bronze: "Kaksi tavallista 40–74-korttia. Vain draft-palkinto.",
+  draft_silver: "Kolme 50–79-korttia, yksi taattu 70+. Vain draft-palkinto.",
+  draft_elite: "Kuusi 80+-korttia, kaksi taattua 84+. Vain draft-palkinto.",
+  draft_champion: "Kymmenen 80+-korttia, yksi taattu 86+ ja kaksi 84+. Vain draft-palkinto.",
+
   bronse: "Kolme korttia. Enimmäkseen vakituisia, mutta mitä tahansa voi tapahtua.",
   solv: "Viisi korttia, joista vähintään yksi 80 tai parempi.",
   gull: "Kahdeksan korttia, joista vähintään yksi 83 tai parempi.",

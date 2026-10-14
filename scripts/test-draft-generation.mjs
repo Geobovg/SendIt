@@ -64,6 +64,8 @@ try {
       assert.ok(ai.team.starters.every((card, index) => canPlayPosition(card.position, formations[ai.team.formation][index].position)));
     }
   }
+  assert.deepEqual(core.draftReward(175, null, "sjeldne_spillere", 0), {mb:175,packs:[{key:"sjeldne_spillere",quantity:1}],tokens:0});
+  assert.deepEqual(core.draftReward(10, [{key:"gullpakke",quantity:2}], "old-pack", 1), {mb:10,packs:[{key:"gullpakke",quantity:2}],tokens:1});
   assert.equal(core.slotAccepts("b4", "4-3-3", "LM"), true);
   assert.equal(core.slotAccepts("b2", "4-3-3", "RWB"), true);
   assert.equal(core.slotAccepts("b5", "4-3-3", "SA"), true);
