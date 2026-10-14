@@ -71,7 +71,9 @@ export function aiDraftTeam(pool: { normal: PoolCard[] }, target: number, usedNa
   const key = crypto.randomUUID().slice(0, 8);
   const formation = pick(formationNames) ?? "4-3-3";
   const used = new Set<string>();
-  const pickNear = (accepts: (position: string) => boolean, aim: number) => {
+  const pickNear = (accepts: (position: string) => boolean, base: number) => {
+    // Hver spiller siktes litt over eller under snittet, så lagene får både stjerner og svakere ledd.
+    const aim = base + Math.floor(Math.random() * 7) - 3;
     const fits = (card: PoolCard, spread: number) => !used.has(card.catalogId) && accepts(card.position) && Math.abs(card.overall - aim) <= spread;
     const card = pick(pool.normal.filter((entry) => fits(entry, 2))) ?? pick(pool.normal.filter((entry) => fits(entry, 5))) ?? pick(pool.normal.filter((entry) => fits(entry, 99)));
     if (card) used.add(card.catalogId);
@@ -89,8 +91,9 @@ export function aiDraftTeam(pool: { normal: PoolCard[] }, target: number, usedNa
   return { name, rating, team };
 }
 
-/** Motstanderne i solo blir bedre for hver runde, målt mot ditt eget lag. */
-const soloOffsets = [-6, -4, -2, 0, 2];
+/** Motstanderne i solo blir bedre for hver runde, målt mot ditt eget lag, med litt tilfeldig variasjon fra kamp til kamp. */
+const soloOffsets = [-4, -3, -1, 0, 2];
 export function soloOpponentRating(ownRating: number, round: number) {
-  return Math.max(55, Math.min(95, ownRating + (soloOffsets[round - 1] ?? 0)));
+  const variation = Math.floor(Math.random() * 7) - 3;
+  return Math.max(55, Math.min(95, ownRating + (soloOffsets[round - 1] ?? 0) + variation));
 }

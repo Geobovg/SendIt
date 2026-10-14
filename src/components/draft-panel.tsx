@@ -62,10 +62,10 @@ export function DraftPanel({ data, budget }: { data: DraftPageData; budget: numb
     </div>;
   }
   return <div className="grid gap-4">
-      <DraftWallet tokens={data.tokens} />
-    {last ? <LastResult draft={last} packNames={data.packNames} /> : null}
+    <DraftWallet tokens={data.tokens} />
+    <StartSoloDraft data={data} budget={budget} />
+    {last ? <LastResult draft={last} packNames={data.packNames} losses={countLosses(last.mode === "room" ? room?.fixtures ?? [] : data.fixtures, last)} /> : null}
     {last?.mode === "room" && room && room.status !== "cancelled" && room.fixtures.length ? <RoomBracket room={room} /> : null}
-    {last?.mode === "solo" && data.fixtures.length ? <SoloLadder fixtures={data.fixtures} wins={last.wins} active={false} /> : null}
     <DraftHome data={data} budget={budget} />
   </div>;
 }
@@ -156,10 +156,21 @@ function FriendsDraft({ data, budget, bringTeam = false }: { data: DraftPageData
       </section>);
 }
 
-function DraftHome({ data, budget }: { data: DraftPageData; budget: number }) {
+/** Kjøpsknappen for en ny solo-draft. Ligger øverst på startsiden, over forrige resultat. */
+function StartSoloDraft({ data, budget }: { data: DraftPageData; budget: number }) {
   const t = useT().draft;
   const [soloState, startSolo, startingSolo] = useActionState(startSoloDraftAction, initial);
   const short = budget < data.entryFee;
+  return <form action={startSolo} className="grid gap-2">
+    <button disabled={startingSolo || short} className={`${limeButton} py-3 text-lg`}>{startingSolo ? t.home.starting : t.home.startSolo(data.entryFee)}</button>
+    {data.tokens > 0 ? <button name="payment" value="token" disabled={startingSolo} className={ghostButton}>{t.tokens.start}</button> : null}
+    {short && data.tokens === 0 ? <p className="text-xs text-rose-300">{t.home.notEnough(data.entryFee)}</p> : null}
+    <ErrorText error={soloState.error} />
+  </form>;
+}
+
+function DraftHome({ data, budget }: { data: DraftPageData; budget: number }) {
+  const t = useT().draft;
   return <div className="grid gap-4">
     <section className="relative overflow-hidden rounded-2xl border border-lime-300/30 bg-[#08101b] p-5 sm:p-6" style={{ backgroundImage: "radial-gradient(circle at 85% 0%, rgba(152,255,44,.18), transparent 35%), radial-gradient(circle at 0% 100%, rgba(24,207,255,.14), transparent 35%)" }}>
       <p className="text-[10px] font-black tracking-[.28em] text-lime-300">{t.home.eyebrow}</p>
@@ -173,12 +184,6 @@ function DraftHome({ data, budget }: { data: DraftPageData; budget: number }) {
       <section className={`${panelClass} grid content-start gap-3`}>
         <div><p className="text-[10px] font-black tracking-widest text-white/45">{t.home.soloEyebrow}</p><h3 className="text-xl font-black">{t.home.soloTitle}</h3><p className="mt-1 text-sm text-white/65">{t.home.soloText}</p></div>
         <PrizeTable mode="solo" data={data} />
-        <form action={startSolo} className="grid gap-2">
-          <button disabled={startingSolo || short} className={`${limeButton} py-3 text-lg`}>{startingSolo ? t.home.starting : t.home.startSolo(data.entryFee)}</button>
-          {data.tokens > 0 ? <button name="payment" value="token" disabled={startingSolo} className={ghostButton}>{t.tokens.start}</button> : null}
-          {short && data.tokens === 0 ? <p className="text-xs text-rose-300">{t.home.notEnough(data.entryFee)}</p> : null}
-          <ErrorText error={soloState.error} />
-        </form>
       </section>
 
       <FriendsDraft data={data} budget={budget} />
@@ -197,7 +202,13 @@ function DraftHome({ data, budget }: { data: DraftPageData; budget: number }) {
   </div>;
 }
 
-function LastResult({ draft, packNames }: { draft: DraftView; packNames: Record<string, string> }) {
+/** Antall kamper dette laget har tapt, ut fra kampene som er spilt. */
+function countLosses(fixtures: DraftFixture[], draft: DraftView) {
+  if (draft.status === "champion") return 0;
+  return fixtures.filter((fixture) => fixture.mine && fixture.status === "completed" && (fixture.winner === "home" ? fixture.away?.mine : fixture.home?.mine)).length;
+}
+
+function LastResult({ draft, packNames, losses }: { draft: DraftView; packNames: Record<string, string>; losses: number }) {
   const t = useT().draft;
   const total = draft.mode === "solo" ? SOLO_ROUNDS : ROOM_ROUNDS;
   const champion = draft.status === "champion";
@@ -206,7 +217,7 @@ function LastResult({ draft, packNames }: { draft: DraftView; packNames: Record<
   return <section className={`relative overflow-hidden rounded-2xl border p-5 ${champion ? "border-lime-300/60 bg-lime-300/10" : "border-white/10 bg-slate-900/75"}`}>
     <p className="text-[10px] font-black tracking-[.28em] text-white/50">{t.result.eyebrow}</p>
     <h2 className="mt-1 text-2xl font-black">{champion ? t.result.champion : t.result.eliminated(roundName(t, draft.wins + 1, total))}</h2>
-    <p className="mt-1 text-white/70">{t.result.wins(draft.wins, total)}</p>
+    <p className="mt-1 text-white/70">{t.result.record}: <b className="font-black text-white">{draft.wins}–{losses}</b></p>
     <p className="mt-3 block w-fit max-w-full rounded-xl bg-black/30 px-3 py-2 text-sm font-black text-lime-300">{t.result.prize}: <RewardText reward={draft.reward} packNames={packNames} /></p>
     {draft.reward.packs.length ? <p className="mt-2 text-xs text-white/50">{t.result.packHint}</p> : null}
   </section>;
