@@ -54,6 +54,7 @@ export const draft: DraftDict = {
     champion: "Mestari! 🏆",
     eliminated: (round: string) => `Putosi: ${round.toLowerCase()}`,
     wins: (wins: number, total: number) => `${wins}/${total} ottelua voitettu`,
+    record: "Tulos",
     prize: "Palkinto",
     packHint: "Pakettisi odottavat Paketit-osiossa.",
   },

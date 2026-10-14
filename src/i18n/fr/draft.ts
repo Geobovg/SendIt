@@ -54,6 +54,7 @@ export const draft: DraftDict = {
     champion: "Champion ! 🏆",
     eliminated: (round: string) => `Éliminé : ${round.toLowerCase()}`,
     wins: (wins: number, total: number) => `${wins} match${wins === 1 ? "" : "s"} gagné${wins === 1 ? "" : "s"} sur ${total}`,
+    record: "Bilan",
     prize: "Récompense",
     packHint: "Tes packs sont disponibles sous Packs.",
   },
