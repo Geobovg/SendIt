@@ -20,7 +20,7 @@ function load(url) {
 }
 const core = load(new URL("../src/lib/draft-core.ts", import.meta.url));
 const { formations, formationNames, canPlayPosition } = load(new URL("../src/lib/lineup.ts", import.meta.url));
-const { drawOptions, aiDraftTeam } = load(new URL("../src/lib/draft-generation.ts", import.meta.url));
+const { drawOptions, aiDraftTeam, takenKeys, isTaken } = load(new URL("../src/lib/draft-generation.ts", import.meta.url));
 const positions = ["GK", "CB", "LB", "LWB", "RB", "RWB", "CDM", "CM", "CAM", "LW", "RW", "LM", "RM", "ST", "SA"];
 const normal = positions.flatMap((position) => Array.from({ length: 20 }, (_, index) => ({
   catalogId: `${position}-${index}`, name: `${position} ${index}`, position, overall: 75 + index,
@@ -69,6 +69,20 @@ try {
   assert.equal(core.slotAccepts("b4", "4-3-3", "LM"), true);
   assert.equal(core.slotAccepts("b2", "4-3-3", "RWB"), true);
   assert.equal(core.slotAccepts("b5", "4-3-3", "SA"), true);
+  // Samme spiller under to katalog-id-er (og med aksent i navnet) regnes som én spiller.
+  const twins = { normal: [
+    { catalogId: "a", name: "Vinícius Júnior", position: "LW", overall: 90, attributes: {}, special: null },
+    { catalogId: "b", name: "Vinicius Junior", position: "LW", overall: 89, attributes: {}, special: null },
+    { catalogId: "c", name: "Annen Spiller", position: "LW", overall: 80, attributes: {}, special: null },
+  ], special: [] };
+  const withTwin = takenKeys([twins.normal[0]]);
+  assert.equal(isTaken(withTwin, twins.normal[1]), true);
+  assert.equal(isTaken(withTwin, twins.normal[2]), false);
+  for (let run = 0; run < 50; run++) {
+    const names = drawOptions(twins, "captain", "4-3-3", new Set()).map((card) => card.catalogId);
+    assert.ok(!(names.includes("a") && names.includes("b")), "samme spiller to ganger i ett valg");
+    assert.deepEqual(drawOptions(twins, "captain", "4-3-3", withTwin).map((card) => card.catalogId), ["c"]);
+  }
   assert.deepEqual(drawOptions({normal: [], special: []}, "s0", "4-3-3", new Set()), []);
   assert.throws(() => aiDraftTeam({normal: []}, 85, new Set()), /eleven players/);
   assert.equal(core.draftTeamSnapshot("manager", "4-3-3", {}), null);

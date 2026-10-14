@@ -15,7 +15,7 @@ type Db = ReturnType<typeof supabaseAdmin>;
 // ---------------------------------------------------------------------------
 
 import { aiDraftTeam, soloOpponentRating, type DraftAiSide, type PoolCard } from "./draft-generation";
-export { aiDraftTeam, drawOptions, type DraftAiSide } from "./draft-generation";
+export { aiDraftTeam, drawOptions, isTaken, takenKeys, type DraftAiSide } from "./draft-generation";
 type CatalogRow = { id: string; slug: string; name: string; position: string; overall: number; club: string | null; league: string | null; nation: string | null; accent: string | null; attributes: Record<string, number> | null; active: boolean };
 type SpecialRow = { id: string; kind: string; catalog_id: string; overall: number; attributes: Record<string, number> | null };
 
