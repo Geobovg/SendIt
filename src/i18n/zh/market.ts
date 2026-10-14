@@ -36,7 +36,7 @@ const packDescriptions: Record<string, string> = {
   gull_spillere: "五张卡，保底至少一张 78 或以上。",
   premium_gull: "六张卡，保底至少两张 80 或以上。",
   sjeldne_spillere: "五张卡，全部 80 或以上，且至少一张 83+。每天最多 3 次。",
-  jumbo_premium_gull: "十二张卡，全部 79+，保底三张 80+ 和一张 83+。每天最多 3 次。",
+  jumbo_premium_gull: "八张卡，全部 79+，保底三张 80+ 和一张 83+。每天最多 3 次。",
 };
 
 export const market = {

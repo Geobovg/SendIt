@@ -36,7 +36,7 @@ const packDescriptions: Record<string, string> = {
   gull_spillere: "Fem kort, minst ett på 78 eller bättre garanterat.",
   premium_gull: "Sex kort, minst två på 80 eller bättre garanterade.",
   sjeldne_spillere: "Fem kort, alla på 80 eller bättre, och minst ett på 83+. Max 3 per dag.",
-  jumbo_premium_gull: "Tolv kort, alla 79+, tre på 80+ och ett på 83+ garanterade. Max 3 per dag.",
+  jumbo_premium_gull: "Åtta kort, alla 79+, tre på 80+ och ett på 83+ garanterade. Max 3 per dag.",
 };
 
 export const market = {
