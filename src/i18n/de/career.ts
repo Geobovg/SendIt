@@ -228,6 +228,8 @@ export const career = {
     listOnMarket: "Auf dem Transfermarkt anbieten",
     cancel: "Abbrechen",
   },
+  /** Telleren for kamper i denne perioden: spilt, tak og timer til neste nullstilling. */
+  quota: (used: number, max: number, hours: number) => `${used} von ${max} Managerspielen in diesem 6-Stunden-Zeitraum gespielt · wird in ca. ${hours} Std. zurückgesetzt`,
   errors: {
     bothNeedLineup: "Beide Manager benötigen 11 gültige Spieler in ihrer Startelf",
     onlyFriends: "Du kannst nur Freunde herausfordern",
@@ -235,8 +237,8 @@ export const career = {
     pickLineupFirst: "Wählen Sie eine XI aus, bevor Sie das Managerspiel annehmen",
     cannotStart: "Das Spiel kann nicht gestartet werden",
     hourlyFriendMatchLimit: (max: number) => `Du kannst innerhalb einer Stunde höchstens ${max} direkte Managerspiele gegen Freunde spielen.`,
-    participantDailyMatchLimit: (max: number) => `Ein Spieler hat das Limit von ${max} Managerspielen in den letzten 24 Stunden erreicht.`,
-    dailyMatchLimit: (max: number) => `Du hast in den letzten 24 Stunden ${max} Managerspiele gespielt. Geh mal Gras anfassen, Kumpel!`,
+    participantPeriodMatchLimit: (max: number) => `Ein Spieler hat das Limit von ${max} Managerspielen in diesem 6-Stunden-Zeitraum erreicht.`,
+    periodMatchLimit: (max: number) => `Du hast in diesem 6-Stunden-Zeitraum ${max} Managerspiele gespielt. Geh mal Gras anfassen, Kumpel!`,
     automatedPlay: "Spiele können nicht von ChatGPT oder anderen Bots gespielt werden. Spiel selbst!",
     matchNotFound: "Manager-Übereinstimmung nicht gefunden",
     notFinished: "Das Spiel ist noch nicht vorbei",

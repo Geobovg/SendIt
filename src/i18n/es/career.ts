@@ -228,6 +228,8 @@ export const career = {
     listOnMarket: "Poner en el mercado",
     cancel: "Cancelar",
   },
+  /** Telleren for kamper i denne perioden: spilt, tak og timer til neste nullstilling. */
+  quota: (used: number, max: number, hours: number) => `${used} de ${max} partidos de mánager jugados en este período de 6 horas · se reinicia en unas ${hours} h`,
   errors: {
     bothNeedLineup: "Ambos entrenadores necesitan 11 jugadores válidos en su once inicial",
     onlyFriends: "Sólo puedes desafiar a tus amigos.",
@@ -235,8 +237,8 @@ export const career = {
     pickLineupFirst: "Elige un XI antes de aceptar el partido de entrenador",
     cannotStart: "El partido no se puede iniciar.",
     hourlyFriendMatchLimit: (max: number) => `Puedes jugar como máximo ${max} partidos de mánager directos contra amigos en una hora.`,
-    participantDailyMatchLimit: (max: number) => `Un jugador ha alcanzado el límite de ${max} partidos de mánager en las últimas 24 horas.`,
-    dailyMatchLimit: (max: number) => `Has jugado ${max} partidos de mánager en las últimas 24 horas. ¡Ve a tocar césped, amigo!`,
+    participantPeriodMatchLimit: (max: number) => `Un jugador ha alcanzado el límite de ${max} partidos de mánager en este período de 6 horas.`,
+    periodMatchLimit: (max: number) => `Has jugado ${max} partidos de mánager en este período de 6 horas. ¡Ve a tocar césped, amigo!`,
     automatedPlay: "Los partidos no se pueden jugar con ChatGPT ni otros bots. ¡Juega tú!",
     matchNotFound: "No se encontró coincidencia de administrador",
     notFinished: "El partido aún no ha terminado.",
