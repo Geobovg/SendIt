@@ -39,9 +39,12 @@ export type ManagerTeamSnapshot = {
  * `ratingWeight` forsterker hvor mye ratingforskjellen betyr i åpent spill (1 når den mangler).
  * Vennesesongkamper får en høyere vekt, så det beste laget oftere vinner.
  */
-export type ManagerKickoffEvent = { type: "kickoff"; version: 1 | 2 | 3 | 4 | 5 | 6 | 7; home: ManagerTeamSnapshot; away: ManagerTeamSnapshot; knockout?: boolean; ratingWeight?: number };
+export type ManagerKickoffEvent = { type: "kickoff"; version: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8; home: ManagerTeamSnapshot; away: ManagerTeamSnapshot; knockout?: boolean; ratingWeight?: number };
 /**
- * Kamper som startes nå får versjon 7: som versjon 6, men med kjemi (se chemistry.ts). Hver spiller på banen får
+ * Kamper som startes nå får versjon 8: som versjon 7, men en AI-klubb får ingen store sjanser mot en manager –
+ * de stoppet bare kampen uten at noen hadde noe å velge. Straffer står som før, for da står keeperen i mål.
+ *
+ * Versjon 7: som versjon 6, men med kjemi (se chemistry.ts). Hver spiller på banen får
  * 0–3 kjemipoeng ut fra hvor mange på laget som deler klubb, liga og nasjon, og hvert poeng er +1 effektiv rating i
  * kampmotoren. Kjemien regnes ut på nytt hvert minutt for dem som står på banen, så bytter og utvisninger merkes.
  * Eldre kamper beholder modellen de ble startet med.
@@ -52,7 +55,7 @@ export type ManagerKickoffEvent = { type: "kickoff"; version: 1 | 2 | 3 | 4 | 5 
  * AI-klubbene bytter selv. Versjon 5 hadde ingen bytter; eldre kamper beholder klokka og modellen
  * de ble startet med.
  */
-export const MANAGER_KICKOFF_VERSION = 7;
+export const MANAGER_KICKOFF_VERSION = 8;
 export type MatchSide = "home" | "away";
 export type ManagerSubstitutionEvent = { type: "substitution"; side: MatchSide; outId: string; inId: string; minute: number };
 /** En manager er ferdig med byttevinduet – enten fordi han trykket «Ferdig», eller fordi alle tre byttene er brukt. */
@@ -249,7 +252,7 @@ export function getManagerKickoff(events: unknown): ManagerKickoffEvent | null {
   const kickoff = events.find((event) => event && typeof event === "object" && (event as { type?: unknown }).type === "kickoff") as Record<string, unknown> | undefined;
   if (!kickoff) return null;
   // Eldre kamper ligger lagret som versjon 1 og 2, uten katalogdata og skuddstat.
-  const known = kickoff.version === 1 || kickoff.version === 2 || kickoff.version === 3 || kickoff.version === 4 || kickoff.version === 5 || kickoff.version === 6 || kickoff.version === 7;
+  const known = kickoff.version === 1 || kickoff.version === 2 || kickoff.version === 3 || kickoff.version === 4 || kickoff.version === 5 || kickoff.version === 6 || kickoff.version === 7 || kickoff.version === 8;
   return known && isTeam(kickoff.home) && isTeam(kickoff.away) ? (kickoff as ManagerKickoffEvent) : null;
 }
 
@@ -809,6 +812,8 @@ function simulateMatch(matchId: string, kickoff: ManagerKickoffEvent, substituti
     const kind = shotSlots.get(minute);
     if (kind) {
       const side = shotSide(matchId, minute);
+      // Fra versjon 8 stoppes ikke kampen for en stor sjanse ingen av managerne skal skyte: ligger den hos en AI-klubb, er det bare å se på.
+      if (kickoff.version >= 8 && kind === "chance" && isAiTeam(kickoff[side])) continue;
       const players = active[side].filter((player) => player.position !== "GK");
       // Straffen tas alltid av den beste avslutteren på banen; en stor sjanse faller på den som er der.
       const taker = kind === "penalty"
