@@ -237,6 +237,7 @@ export function PackStore({ packs, freePacks, budget, shop }: { packs: ManagerPa
 
     <div className="flex flex-wrap gap-x-5 gap-y-1">
       <Link href="/managerkarriere/informs" className="text-xs font-black tracking-wide underline-offset-4 hover:underline" style={{ color: specialStyles.inform.border }}>{tp.allInforms} →</Link>
+      <Link href="/managerkarriere/icons" className="text-xs font-black tracking-wide underline-offset-4 hover:underline" style={{ color: specialStyles.icon.glow }}>{tp.allIcons} →</Link>
       <Link href="/managerkarriere/honorable" className="text-xs font-black tracking-wide underline-offset-4 hover:underline" style={{ color: specialStyles.honorable.glow }}>{tp.allHonorable} →</Link>
     </div>
 
