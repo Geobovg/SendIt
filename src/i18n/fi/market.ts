@@ -38,7 +38,7 @@ const packDescriptions: Record<string, string> = {
   premium_gull: "Kuusi korttia, vähintään kaksi 80 tai parempaa taattu.",
   sjeldne_spillere: "Viisi korttia, kaikki 80 tai parempia, ja vähintään yksi 83+. Enintään 3 päivässä.",
   jumbo_premium_gull: "Kahdeksan korttia, kaikki 79+, kolme 80+ ja yksi 83+ taattu. Enintään 3 päivässä.",
-  skadoosh_dude: "Viisitoista korttia, kaikki 80+, yksi 88+, kaksi 86+ ja neljä 84+ taattu.",
+  skadoosh_dude: "Viisitoista korttia, kaikki 80+, yksi 88+, kaksi 86+ ja neljä 84+ taattu. Enintään 1 päivässä.",
 };
 
 export const market = {

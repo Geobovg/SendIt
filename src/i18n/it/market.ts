@@ -38,7 +38,7 @@ const packDescriptions: Record<string, string> = {
   premium_gull: "Sei carte, con almeno due da 80 o più garantite.",
   sjeldne_spillere: "Cinque carte, tutte da 80 o più, e almeno una 83+. Max 3 al giorno.",
   jumbo_premium_gull: "Otto carte, tutte 79+, con tre 80+ e una 83+ garantite. Max 3 al giorno.",
-  skadoosh_dude: "Quindici carte, tutte 80+, con una 88+, due 86+ e quattro 84+ garantite.",
+  skadoosh_dude: "Quindici carte, tutte 80+, con una 88+, due 86+ e quattro 84+ garantite. Max 1 al giorno.",
 };
 
 export const market = {
