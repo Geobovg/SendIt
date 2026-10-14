@@ -24,10 +24,10 @@ export type Arena = {
 
 export const arenas: Arena[] = [
   { number: 1, name: "Gamle Gress", colors: { primary: "#98ff2c", glow: "rgba(152,255,44,.18)", base: "#07111a" }, rating: { bottom: 58, top: 84 }, offsets: [-2, -1, 0, 1, 5], bonus: 0, factor: 1, informFactor: 1 },
-  { number: 2, name: "Ullevaal", colors: { primary: "#ff4d5e", glow: "rgba(255,77,94,.2)", base: "#140a10" }, rating: { bottom: 80, top: 85 }, offsets: [-2, -1, 0, 1, 3], bonus: 1, factor: 1.5, informFactor: 1.05 },
-  { number: 3, name: "Wembley Stadium", colors: { primary: "#5cc8ff", glow: "rgba(92,200,255,.2)", base: "#07101c" }, rating: { bottom: 83, top: 87 }, offsets: [-1, 0, 0, 1, 2], bonus: 2, factor: 2, informFactor: 1.1 },
-  { number: 4, name: "Old Trafford", colors: { primary: "#ff2b2b", glow: "rgba(255,43,43,.22)", base: "#160707" }, rating: { bottom: 85, top: 90 }, offsets: [-1, 0, 1, 1, 2], bonus: 2, factor: 2.5, informFactor: 1.15 },
-  { number: 5, name: "Camp Nou", colors: { primary: "#f2c94c", glow: "rgba(242,201,76,.22)", base: "#0b0a1c" }, rating: { bottom: 88, top: 93 }, offsets: [0, 0, 1, 1, 2], bonus: 3, factor: 3, informFactor: 1.25 },
+  { number: 2, name: "Ullevaal", colors: { primary: "#ff4d5e", glow: "rgba(255,77,94,.2)", base: "#140a10" }, rating: { bottom: 80, top: 85 }, offsets: [-2, -1, 0, 1, 3], bonus: 0, factor: 1.5, informFactor: 1.05 },
+  { number: 3, name: "Wembley Stadium", colors: { primary: "#5cc8ff", glow: "rgba(92,200,255,.2)", base: "#07101c" }, rating: { bottom: 82, top: 87 }, offsets: [-1, 0, 0, 1, 2], bonus: 1, factor: 2, informFactor: 1.1 },
+  { number: 4, name: "Old Trafford", colors: { primary: "#ff2b2b", glow: "rgba(255,43,43,.22)", base: "#160707" }, rating: { bottom: 84, top: 89 }, offsets: [-1, 0, 1, 1, 2], bonus: 1, factor: 2.5, informFactor: 1.15 },
+  { number: 5, name: "Camp Nou", colors: { primary: "#f2c94c", glow: "rgba(242,201,76,.22)", base: "#0b0a1c" }, rating: { bottom: 85, top: 90 }, offsets: [0, 0, 1, 1, 2], bonus: 2, factor: 3, informFactor: 1.25 },
 ];
 
 export const lastArena = arenas.length as ArenaNumber;
