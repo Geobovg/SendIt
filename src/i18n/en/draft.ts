@@ -1,5 +1,13 @@
 // Draft in manager career: draft a team from the whole catalogue and play a knockout tournament.
 export const draft = {
+  tokens: {
+    balance: (count: number) => `Draft tokens: ${count}`,
+    hint: "One token gives one free solo or friends entry. Tokens do not expire.",
+    reward: (count: number) => `${count} draft ${count === 1 ? "token" : "tokens"}`,
+    start: "Start with token",
+    join: "Join with token",
+    create: "Create with token",
+  },
   hub: {
     eyebrow: "DRAFT",
     title: "Draft a team, win the tournament",
@@ -26,6 +34,8 @@ export const draft = {
     createRoom: (fee: number) => `Create and invite · ${fee} MB`,
     creating: "Creating …",
     roomHint: (size: number) => `Up to ${size} managers. Everyone pays the entry when they join, and gets it back if the tournament is cancelled before it starts.`,
+    randomPrizes: "One of these prize combinations is drawn when your draft ends. More wins give better packs.",
+    minimumValue: (value: number) => `Value at least ${value} MB`,
     prizes: "PRIZES",
     prizeWins: (wins: number, max: number) => wins === max ? `${wins} wins – champion` : `${wins} ${wins === 1 ? "win" : "wins"}`,
     invitesTitle: "INVITES",
@@ -43,7 +53,7 @@ export const draft = {
     eliminated: (round: string) => `Knocked out in the ${round.toLowerCase()}`,
     wins: (wins: number, total: number) => `${wins} of ${total} matches won`,
     prize: "Prize",
-    packHint: "The pack is waiting under Packs.",
+    packHint: "Your packs are waiting under Packs.",
   },
   rounds: {
     final: "Final",
@@ -114,6 +124,9 @@ export const draft = {
     friendMatchHint: "Either of you can start the match. Shots and substitutions are picked automatically if you're not watching.",
   },
   errors: {
+    noTokens: "You have no draft tokens.",
+    invalidResult: "Invalid draft result.",
+    noRewards: "No draft prizes found.",
     busy: "Something else changed the draft at the same time. Try again.",
     notDrafting: "You don't have a draft in progress.",
     invalidFormation: "Unknown formation.",

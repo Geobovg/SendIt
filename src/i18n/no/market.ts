@@ -3,6 +3,11 @@ import type { MarketDict } from "../en/market";
 // Pakkenavn og -beskrivelser ligger på norsk i databasen (manager_packs). De oversettes her ut fra
 // pakkenøkkelen, og ukjente nøkler faller tilbake til teksten fra databasen.
 const packNames: Record<string, string> = {
+  draft_bronze: "Draft bronsepakke",
+  draft_silver: "Draft sølvpakke",
+  draft_elite: "Draft elitepakke",
+  draft_champion: "Draft mesterpakke",
+
   bronse: "Bronsepakke",
   solv: "Sølvpakke",
   gull: "Gullpakke",
@@ -18,6 +23,11 @@ const packNames: Record<string, string> = {
 };
 
 const packDescriptions: Record<string, string> = {
+  draft_bronze: "To vanlige kort på 40–74. Kun draftpremie.",
+  draft_silver: "Tre kort på 50–79, garantert ett på 70+. Kun draftpremie.",
+  draft_elite: "Seks kort på 80+, garantert to på 84+. Kun draftpremie.",
+  draft_champion: "Ti kort på 80+, garantert ett på 86+ og to på 84+. Kun draftpremie.",
+
   bronse: "Tre kort. Mest vanlige spillere, men alt kan skje.",
   solv: "Fem kort, garantert minst ett på 80 eller bedre.",
   gull: "Åtte kort, garantert minst ett på 83 eller bedre.",

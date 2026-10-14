@@ -2,6 +2,14 @@ import type { DraftDict } from "../en/draft";
 
 // Draft en carrière manager : draftez une équipe dans tout le catalogue et jouez un tournoi à élimination directe.
 export const draft: DraftDict = {
+  tokens: {
+    balance: (count: number) => `Jetons draft : ${count}`,
+    hint: "Un jeton offre une entrée gratuite en solo ou entre amis. Les jetons n'expirent pas.",
+    reward: (count: number) => `${count} jeton${count === 1 ? "" : "s"} draft`,
+    start: "Démarrer avec un jeton",
+    join: "Rejoindre avec un jeton",
+    create: "Créer avec un jeton",
+  },
   hub: {
     eyebrow: "DRAFT",
     title: "Drafte une équipe, gagne le tournoi",
@@ -28,6 +36,8 @@ export const draft: DraftDict = {
     createRoom: (fee: number) => `Créer et inviter · ${fee} MB`,
     creating: "Création …",
     roomHint: (size: number) => `Jusqu'à ${size} managers. Chacun paie l'entrée en rejoignant et la récupère si le tournoi est annulé avant de commencer.`,
+    randomPrizes: "À la fin du draft, une de ces combinaisons est tirée au sort. Plus de victoires donnent de meilleurs packs.",
+    minimumValue: (value: number) => `Valeur minimale : ${value} MB`,
     prizes: "RÉCOMPENSES",
     prizeWins: (wins: number, max: number) => wins === max ? `${wins} victoires – champion` : `${wins} ${wins === 1 ? "victoire" : "victoires"}`,
     invitesTitle: "INVITATIONS",
@@ -45,7 +55,7 @@ export const draft: DraftDict = {
     eliminated: (round: string) => `Éliminé : ${round.toLowerCase()}`,
     wins: (wins: number, total: number) => `${wins} match${wins === 1 ? "" : "s"} gagné${wins === 1 ? "" : "s"} sur ${total}`,
     prize: "Récompense",
-    packHint: "Le pack t'attend dans Packs.",
+    packHint: "Tes packs sont disponibles sous Packs.",
   },
   rounds: {
     final: "Finale",
@@ -116,6 +126,9 @@ export const draft: DraftDict = {
     friendMatchHint: "L'un ou l'autre peut lancer le match. Les tirs et les remplacements sont choisis automatiquement si tu ne regardes pas.",
   },
   errors: {
+    noTokens: "Tu n'as aucun jeton draft.",
+    invalidResult: "Résultat de draft invalide.",
+    noRewards: "Aucune récompense draft trouvée.",
     busy: "Une autre action a modifié le draft en même temps. Réessaie.",
     notDrafting: "Tu n'as pas de draft en cours.",
     invalidFormation: "Formation inconnue.",

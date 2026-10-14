@@ -2,6 +2,14 @@ import type { DraftDict } from "../en/draft";
 
 // Draft i managerkarriären: drafta ett lag från hela katalogen och spela en utslagsturnering.
 export const draft: DraftDict = {
+  tokens: {
+    balance: (count: number) => `Draft tokens: ${count}`,
+    hint: "En token ger ett gratis inträde solo eller med vänner. Tokens går inte ut.",
+    reward: (count: number) => `${count} draft ${count === 1 ? "token" : "tokens"}`,
+    start: "Starta med token",
+    join: "Gå med med token",
+    create: "Skapa med token",
+  },
   hub: {
     eyebrow: "DRAFT",
     title: "Drafta ett lag, vinn turneringen",
@@ -28,6 +36,8 @@ export const draft: DraftDict = {
     createRoom: (fee: number) => `Skapa och bjud in · ${fee} MB`,
     creating: "Skapar …",
     roomHint: (size: number) => `Upp till ${size} managers. Alla betalar insatsen när de går med och får tillbaka den om turneringen ställs in innan den startar.`,
+    randomPrizes: "När draften avslutas lottas en av dessa priskombinationer. Fler vinster ger bättre paket.",
+    minimumValue: (value: number) => `Värde minst ${value} MB`,
     prizes: "PRISER",
     prizeWins: (wins: number, max: number) => wins === max ? `${wins} vinster – mästare` : `${wins} ${wins === 1 ? "vinst" : "vinster"}`,
     invitesTitle: "INBJUDNINGAR",
@@ -45,7 +55,7 @@ export const draft: DraftDict = {
     eliminated: (round: string) => `Utslagen i ${round.toLowerCase()}`,
     wins: (wins: number, total: number) => `${wins} av ${total} matcher vunna`,
     prize: "Pris",
-    packHint: "Paketet väntar under Förpackningar.",
+    packHint: "Dina paket finns under Paket.",
   },
   rounds: {
     final: "Final",
@@ -116,6 +126,9 @@ export const draft: DraftDict = {
     friendMatchHint: "Vem som helst av er kan starta matchen. Skott och byten väljs automatiskt om du inte tittar.",
   },
   errors: {
+    noTokens: "Du har inga draft tokens.",
+    invalidResult: "Ogiltigt draftresultat.",
+    noRewards: "Inga draftpriser hittades.",
     busy: "Något annat ändrade draften samtidigt. Försök igen.",
     notDrafting: "Du har ingen pågående draft.",
     invalidFormation: "Okänd formation.",

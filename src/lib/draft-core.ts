@@ -14,23 +14,14 @@ export const ROOM_SIZE = 8;
 export const DRAFT_RATING_WEIGHT = 2;
 export const OPTIONS_PER_PICK = 5;
 
-/** Premien etter antall seire, indeksert på seire. Holdes lik draft_prize() i databasen. */
-export const DRAFT_PRIZES: Record<"solo" | "room", { mb: number; pack: string | null }[]> = {
-  solo: [
-    { mb: 15, pack: null },
-    { mb: 30, pack: null },
-    { mb: 50, pack: null },
-    { mb: 75, pack: "gullpakke" },
-    { mb: 110, pack: "premium_gull" },
-    { mb: 175, pack: "sjeldne_spillere" },
-  ],
-  room: [
-    { mb: 15, pack: null },
-    { mb: 40, pack: null },
-    { mb: 80, pack: "gullpakke" },
-    { mb: 150, pack: "premium_gull" },
-  ],
-};
+export type DraftRewardPack = { key: string; quantity: number };
+export type DraftReward = { mb: number; packs: DraftRewardPack[]; tokens: number };
+export type DraftRewardOption = DraftReward & { id: string; mode: "solo" | "room"; wins: number; value: number };
+
+/** Gamle drafts med én pakke beholdes, nye bruker hele kombinasjonen. */
+export function draftReward(mb: number | null, packs: DraftRewardPack[] | null, legacyPack: string | null, tokens: number): DraftReward {
+  return { mb: mb ?? 0, packs: packs ?? (legacyPack ? [{ key: legacyPack, quantity: 1 }] : []), tokens };
+}
 
 export type DraftPlayer = ManagerPlayerSnapshot & { catalogId: string; attributes: Record<string, number>; special: SpecialKind | null };
 export type DraftStatus = "drafting" | "active" | "eliminated" | "champion" | "cancelled";
@@ -91,9 +82,4 @@ export function draftTeamSnapshot(userId: string, formationValue: string | null,
   if (starters.some((player) => !player)) return null;
   const bench = BENCH_KEYS.map((key) => players[key]).filter((player): player is DraftPlayer => Boolean(player));
   return { userId, formation, starters: starters.map(toSnapshot), bench: bench.map(toSnapshot) };
-}
-
-export function prizeFor(mode: "solo" | "room", wins: number) {
-  const table = DRAFT_PRIZES[mode];
-  return table[Math.max(0, Math.min(wins, table.length - 1))];
 }

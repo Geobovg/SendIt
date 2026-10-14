@@ -2,6 +2,14 @@ import type { DraftDict } from "../en/draft";
 
 // الدرافت في مسيرة المدرب: اختر فريقًا من الكتالوج كاملًا والعب بطولة بنظام خروج المغلوب.
 export const draft: DraftDict = {
+  tokens: {
+    balance: (count: number) => `رموز الدرافت: ${count}`,
+    hint: "يمنح الرمز دخولاً مجانياً فردياً أو مع الأصدقاء. الرموز لا تنتهي صلاحيتها.",
+    reward: (count: number) => `${count} رمز درافت`,
+    start: "ابدأ برمز",
+    join: "انضم برمز",
+    create: "أنشئ برمز",
+  },
   hub: {
     eyebrow: "درافت",
     title: "اختر فريقك واربح البطولة",
@@ -28,6 +36,8 @@ export const draft: DraftDict = {
     createRoom: (fee: number) => `إنشاء ودعوة · ${fee} MB`,
     creating: "جارٍ الإنشاء …",
     roomHint: (size: number) => `حتى ${size} مدربين. يدفع الجميع رسوم الاشتراك عند الانضمام، وتُسترد إذا أُلغيت البطولة قبل بدايتها.`,
+    randomPrizes: "عند انتهاء الدرافت تُسحب إحدى هذه الجوائز. المزيد من الانتصارات يمنح حزماً أفضل.",
+    minimumValue: (value: number) => `قيمة لا تقل عن ${value} MB`,
     prizes: "الجوائز",
     prizeWins: (wins: number, max: number) => wins === max ? `${wins} انتصارات – بطل` : `${wins} ${wins === 1 ? "انتصار" : "انتصارات"}`,
     invitesTitle: "الدعوات",
@@ -45,7 +55,7 @@ export const draft: DraftDict = {
     eliminated: (round: string) => `خرجت في ${round.toLowerCase()}`,
     wins: (wins: number, total: number) => `فزت في ${wins} من ${total} مباريات`,
     prize: "الجائزة",
-    packHint: "الحزمة بانتظارك في قسم حزم.",
+    packHint: "حزمك متاحة في قسم الحزم.",
   },
   rounds: {
     final: "النهائي",
@@ -116,6 +126,9 @@ export const draft: DraftDict = {
     friendMatchHint: "يمكن لأي منكما بدء المباراة. تُختار التسديدات والتبديلات تلقائيًا إذا لم تكن تشاهد.",
   },
   errors: {
+    noTokens: "ليس لديك رموز درافت.",
+    invalidResult: "نتيجة درافت غير صالحة.",
+    noRewards: "لم يتم العثور على جوائز درافت.",
     busy: "شيء آخر غيّر الدرافت في الوقت نفسه. حاول مرة أخرى.",
     notDrafting: "ليس لديك درافت جارٍ.",
     invalidFormation: "تشكيلة غير معروفة.",

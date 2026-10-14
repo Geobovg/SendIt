@@ -1,5 +1,10 @@
 // Pakkene lagres med norske navn i databasen, så de engelske navnene slås opp på pakkenøkkelen.
 const packNames: Record<string, string> = {
+  draft_bronze: "Pack bronze draft",
+  draft_silver: "Pack argent draft",
+  draft_elite: "Pack élite draft",
+  draft_champion: "Pack champion draft",
+
   bronse: "Pack Bronze",
   solv: "Pack Argent",
   gull: "Pack Or",
@@ -15,6 +20,11 @@ const packNames: Record<string, string> = {
 };
 
 const packDescriptions: Record<string, string> = {
+  draft_bronze: "Deux cartes ordinaires 40–74. Récompense draft uniquement.",
+  draft_silver: "Trois cartes 50–79, dont une 70+ garantie. Récompense draft uniquement.",
+  draft_elite: "Six cartes 80+, dont deux 84+ garanties. Récompense draft uniquement.",
+  draft_champion: "Dix cartes 80+, dont une 86+ et deux 84+ garanties. Récompense draft uniquement.",
+
   bronse: "Trois cartes. Surtout des habitués, mais tout peut arriver.",
   solv: "Cinq cartes, avec au moins une garantie de 80 ou mieux.",
   gull: "Huit cartes, avec au moins une garantie de 83 ou mieux.",

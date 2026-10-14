@@ -2,6 +2,14 @@ import type { DraftDict } from "../en/draft";
 
 // Draft i managerkarrieren: drafte et lag fra hele katalogen og spille en utslagsturnering.
 export const draft: DraftDict = {
+  tokens: {
+    balance: (count: number) => `Draft tokens: ${count}`,
+    hint: "Ett token gir én gratis inngang i solo eller med venner. Tokens utløper ikke.",
+    reward: (count: number) => `${count} draft ${count === 1 ? "token" : "tokens"}`,
+    start: "Start med token",
+    join: "Bli med med token",
+    create: "Opprett med token",
+  },
   hub: {
     eyebrow: "DRAFT",
     title: "Draft et lag, vinn turneringen",
@@ -28,6 +36,8 @@ export const draft: DraftDict = {
     createRoom: (fee: number) => `Opprett og inviter · ${fee} MB`,
     creating: "Oppretter …",
     roomHint: (size: number) => `Opptil ${size} managere. Alle betaler innsatsen når de blir med, og får den tilbake hvis turneringen avlyses før den starter.`,
+    randomPrizes: "Når draften avsluttes, trekkes én av disse premiekombinasjonene. Flere seire gir bedre pakker.",
+    minimumValue: (value: number) => `Verdi minst ${value} MB`,
     prizes: "PREMIER",
     prizeWins: (wins: number, max: number) => wins === max ? `${wins} seire – mester` : `${wins} ${wins === 1 ? "seier" : "seire"}`,
     invitesTitle: "INVITASJONER",
@@ -45,7 +55,7 @@ export const draft: DraftDict = {
     eliminated: (round: string) => `Ute i ${round.toLowerCase()}`,
     wins: (wins: number, total: number) => `${wins} av ${total} kamper vunnet`,
     prize: "Premie",
-    packHint: "Pakken venter under Pakker.",
+    packHint: "Pakkene dine ligger under Pakker.",
   },
   rounds: {
     final: "Finale",
@@ -116,6 +126,9 @@ export const draft: DraftDict = {
     friendMatchHint: "Begge kan starte kampen. Skudd og bytter velges automatisk hvis du ikke følger med.",
   },
   errors: {
+    noTokens: "Du har ingen draft tokens.",
+    invalidResult: "Ugyldig draftresultat.",
+    noRewards: "Fant ingen draftpremier.",
     busy: "Noe annet endret draften samtidig. Prøv igjen.",
     notDrafting: "Du har ingen draft på gang.",
     invalidFormation: "Ukjent formasjon.",

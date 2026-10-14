@@ -2,6 +2,14 @@ import type { DraftDict } from "../en/draft";
 
 // Draft nella carriera allenatore: scegli una squadra da tutto il catalogo e gioca un torneo a eliminazione diretta.
 export const draft: DraftDict = {
+  tokens: {
+    balance: (count: number) => `Gettoni draft: ${count}`,
+    hint: "Un gettone dà un ingresso gratuito in solo o con amici. I gettoni non scadono.",
+    reward: (count: number) => `${count} ${count === 1 ? "gettone" : "gettoni"} draft`,
+    start: "Inizia con gettone",
+    join: "Partecipa con gettone",
+    create: "Crea con gettone",
+  },
   hub: {
     eyebrow: "DRAFT",
     title: "Fai il draft, vinci il torneo",
@@ -28,6 +36,8 @@ export const draft: DraftDict = {
     createRoom: (fee: number) => `Crea e invita · ${fee} MB`,
     creating: "Creazione …",
     roomHint: (size: number) => `Fino a ${size} allenatori. Tutti pagano l'iscrizione quando entrano e la riavranno se il torneo viene annullato prima di iniziare.`,
+    randomPrizes: "Alla fine viene estratta una di queste combinazioni. Più vittorie danno pacchetti migliori.",
+    minimumValue: (value: number) => `Valore minimo ${value} MB`,
     prizes: "PREMI",
     prizeWins: (wins: number, max: number) => wins === max ? `${wins} vittorie – campione` : `${wins} ${wins === 1 ? "vittoria" : "vittorie"}`,
     invitesTitle: "INVITI",
@@ -45,7 +55,7 @@ export const draft: DraftDict = {
     eliminated: (round: string) => `Eliminato: ${round.toLowerCase()}`,
     wins: (wins: number, total: number) => `${wins} partite vinte su ${total}`,
     prize: "Premio",
-    packHint: "Il pacchetto ti aspetta in Confezioni.",
+    packHint: "I tuoi pacchetti sono nella sezione Pacchetti.",
   },
   rounds: {
     final: "Finale",
@@ -116,6 +126,9 @@ export const draft: DraftDict = {
     friendMatchHint: "Uno qualsiasi di voi può avviare la partita. Tiri e sostituzioni vengono scelti automaticamente se non stai guardando.",
   },
   errors: {
+    noTokens: "Non hai gettoni draft.",
+    invalidResult: "Risultato draft non valido.",
+    noRewards: "Nessun premio draft trovato.",
     busy: "Qualcos'altro ha modificato il draft nello stesso momento. Riprova.",
     notDrafting: "Non hai un draft in corso.",
     invalidFormation: "Modulo sconosciuto.",

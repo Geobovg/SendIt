@@ -2,6 +2,14 @@ import type { DraftDict } from "../en/draft";
 
 // Draft in der Managerkarriere: ein Team aus dem gesamten Katalog draften und ein K.-o.-Turnier spielen.
 export const draft: DraftDict = {
+  tokens: {
+    balance: (count: number) => `Draft-Token: ${count}`,
+    hint: "Ein Token gibt einen kostenlosen Eintritt solo oder mit Freunden. Token verfallen nicht.",
+    reward: (count: number) => `${count} Draft-Token`,
+    start: "Mit Token starten",
+    join: "Mit Token beitreten",
+    create: "Mit Token erstellen",
+  },
   hub: {
     eyebrow: "DRAFT",
     title: "Team draften, Turnier gewinnen",
@@ -28,6 +36,8 @@ export const draft: DraftDict = {
     createRoom: (fee: number) => `Erstellen und einladen · ${fee} MB`,
     creating: "Wird erstellt …",
     roomHint: (size: number) => `Bis zu ${size} Manager. Alle zahlen die Startgebühr beim Beitritt und bekommen sie zurück, wenn das Turnier vor dem Start abgesagt wird.`,
+    randomPrizes: "Am Ende wird eine dieser Belohnungskombinationen ausgelost. Mehr Siege bringen bessere Packs.",
+    minimumValue: (value: number) => `Wert mindestens ${value} MB`,
     prizes: "BELOHNUNGEN",
     prizeWins: (wins: number, max: number) => wins === max ? `${wins} Siege – Champion` : `${wins} ${wins === 1 ? "Sieg" : "Siege"}`,
     invitesTitle: "EINLADUNGEN",
@@ -45,7 +55,7 @@ export const draft: DraftDict = {
     eliminated: (round: string) => `Ausgeschieden: ${round}`,
     wins: (wins: number, total: number) => `${wins} von ${total} Spielen gewonnen`,
     prize: "Belohnung",
-    packHint: "Das Pack wartet unter Packungen.",
+    packHint: "Deine Packs warten unter Packs.",
   },
   rounds: {
     final: "Finale",
@@ -116,6 +126,9 @@ export const draft: DraftDict = {
     friendMatchHint: "Jeder von euch kann das Spiel starten. Schüsse und Wechsel werden automatisch gewählt, wenn du nicht zuschaust.",
   },
   errors: {
+    noTokens: "Du hast keine Draft-Token.",
+    invalidResult: "Ungültiges Draft-Ergebnis.",
+    noRewards: "Keine Draft-Belohnungen gefunden.",
     busy: "Etwas anderes hat den Draft gleichzeitig geändert. Versuche es erneut.",
     notDrafting: "Du hast keinen laufenden Draft.",
     invalidFormation: "Unbekannte Formation.",

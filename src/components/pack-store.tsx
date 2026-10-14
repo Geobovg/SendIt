@@ -256,7 +256,7 @@ export function PackStore({ packs, freePacks, budget, shop }: { packs: ManagerPa
             {dailyLeft !== null ? <p className="mt-1 text-xs font-bold">{tp.dailyLeft(dailyLeft, pack.daily_limit ?? 0)}</p> : null}
             {leftToday !== null ? <p className={`mt-1 text-xs font-bold ${leftToday ? "" : "text-danger"}`}>{tp.purchasesLeftToday(leftToday, pack.daily_purchase_limit ?? 0)}</p> : null}
           </div>
-          {pack.purchasable || dailyLeft !== null ? <button type="button" className="justify-self-start text-xs underline" onClick={() => setOpenOdds((current) => current === pack.key ? null : pack.key)} aria-expanded={openOdds === pack.key}>
+          {pack.purchasable || dailyLeft !== null || free > 0 ? <button type="button" className="justify-self-start text-xs underline" onClick={() => setOpenOdds((current) => current === pack.key ? null : pack.key)} aria-expanded={openOdds === pack.key}>
             {openOdds === pack.key ? tp.hideOdds : tp.showOdds}
           </button> : null}
           {openOdds === pack.key ? <div className="grid gap-2 rounded-lg border border-border p-3">

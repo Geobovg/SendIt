@@ -1,5 +1,10 @@
 // Pakkene lagres med norske navn i databasen, så de engelske navnene slås opp på pakkenøkkelen.
 const packNames: Record<string, string> = {
+  draft_bronze: "حزمة برونزية للدرافت",
+  draft_silver: "حزمة فضية للدرافت",
+  draft_elite: "حزمة نخبة للدرافت",
+  draft_champion: "حزمة بطل للدرافت",
+
   bronse: "الحزمة البرونزية",
   solv: "الحزمة الفضية",
   gull: "الحزمة الذهبية",
@@ -15,6 +20,11 @@ const packNames: Record<string, string> = {
 };
 
 const packDescriptions: Record<string, string> = {
+  draft_bronze: "بطاقتان عاديتان بتقييم 40–74. جائزة درافت فقط.",
+  draft_silver: "ثلاث بطاقات بتقييم 50–79، واحدة مضمونة 70+. جائزة درافت فقط.",
+  draft_elite: "ست بطاقات 80+، اثنتان مضمونتان 84+. جائزة درافت فقط.",
+  draft_champion: "عشر بطاقات 80+، واحدة مضمونة 86+ واثنتان 84+. جائزة درافت فقط.",
+
   bronse: "ثلاث بطاقات. في الغالب النظامي، ولكن أي شيء يمكن أن يحدث.",
   solv: "خمس بطاقات، مع ضمان 80 بطاقة واحدة على الأقل أو أفضل.",
   gull: "ثماني بطاقات، مع ضمان 83 بطاقة واحدة على الأقل أو أفضل.",

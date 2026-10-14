@@ -34,9 +34,9 @@ async function saveDraft(db: Db, draft: DraftRow, changes: Partial<Pick<DraftRow
 }
 
 export async function startSoloDraftAction(_prev: ActionState, _formData: FormData): Promise<ActionState> {
-  void _prev; void _formData;
+  void _prev;
   const user = await requireUser();
-  const { error } = await supabaseAdmin().rpc("start_draft", { target_user: user.id, target_room: null });
+  const { error } = await supabaseAdmin().rpc("start_draft_with_payment", { target_user: user.id, target_room: null, use_token: _formData.get("payment") === "token" });
   if (error) return { error: await dbErrorMessage(error) };
   draftPaths(); return { ok: true };
 }
@@ -210,7 +210,7 @@ export async function createDraftRoomAction(_prev: ActionState, formData: FormDa
   if (!invited.length) return { error: errors.pickFriends };
   if (invited.length > ROOM_SIZE - 1) return { error: errors.roomFull };
   for (const friendId of invited) if (!(await friendshipId(user.id, friendId))) return { error: errors.friendsOnly };
-  const { error } = await db.rpc("create_draft_room", { target_user: user.id, invited });
+  const { error } = await db.rpc("create_draft_room_with_payment", { target_user: user.id, invited, use_token: formData.get("payment") === "token" });
   if (error) return { error: await dbErrorMessage(error) };
   draftPaths(); return { ok: true };
 }
@@ -232,9 +232,9 @@ export async function respondDraftInviteAction(_prev: ActionState, formData: For
   const user = await requireUser(); const db = supabaseAdmin();
   const roomId = String(formData.get("room_id") ?? "");
   const answer = formData.get("answer");
-  if (answer !== "join" && answer !== "decline") return { error: (await getT()).dbErrors.invalidAnswer };
-  if (answer === "join") {
-    const { error } = await db.rpc("start_draft", { target_user: user.id, target_room: roomId });
+  if (answer !== "join" && answer !== "join_token" && answer !== "decline") return { error: (await getT()).dbErrors.invalidAnswer };
+  if (answer === "join" || answer === "join_token") {
+    const { error } = await db.rpc("start_draft_with_payment", { target_user: user.id, target_room: roomId, use_token: answer === "join_token" });
     if (error) return { error: await dbErrorMessage(error) };
   } else {
     const { error } = await db.from("career_draft_room_members").delete().eq("room_id", roomId).eq("user_id", user.id).eq("status", "invited");

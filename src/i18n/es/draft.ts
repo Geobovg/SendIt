@@ -2,6 +2,14 @@ import type { DraftDict } from "../en/draft";
 
 // Draft en el modo carrera de mánager: draftea un equipo de todo el catálogo y juega un torneo eliminatorio.
 export const draft: DraftDict = {
+  tokens: {
+    balance: (count: number) => `Fichas de draft: ${count}`,
+    hint: "Una ficha da una entrada gratis en solitario o con amigos. Las fichas no caducan.",
+    reward: (count: number) => `${count} ficha${count === 1 ? "" : "s"} de draft`,
+    start: "Iniciar con ficha",
+    join: "Unirme con ficha",
+    create: "Crear con ficha",
+  },
   hub: {
     eyebrow: "DRAFT",
     title: "Haz un draft y gana el torneo",
@@ -28,6 +36,8 @@ export const draft: DraftDict = {
     createRoom: (fee: number) => `Crear e invitar · ${fee} MB`,
     creating: "Creando …",
     roomHint: (size: number) => `Hasta ${size} mánagers. Todos pagan la entrada al unirse y la recuperan si el torneo se cancela antes de empezar.`,
+    randomPrizes: "Al terminar se sortea una de estas combinaciones. Más victorias dan mejores sobres.",
+    minimumValue: (value: number) => `Valor mínimo de ${value} MB`,
     prizes: "PREMIOS",
     prizeWins: (wins: number, max: number) => wins === max ? `${wins} victorias – campeón` : `${wins} ${wins === 1 ? "victoria" : "victorias"}`,
     invitesTitle: "INVITACIONES",
@@ -45,7 +55,7 @@ export const draft: DraftDict = {
     eliminated: (round: string) => `Eliminado en: ${round.toLowerCase()}`,
     wins: (wins: number, total: number) => `${wins} de ${total} partidos ganados`,
     prize: "Premio",
-    packHint: "El sobre te espera en Paquetes.",
+    packHint: "Tus sobres están en Sobres.",
   },
   rounds: {
     final: "Final",
@@ -116,6 +126,9 @@ export const draft: DraftDict = {
     friendMatchHint: "Cualquiera de los dos puede empezar el partido. Los tiros y los cambios se eligen automáticamente si no estás mirando.",
   },
   errors: {
+    noTokens: "No tienes fichas de draft.",
+    invalidResult: "Resultado de draft no válido.",
+    noRewards: "No se encontraron premios de draft.",
     busy: "Otra acción cambió el draft al mismo tiempo. Inténtalo de nuevo.",
     notDrafting: "No tienes ningún draft en curso.",
     invalidFormation: "Formación desconocida.",

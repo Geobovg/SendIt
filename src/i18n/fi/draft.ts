@@ -2,6 +2,14 @@ import type { DraftDict } from "../en/draft";
 
 // Draft managerurassa: draftaa joukkue koko katalogista ja pelaa pudotuspeliturnaus.
 export const draft: DraftDict = {
+  tokens: {
+    balance: (count: number) => `Draft-poletteja: ${count}`,
+    hint: "Yksi poletti antaa ilmaisen osallistumisen yksin tai ystävien kanssa. Poletit eivät vanhene.",
+    reward: (count: number) => `${count} draft-polettia`,
+    start: "Aloita poletilla",
+    join: "Liity poletilla",
+    create: "Luo poletilla",
+  },
   hub: {
     eyebrow: "DRAFT",
     title: "Draftaa joukkue, voita turnaus",
@@ -28,6 +36,8 @@ export const draft: DraftDict = {
     createRoom: (fee: number) => `Luo ja kutsu · ${fee} MB`,
     creating: "Luodaan …",
     roomHint: (size: number) => `Enintään ${size} manageria. Jokainen maksaa osallistumismaksun liittyessään ja saa sen takaisin, jos turnaus perutaan ennen alkua.`,
+    randomPrizes: "Draftin päättyessä arvotaan yksi näistä palkintoyhdistelmistä. Useammat voitot antavat parempia paketteja.",
+    minimumValue: (value: number) => `Arvo vähintään ${value} MB`,
     prizes: "PALKINNOT",
     prizeWins: (wins: number, max: number) => wins === max ? `${wins} voittoa – mestari` : `${wins} ${wins === 1 ? "voitto" : "voittoa"}`,
     invitesTitle: "KUTSUT",
@@ -45,7 +55,7 @@ export const draft: DraftDict = {
     eliminated: (round: string) => `Putosi: ${round.toLowerCase()}`,
     wins: (wins: number, total: number) => `${wins}/${total} ottelua voitettu`,
     prize: "Palkinto",
-    packHint: "Paketti odottaa kohdassa Pakkaukset.",
+    packHint: "Pakettisi odottavat Paketit-osiossa.",
   },
   rounds: {
     final: "Finaali",
@@ -116,6 +126,9 @@ export const draft: DraftDict = {
     friendMatchHint: "Kumpi tahansa voi aloittaa ottelun. Laukaukset ja vaihdot valitaan automaattisesti, jos et seuraa.",
   },
   errors: {
+    noTokens: "Sinulla ei ole draft-poletteja.",
+    invalidResult: "Virheellinen draft-tulos.",
+    noRewards: "Draft-palkintoja ei löytynyt.",
     busy: "Jokin muu muutti draftia samaan aikaan. Yritä uudelleen.",
     notDrafting: "Sinulla ei ole draftia käynnissä.",
     invalidFormation: "Tuntematon ryhmitys.",

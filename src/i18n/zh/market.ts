@@ -1,5 +1,10 @@
 // Pakkene lagres med norske navn i databasen, så de engelske navnene slås opp på pakkenøkkelen.
 const packNames: Record<string, string> = {
+  draft_bronze: "选秀青铜包",
+  draft_silver: "选秀白银包",
+  draft_elite: "选秀精英包",
+  draft_champion: "选秀冠军包",
+
   bronse: "青铜包",
   solv: "银包",
   gull: "黄金包",
@@ -15,6 +20,11 @@ const packNames: Record<string, string> = {
 };
 
 const packDescriptions: Record<string, string> = {
+  draft_bronze: "两张40–74评分普通卡。仅作为选秀奖励。",
+  draft_silver: "三张50–79评分卡，保底一张70+。仅作为选秀奖励。",
+  draft_elite: "六张80+卡，保底两张84+。仅作为选秀奖励。",
+  draft_champion: "十张80+卡，保底一张86+和两张84+。仅作为选秀奖励。",
+
   bronse: "三张牌。大部分都是常客，但任何事情都有可能发生。",
   solv: "五张牌，其中至少一张保证为 80 或更高。",
   gull: "八张牌，至少一张 83 或更高的保证。",
