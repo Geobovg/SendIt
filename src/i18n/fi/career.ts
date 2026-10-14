@@ -228,6 +228,8 @@ export const career = {
     listOnMarket: "Laita myyntiin markkinoille",
     cancel: "Peruuta",
   },
+  /** Telleren for dagens kamper: spilt, tak og timer til nullstilling ved midnatt. */
+  quota: (used: number, max: number, hours: number) => `${used}/${max} manageriottelua pelattu tänään · nollautuu noin ${hours} h kuluttua`,
   errors: {
     bothNeedLineup: "Molemmat managerit tarvitsevat 11 kelvollista pelaajaa aloitussarjaansa",
     onlyFriends: "Voit haastaa vain ystäviä",

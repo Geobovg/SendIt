@@ -228,6 +228,8 @@ export const career = {
     listOnMarket: "Lägg ut på marknaden",
     cancel: "Avbryt",
   },
+  /** Telleren for dagens kamper: spilt, tak og timer til nullstilling ved midnatt. */
+  quota: (used: number, max: number, hours: number) => `${used} av ${max} managermatcher spelade i dag · nollställs om ca ${hours} tim`,
   errors: {
     bothNeedLineup: "Båda tränarna behöver 11 giltiga spelare i sin start XI",
     onlyFriends: "Du kan bara utmana vänner",

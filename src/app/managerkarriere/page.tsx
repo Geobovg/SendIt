@@ -2,12 +2,14 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ManagerTopBar } from "@/components/manager-navigation";
 import { ManagerOverview } from "@/components/manager-overview";
+import { MatchQuotaBadge } from "@/components/match-quota";
 import { AiSeasonHero, FriendSeasonTeaser } from "@/components/season-panels";
 import { currentUser, sessionUserId } from "@/lib/auth";
 import { getCareerChallenges, getCareerProfile, getManagerHome, listManagerMatchHistory } from "@/lib/career";
 import { DRAFT_ENTRY_FEE } from "@/lib/draft-core";
 import { getDraftHub } from "@/lib/draft";
 import { squadCapacity } from "@/lib/manager-limits";
+import { managerMatchQuota } from "@/lib/match-limit";
 import { getAiSeason, getFriendSeasons } from "@/lib/seasons";
 import { getT } from "@/i18n/server";
 
@@ -18,11 +20,12 @@ export default async function ManagerCareerPage() {
   const userId = await sessionUserId();
   if (!userId) redirect("/login");
   const careerPromise = getCareerProfile(userId);
-  const [user, career, manager, challenges, matches, friendSeasons, season, draft] = await Promise.all([currentUser(), careerPromise, getManagerHome(userId), getCareerChallenges(userId), listManagerMatchHistory(userId), getFriendSeasons(userId), getAiSeason(userId), getDraftHub(userId)]);
+  const [user, career, manager, challenges, matches, friendSeasons, season, draft, quota] = await Promise.all([currentUser(), careerPromise, getManagerHome(userId), getCareerChallenges(userId), listManagerMatchHistory(userId), getFriendSeasons(userId), getAiSeason(userId), getDraftHub(userId), managerMatchQuota(userId)]);
   if (!user) redirect("/login");
   const t = await getT();
   return <div className="mx-auto grid w-full max-w-[1600px] gap-4">
     <ManagerTopBar clubName={career.club_name} budget={career.manager_budget} rating={manager.rating} clubXp={career.club_xp} />
+    <MatchQuotaBadge quota={quota} label={t.career.quota} />
     <AiSeasonHero season={season} />
     <FriendSeasonTeaser seasons={friendSeasons} />
     <Link href="/managerkarriere/draft" className="relative flex items-center gap-4 overflow-hidden rounded-2xl border border-lime-300/30 bg-[#08101b] p-4 transition hover:border-lime-300/70" style={{ backgroundImage: "radial-gradient(circle at 95% 0%, rgba(152,255,44,.18), transparent 40%)" }}>

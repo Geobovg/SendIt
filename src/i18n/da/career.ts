@@ -228,6 +228,8 @@ export const career = {
     listOnMarket: "Sæt til salg på markedet",
     cancel: "Annuller",
   },
+  /** Telleren for dagens kamper: spilt, tak og timer til nullstilling ved midnatt. */
+  quota: (used: number, max: number, hours: number) => `${used} af ${max} managerkampe spillet i dag · nulstilles om ca. ${hours} t`,
   errors: {
     bothNeedLineup: "Begge managere har brug for 11 gyldige spillere i deres start XI",
     onlyFriends: "Du kan kun udfordre venner",

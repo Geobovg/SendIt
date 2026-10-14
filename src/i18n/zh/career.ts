@@ -228,6 +228,8 @@ export const career = {
     listOnMarket: "在转会市场上架",
     cancel: "取消",
   },
+  /** Telleren for dagens kamper: spilt, tak og timer til nullstilling ved midnatt. */
+  quota: (used: number, max: number, hours: number) => `今天已踢 ${used} / ${max} 场经理比赛 · 约 ${hours} 小时后重置`,
   errors: {
     bothNeedLineup: "两位主教练的首发阵容都需要 11 名有效球员",
     onlyFriends: "你只能挑战朋友",

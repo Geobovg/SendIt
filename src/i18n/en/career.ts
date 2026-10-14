@@ -228,6 +228,8 @@ export const career = {
     listOnMarket: "List on the market",
     cancel: "Cancel",
   },
+  /** Telleren for dagens kamper: spilt, tak og timer til nullstilling ved midnatt. */
+  quota: (used: number, max: number, hours: number) => `${used} of ${max} manager matches played today · resets in about ${hours} h`,
   errors: {
     bothNeedLineup: "Both managers need 11 valid players in their starting XI",
     onlyFriends: "You can only challenge friends",

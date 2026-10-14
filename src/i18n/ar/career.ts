@@ -228,6 +228,8 @@ export const career = {
     listOnMarket: "اعرض في السوق",
     cancel: "إلغاء",
   },
+  /** Telleren for dagens kamper: spilt, tak og timer til nullstilling ved midnatt. */
+  quota: (used: number, max: number, hours: number) => `${used} من ${max} مباراة مدرب لُعبت اليوم · تُصفَّر خلال حوالي ${hours} ساعة`,
   errors: {
     bothNeedLineup: "يحتاج كلا المديرين إلى 11 لاعبًا صالحًا في التشكيلة الأساسية",
     onlyFriends: "يمكنك تحدي الأصدقاء فقط",

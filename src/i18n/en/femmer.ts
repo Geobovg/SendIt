@@ -154,6 +154,8 @@ export const femmer = {
     opponentTactic: (tactic: string) => `Opponent: ${tactic}`,
     penaltyShort: "pen.",
   },
+  /** Telleren for dagens kamper: spilt, tak og timer til nullstilling ved midnatt. */
+  quota: (used: number, max: number, hours: number) => `${used} of ${max} Femmer matches played today · resets in about ${hours} h`,
   errors: {
     dailyMatchLimit: (max: number) => `You've played ${max} Femmer matches today. Touch grass pal!`,
     automatedPlay: "Matches can't be played by ChatGPT or other bots. Play yourself!",

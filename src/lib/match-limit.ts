@@ -31,6 +31,35 @@ function osloDayStart(now = new Date()) {
 
 const since = () => osloDayStart().toISOString();
 
+export type MatchQuota = { used: number; max: number; hoursLeft: number };
+
+/** Hele timer (rundet opp) til dagen nullstilles ved midnatt norsk tid. Dagen kan være 23 eller 25 timer, så vi leser starten på neste dag midt på dagen etter. */
+function hoursUntilReset(now = new Date()) {
+  const nextStart = osloDayStart(new Date(osloDayStart(now).getTime() + 36 * HOUR_MS));
+  return Math.max(1, Math.ceil((nextStart.getTime() - now.getTime()) / HOUR_MS));
+}
+
+/** Hvor mange managerkamper (inkludert draft) brukeren har startet i dag, eller null hvis tellingen feiler. */
+export async function managerMatchQuota(userId: string): Promise<MatchQuota | null> {
+  const { count, error } = await supabaseAdmin()
+    .from("career_matches")
+    .select("id", { count: "exact", head: true })
+    .eq("mode", "manager")
+    .or(`home_user_id.eq.${userId},away_user_id.eq.${userId}`)
+    .gte("started_at", since());
+  return error ? null : { used: count ?? 0, max: DAILY_MATCHES, hoursLeft: hoursUntilReset() };
+}
+
+/** Hvor mange femmerkamper brukeren har startet i dag, eller null hvis tellingen feiler. */
+export async function fiveMatchQuota(userId: string): Promise<MatchQuota | null> {
+  const { count, error } = await supabaseAdmin()
+    .from("five_matches")
+    .select("id", { count: "exact", head: true })
+    .eq("controller_id", userId)
+    .gte("started_at", since());
+  return error ? null : { used: count ?? 0, max: DAILY_MATCHES, hoursLeft: hoursUntilReset() };
+}
+
 /** Feilmeldingen hvis brukeren ikke kan starte en managerkamp nå, ellers null. */
 export async function managerMatchLimitError(userId: string, { directFriendMatch = false }: { directFriendMatch?: boolean } = {}): Promise<string | null> {
   const errors = (await getT()).career.errors;

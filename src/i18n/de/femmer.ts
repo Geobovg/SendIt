@@ -156,6 +156,8 @@ export const femmer: Dictionary["femmer"] = {
     opponentTactic: (tactic: string) => `Gegner: ${tactic}`,
     penaltyShort: "Elfm.",
   },
+  /** Telleren for dagens kamper: spilt, tak og timer til nullstilling ved midnatt. */
+  quota: (used: number, max: number, hours: number) => `${used} von ${max} Femmer-Spielen heute gespielt · wird in ca. ${hours} Std. zurückgesetzt`,
   errors: {
     dailyMatchLimit: (max: number) => `Du hast heute ${max} Femmer-Spiele gespielt. Geh mal Gras anfassen, Kumpel!`,
     automatedPlay: "Spiele können nicht von ChatGPT oder anderen Bots gespielt werden. Spiel selbst!",

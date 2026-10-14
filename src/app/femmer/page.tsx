@@ -7,6 +7,7 @@ import { FivePlay } from "@/components/femmer/five-play";
 import { FiveSeasons } from "@/components/femmer/five-seasons";
 import { FiveSquad } from "@/components/femmer/five-squad";
 import { FiveStart } from "@/components/femmer/five-start";
+import { MatchQuotaBadge } from "@/components/match-quota";
 import { ModeMenuLink } from "@/components/mode-menu";
 import { getT } from "@/i18n/server";
 import { currentUser } from "@/lib/auth";
@@ -14,6 +15,7 @@ import { listFriends } from "@/lib/friends";
 import { getFiveLeaderboard, getFiveState, getLiveFiveMatchId, listFiveMatches, listFiveOpponents, listFivePeople } from "@/lib/femmer/data";
 import { settleStaleMatch } from "@/lib/femmer/live";
 import { listFiveSeasons } from "@/lib/femmer/seasons";
+import { fiveMatchQuota } from "@/lib/match-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -28,7 +30,7 @@ export default async function FemmerPage({ searchParams }: PageProps<"/femmer">)
   const t = (await getT()).femmer;
   // En kamp som ble forlatt før den var ferdig, gjøres opp før resten hentes, så tabellen og AI-stigen stemmer.
   await settleStaleMatch(user.id);
-  const [people, state, liveMatchId] = await Promise.all([listFivePeople(), getFiveState(user.id), getLiveFiveMatchId(user.id)]);
+  const [people, state, liveMatchId, quota] = await Promise.all([listFivePeople(), getFiveState(user.id), getLiveFiveMatchId(user.id), fiveMatchQuota(user.id)]);
 
   const heading = <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-xs font-black tracking-[.25em] text-fuchsia-300">{t.menu.kicker}</p><h1 className="text-3xl font-black">{t.title}</h1><p className="mt-1 max-w-2xl text-muted">{t.intro}</p></div><ModeMenuLink /></div>;
 
@@ -58,6 +60,7 @@ export default async function FemmerPage({ searchParams }: PageProps<"/femmer">)
   return <div className="mx-auto grid w-full max-w-6xl gap-5">
     {heading}
     <div className="grid grid-cols-3 gap-2">{stats.map((stat) => <div key={stat.label} className="rounded-xl border border-white/10 bg-slate-900/75 p-3"><p className="text-[11px] font-black tracking-widest text-white/45">{stat.label}</p><p className="truncate text-xl font-black">{stat.value}</p></div>)}</div>
+    <MatchQuotaBadge quota={quota} label={t.quota} />
     {liveMatchId && tab !== "kamp" ? <Link href={`/femmer/kamp/${liveMatchId}`} className="rounded-xl border border-amber-300/50 bg-amber-300/15 p-3 text-sm font-black text-amber-200">{t.play.resume}</Link> : null}
     <nav className="flex gap-1 overflow-x-auto rounded-xl border border-white/10 bg-slate-900/60 p-1">{tabKeys.map((key) => <Link key={key} href={key === "lag" ? "/femmer" : `/femmer?tab=${key}`} className={`shrink-0 rounded-lg px-4 py-2 text-sm font-black transition ${key === tab ? "bg-white text-slate-950" : "text-white/70 hover:bg-white/10"}`}>{t.tabs[key]}{dots[key] ? " •" : ""}</Link>)}</nav>
     {content}

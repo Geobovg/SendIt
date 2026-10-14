@@ -233,6 +233,8 @@ export const career: CareerDict = {
     listOnMarket: "Legg ut på markedet",
     cancel: "Avbryt",
   },
+  /** Telleren for dagens kamper: spilt, tak og timer til nullstilling ved midnatt. */
+  quota: (used: number, max: number, hours: number) => `${used} av ${max} managerkamper spilt i dag · nullstilles om ca. ${hours} t`,
   errors: {
     bothNeedLineup: "Begge managerne må ha 11 gyldige spillere i startelleveren",
     onlyFriends: "Du kan bare utfordre venner",
