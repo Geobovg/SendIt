@@ -228,6 +228,8 @@ export const career = {
     listOnMarket: "Sæt til salg på markedet",
     cancel: "Annuller",
   },
+  /** Telleren for kamper i denne perioden: spilt, tak og timer til neste nullstilling. */
+  quota: (used: number, max: number, hours: number) => `${used} af ${max} managerkampe spillet i denne 6-timers periode · nulstilles om ca. ${hours} t`,
   errors: {
     bothNeedLineup: "Begge managere har brug for 11 gyldige spillere i deres start XI",
     onlyFriends: "Du kan kun udfordre venner",
@@ -235,8 +237,8 @@ export const career = {
     pickLineupFirst: "Vælg en XI, før du accepterer managerkampen",
     cannotStart: "Kampen kan ikke startes",
     hourlyFriendMatchLimit: (max: number) => `Du kan spille højst ${max} direkte managerkampe mod venner inden for én time.`,
-    participantDailyMatchLimit: (max: number) => `En spiller har nået grænsen på ${max} managerkampe de seneste 24 timer.`,
-    dailyMatchLimit: (max: number) => `Du har spillet ${max} managerkampe det seneste døgn. Gå ud og rør ved græs, ven!`,
+    participantPeriodMatchLimit: (max: number) => `En spiller har nået grænsen på ${max} managerkampe i denne 6-timers periode.`,
+    periodMatchLimit: (max: number) => `Du har spillet ${max} managerkampe i denne 6-timers periode. Gå ud og rør ved græs, ven!`,
     automatedPlay: "Kampe kan ikke spilles af ChatGPT eller andre robotter. Spil selv!",
     matchNotFound: "Managermatch blev ikke fundet",
     notFinished: "Kampen er ikke slut endnu",

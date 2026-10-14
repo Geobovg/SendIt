@@ -11,7 +11,7 @@ export const DB_ERROR_RULES: DbErrorRule[] = [
   // Draft (migrering 0094).
   { pattern: /^Vent til draftkampen er ferdig$/, message: (t) => t.draft.errors.matchLive },
   { pattern: /^Maks (\d+) direkte managerkamper per time$/, message: (t, max) => t.career.errors.hourlyFriendMatchLimit(Number(max)) },
-  { pattern: /^En spiller har nådd grensen på (\d+) managerkamper per 24 timer$/, message: (t, max) => t.career.errors.participantDailyMatchLimit(Number(max)) },
+  { pattern: /^En spiller har nådd grensen på (\d+) managerkamper per (?:6 timer|dag|24 timer)$/, message: (t, max) => t.career.errors.participantPeriodMatchLimit(Number(max)) },
   { pattern: /^Du har ingen draft tokens$/, message: (t) => t.draft.errors.noTokens },
   { pattern: /^Ugyldig draftresultat$/, message: (t) => t.draft.errors.invalidResult },
   { pattern: /^Fant ingen draftpremier$/, message: (t) => t.draft.errors.noRewards },

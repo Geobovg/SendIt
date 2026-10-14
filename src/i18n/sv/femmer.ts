@@ -156,8 +156,10 @@ export const femmer: Dictionary["femmer"] = {
     opponentTactic: (tactic: string) => `Motståndaren: ${tactic}`,
     penaltyShort: "str.",
   },
+  /** Telleren for kamper i denne perioden: spilt, tak og timer til neste nullstilling. */
+  quota: (used: number, max: number, hours: number) => `${used} av ${max} femmermatcher spelade under denna 6-timmarsperiod · nollställs om ca ${hours} tim`,
   errors: {
-    dailyMatchLimit: (max: number) => `Du har spelat ${max} femmermatcher det senaste dygnet. Gå ut och rör vid gräs, kompis!`,
+    periodMatchLimit: (max: number) => `Du har spelat ${max} femmermatcher under denna 6-timmarsperiod. Gå ut och rör vid gräs, kompis!`,
     automatedPlay: "Matcher kan inte spelas av ChatGPT eller andra robotar. Spela själv!",
     invalidFormation: "Ogiltig formation",
     invalidPack: "Ogiltigt paket",

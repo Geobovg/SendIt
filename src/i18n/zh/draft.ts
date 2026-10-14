@@ -54,6 +54,7 @@ export const draft: DraftDict = {
     champion: "冠军！🏆",
     eliminated: (round: string) => `止步${round.toLowerCase()}`,
     wins: (wins: number, total: number) => `${total} 场比赛赢了 ${wins} 场`,
+    record: "战绩",
     prize: "奖励",
     packHint: "你的卡包已存入卡包页面。",
   },

@@ -156,8 +156,10 @@ export const femmer: Dictionary["femmer"] = {
     opponentTactic: (tactic: string) => `Avversario: ${tactic}`,
     penaltyShort: "rig.",
   },
+  /** Telleren for kamper i denne perioden: spilt, tak og timer til neste nullstilling. */
+  quota: (used: number, max: number, hours: number) => `${used} su ${max} partite di Femmer giocate in questo periodo di 6 ore · si azzera tra circa ${hours} h`,
   errors: {
-    dailyMatchLimit: (max: number) => `Hai giocato ${max} partite di Femmer nelle ultime 24 ore. Vai a toccare l'erba, amico!`,
+    periodMatchLimit: (max: number) => `Hai giocato ${max} partite di Femmer in questo periodo di 6 ore. Vai a toccare l'erba, amico!`,
     automatedPlay: "Le partite non possono essere giocate da ChatGPT o altri bot. Gioca tu!",
     invalidFormation: "Modulo non valido",
     invalidPack: "Pacchetto non valido",
