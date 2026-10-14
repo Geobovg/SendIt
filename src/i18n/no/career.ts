@@ -239,6 +239,8 @@ export const career: CareerDict = {
     challengeUnavailable: "Utfordringen er ikke lenger tilgjengelig",
     pickLineupFirst: "Velg en ellever før du godtar managerkampen",
     cannotStart: "Kampen kan ikke startes",
+    hourlyFriendMatchLimit: (max: number) => `Du kan spille maks ${max} direkte managerkamper mot venner i løpet av én time.`,
+    participantDailyMatchLimit: (max: number) => `En spiller har nådd grensen på ${max} managerkamper de siste 24 timene.`,
     dailyMatchLimit: (max: number) => `Du har spilt ${max} managerkamper det siste døgnet. Klipp gress kompis!`,
     automatedPlay: "Kamper kan ikke spilles av ChatGPT eller andre roboter. Spill selv!",
     matchNotFound: "Fant ikke managerkampen",

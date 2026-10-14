@@ -234,6 +234,8 @@ export const career = {
     challengeUnavailable: "Este desafío ya no está disponible.",
     pickLineupFirst: "Elige un XI antes de aceptar el partido de entrenador",
     cannotStart: "El partido no se puede iniciar.",
+    hourlyFriendMatchLimit: (max: number) => `Puedes jugar como máximo ${max} partidos de mánager directos contra amigos en una hora.`,
+    participantDailyMatchLimit: (max: number) => `Un jugador ha alcanzado el límite de ${max} partidos de mánager en las últimas 24 horas.`,
     dailyMatchLimit: (max: number) => `Has jugado ${max} partidos de mánager en las últimas 24 horas. ¡Ve a tocar césped, amigo!`,
     automatedPlay: "Los partidos no se pueden jugar con ChatGPT ni otros bots. ¡Juega tú!",
     matchNotFound: "No se encontró coincidencia de administrador",

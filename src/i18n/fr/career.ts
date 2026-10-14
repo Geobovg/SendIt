@@ -234,6 +234,8 @@ export const career = {
     challengeUnavailable: "Ce défi n'est plus disponible",
     pickLineupFirst: "Choisissez un XI avant d'accepter le match du manager",
     cannotStart: "Le match ne peut pas démarrer",
+    hourlyFriendMatchLimit: (max: number) => `Tu peux jouer au maximum ${max} matchs de manager directs contre des amis en une heure.`,
+    participantDailyMatchLimit: (max: number) => `Un joueur a atteint la limite de ${max} matchs de manager sur les dernières 24 heures.`,
     dailyMatchLimit: (max: number) => `Tu as joué ${max} matchs de manager ces dernières 24 heures. Va toucher de l'herbe, mon pote !`,
     automatedPlay: "Les matchs ne peuvent pas être joués par ChatGPT ou d'autres bots. Joue toi-même !",
     matchNotFound: "Correspondance du manager introuvable",

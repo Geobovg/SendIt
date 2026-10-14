@@ -234,6 +234,8 @@ export const career = {
     challengeUnavailable: "Tämä haaste ei ole enää käytettävissä",
     pickLineupFirst: "Valitse XI ennen kuin hyväksyt manageriottelun",
     cannotStart: "Ottelua ei voi aloittaa",
+    hourlyFriendMatchLimit: (max: number) => `Voit pelata enintään ${max} suoraa manageriottelua ystäviä vastaan tunnissa.`,
+    participantDailyMatchLimit: (max: number) => `Pelaaja on saavuttanut ${max} manageriottelun rajan viimeisen 24 tunnin aikana.`,
     dailyMatchLimit: (max: number) => `Olet pelannut ${max} manageriottelua viimeisen vuorokauden aikana. Mene koskettamaan ruohoa, kaveri!`,
     automatedPlay: "ChatGPT tai muut botit eivät voi pelata otteluita. Pelaa itse!",
     matchNotFound: "Managerin ottelua ei löytynyt",

@@ -234,6 +234,8 @@ export const career = {
     challengeUnavailable: "Denna utmaning är inte längre tillgänglig",
     pickLineupFirst: "Välj en XI innan du accepterar managermatchen",
     cannotStart: "Matchen kan inte startas",
+    hourlyFriendMatchLimit: (max: number) => `Du kan spela högst ${max} direkta managermatcher mot vänner under en timme.`,
+    participantDailyMatchLimit: (max: number) => `En spelare har nått gränsen på ${max} managermatcher de senaste 24 timmarna.`,
     dailyMatchLimit: (max: number) => `Du har spelat ${max} managermatcher det senaste dygnet. Gå ut och rör vid gräs, kompis!`,
     automatedPlay: "Matcher kan inte spelas av ChatGPT eller andra robotar. Spela själv!",
     matchNotFound: "Managermatchning hittades inte",

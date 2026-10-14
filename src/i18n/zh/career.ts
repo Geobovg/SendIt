@@ -234,6 +234,8 @@ export const career = {
     challengeUnavailable: "此挑战不再可用",
     pickLineupFirst: "在接受主教练比赛之前选择一个阵容",
     cannotStart: "比赛无法开始",
+    hourlyFriendMatchLimit: (max: number) => `每小时最多可与好友进行 ${max} 场直接经理对战。`,
+    participantDailyMatchLimit: (max: number) => `一名玩家已达到过去24小时内 ${max} 场经理比赛的上限。`,
     dailyMatchLimit: (max: number) => `你在过去 24 小时内已经踢了 ${max} 场经理比赛。出去摸摸草吧，朋友！`,
     automatedPlay: "比赛不能由 ChatGPT 或其他机器人代踢。请自己来踢！",
     matchNotFound: "未找到经理匹配项",

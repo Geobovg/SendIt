@@ -234,6 +234,8 @@ export const career = {
     challengeUnavailable: "هذا التحدي لم يعد متاحا",
     pickLineupFirst: "اختر XI قبل قبول مباراة المدير",
     cannotStart: "لا يمكن بدء المباراة",
+    hourlyFriendMatchLimit: (max: number) => `يمكنك لعب ${max} مباريات مدرب مباشرة ضد الأصدقاء كحد أقصى خلال ساعة واحدة.`,
+    participantDailyMatchLimit: (max: number) => `وصل أحد اللاعبين إلى حد ${max} مباراة مدرب خلال آخر 24 ساعة.`,
     dailyMatchLimit: (max: number) => `لقد لعبت ${max} مباراة مدرب خلال آخر 24 ساعة. اخرج والمس العشب يا صديقي!`,
     automatedPlay: "لا يمكن لـ ChatGPT أو أي روبوت آخر لعب المباريات. العب بنفسك!",
     matchNotFound: "لم يتم العثور على تطابق المدير",
