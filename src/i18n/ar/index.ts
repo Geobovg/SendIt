@@ -1,3 +1,4 @@
+import { draft } from "./draft";
 import { auth } from "./auth";
 import { career } from "./career";
 import { common } from "./common";
@@ -13,4 +14,4 @@ import { seasons } from "./seasons";
 import { tournaments } from "./tournaments";
 import type { Dictionary } from "../en";
 
-export const ar: Dictionary = { common, auth, profile, friends, tournaments, career, market, match, seasons, sbc, femmer, quiz, dbErrors };
+export const ar: Dictionary = { draft, common, auth, profile, friends, tournaments, career, market, match, seasons, sbc, femmer, quiz, dbErrors };

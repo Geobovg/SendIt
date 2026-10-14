@@ -9,6 +9,7 @@ export const career = {
   },
   loading: "Caricamento",
   sections: {
+    draft: "Draft",
     sesong: "Stagione",
     lagtropp: "Squadra",
     klubblager: "Stoccaggio",

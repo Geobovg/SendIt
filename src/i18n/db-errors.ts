@@ -8,6 +8,15 @@ type DbErrorRule = { pattern: RegExp; message: (t: Dictionary, ...values: string
 
 // Ingen av meldingene inneholder kolon, så de overlever også `stripPrefix` i dbErrorMessage uendret.
 export const DB_ERROR_RULES: DbErrorRule[] = [
+  // Draft (migrering 0094).
+  { pattern: /^Vent til draftkampen er ferdig$/, message: (t) => t.draft.errors.matchLive },
+  { pattern: /^Du har allerede en draft i gang$/, message: (t) => t.draft.errors.alreadyRunning },
+  { pattern: /^Draft-turneringen har allerede startet$/, message: (t) => t.draft.errors.roomStarted },
+  { pattern: /^Du er ikke invitert til denne draft-turneringen$/, message: (t) => t.draft.errors.notInvited },
+  { pattern: /^Draft-turneringen er full$/, message: (t) => t.draft.errors.roomFull },
+  { pattern: /^Bare den som laget draft-turneringen kan starte den$/, message: (t) => t.draft.errors.onlyHost },
+  { pattern: /^Draft-turneringen trenger minst to managere$/, message: (t) => t.draft.errors.needTwo },
+  { pattern: /^Alle må bli ferdige med draften først$/, message: (t) => t.draft.errors.everyoneMustFinish },
   // Femmer (migrering 0075).
   { pattern: /^Du har allerede startet Femmer$/, message: (t) => t.femmer.errors.alreadyStarted },
   { pattern: /^Velg riktig antall kort$/, message: (t) => t.femmer.errors.wrongPickCount },

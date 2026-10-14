@@ -10,16 +10,18 @@ import { playerPhoto } from "@/lib/player-photos";
 import type { TeamView } from "@/lib/ai-opponent";
 import { managerTeamAction } from "@/lib/manager-actions";
 import { seasonOpponentTeamAction } from "@/lib/season-actions";
+import { specialStyles, type SpecialKind } from "@/lib/special-cards";
 import { PitchMarkings, slotPoint } from "./squad-pitch";
 import { useScrollLock } from "./use-scroll-lock";
 
-/** Et lite spillerkort som bare vises, uten noe å trykke på. */
-function TeamCard({ player }: { player: ManagerPlayerSnapshot }) {
+/** Et lite spillerkort som bare vises, uten noe å trykke på. Spesialkort (f.eks. i draften) får sin egen bakgrunn. */
+export function TeamCard({ player }: { player: ManagerPlayerSnapshot & { special?: SpecialKind | null } }) {
   const anyLabel = useT().career.special.anyPosition;
   const photo = player.slug ? playerPhoto(player.slug) : null;
   // Som i lagtroppen: lange navn vises uten fornavn.
   const shortName = player.name.length > 13 && player.name.includes(" ") ? player.name.slice(player.name.indexOf(" ") + 1) : player.name;
-  return <div className="@container relative aspect-[100/136] w-full overflow-hidden rounded-[9%/7%] border-2 border-amber-200/80 text-white shadow-[0_8px_18px_rgba(0,0,0,.45)]" style={{ background: `radial-gradient(circle at 85% 0%, ${player.accent ?? "#d3a13a"}cc, transparent 45%), linear-gradient(160deg, #f3d57a 0%, #d3a13a 30%, #8a5a17 70%, #3a230c 100%)` }}>
+  const special = player.special ? specialStyles[player.special] : null;
+  return <div className="@container relative aspect-[100/136] w-full overflow-hidden rounded-[9%/7%] border-2 border-amber-200/80 text-white shadow-[0_8px_18px_rgba(0,0,0,.45)]" style={special ? { background: special.background, borderColor: special.border } : { background: `radial-gradient(circle at 85% 0%, ${player.accent ?? "#d3a13a"}cc, transparent 45%), linear-gradient(160deg, #f3d57a 0%, #d3a13a 30%, #8a5a17 70%, #3a230c 100%)` }}>
     {photo ? <Image src={photo} alt="" width={256} height={256} className="pointer-events-none absolute bottom-[21%] right-[-12%] h-[90cqw] w-[90cqw] object-contain object-bottom drop-shadow-[0_6px_6px_rgba(0,0,0,.45)]" /> : <span className="absolute bottom-[30%] right-[12%] text-[34cqw] leading-none opacity-80">⚽</span>}
     <span className="absolute left-[6cqw] top-[6cqw] flex w-[24cqw] flex-col items-center gap-[2.5cqw] drop-shadow-[0_1px_2px_rgba(0,0,0,.6)]">
       <b className={`${player.overall >= 100 ? "text-[19cqw]" : "text-[27cqw]"} font-black leading-[.85] tracking-tighter`}>{player.overall}</b>
@@ -30,23 +32,24 @@ function TeamCard({ player }: { player: ManagerPlayerSnapshot }) {
 }
 
 type Loaded = TeamView | { error: string };
-/** `season` er en motstander i AI-sesongen din (justert til divisjonen), `user` er det ekte laget til en bruker. */
-export type TeamSource = { season: string } | { user: string };
+/** `season` er en motstander i AI-sesongen din (justert til divisjonen), `user` er det ekte laget til en bruker, og `team` et lag som allerede er hentet (f.eks. i draften). */
+export type TeamSource = { season: string } | { user: string } | { team: TeamView };
 
 /** Vinduet som viser et lag på banen med benken under. */
 export function TeamDialog({ source, onClose }: { source: TeamSource; onClose: () => void }) {
   const t = useT();
   const [team, setTeam] = useState<Loaded | null>(null);
   const seasonKey = "season" in source ? source.season : null; const userId = "user" in source ? source.user : null;
+  const ready = "team" in source ? source.team : null;
   useScrollLock();
   useEffect(() => {
     let current = true;
-    const load = seasonKey ? seasonOpponentTeamAction(seasonKey) : managerTeamAction(userId ?? "");
+    const load = ready ? Promise.resolve(ready) : seasonKey ? seasonOpponentTeamAction(seasonKey) : managerTeamAction(userId ?? "");
     load.then((result) => { if (current) setTeam(result); }).catch(() => { if (current) setTeam({ error: t.seasons.team.none }); });
     const onKey = (event: KeyboardEvent) => { if (event.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
     return () => { current = false; window.removeEventListener("keydown", onKey); };
-  }, [seasonKey, userId, onClose, t]);
+  }, [seasonKey, userId, ready, onClose, t]);
   const loaded = team && !("error" in team) ? team : null;
   const slots = loaded ? formations[formationNames.includes(loaded.formation as Formation) ? (loaded.formation as Formation) : "4-3-3"] : [];
   // Vinduet legges rett i body, så det ikke arver farger eller plassering fra raden det åpnes fra.
