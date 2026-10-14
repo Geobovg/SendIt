@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "check:db-errors": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-db-errors.ts",
-    "test:draft": "node scripts/test-draft-generation.mjs && node scripts/test-draft.mjs && node scripts/test-draft-rewards.mjs"
+    "test:draft": "node scripts/test-draft-generation.mjs && node scripts/test-draft.mjs && node scripts/test-draft-rewards.mjs",
+    "test:match-limits": "node scripts/test-match-limits.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",

@@ -47,7 +47,7 @@ export async function startCareerMatchAction(_prev: ActionState, formData: FormD
   if (!match || (match.home_user_id !== user.id && match.away_user_id !== user.id) || match.status !== "lobby") return { error: (await getT()).career.errors.cannotStart };
   const startedAt = new Date().toISOString();
   if (match.mode !== "manager") return { error: (await getT()).career.errors.cannotStart };
-  const limitError = await managerMatchLimitError(user.id);
+  const limitError = await managerMatchLimitError(user.id, { directFriendMatch: true });
   if (limitError) return { error: limitError };
   const kickoff = await createManagerKickoff(db, match.home_user_id, match.away_user_id);
   if ("error" in kickoff) return { error: kickoff.error };

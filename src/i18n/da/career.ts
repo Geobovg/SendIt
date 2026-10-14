@@ -234,6 +234,8 @@ export const career = {
     challengeUnavailable: "Denne udfordring er ikke længere tilgængelig",
     pickLineupFirst: "Vælg en XI, før du accepterer managerkampen",
     cannotStart: "Kampen kan ikke startes",
+    hourlyFriendMatchLimit: (max: number) => `Du kan spille højst ${max} direkte managerkampe mod venner inden for én time.`,
+    participantDailyMatchLimit: (max: number) => `En spiller har nået grænsen på ${max} managerkampe de seneste 24 timer.`,
     dailyMatchLimit: (max: number) => `Du har spillet ${max} managerkampe det seneste døgn. Gå ud og rør ved græs, ven!`,
     automatedPlay: "Kampe kan ikke spilles af ChatGPT eller andre robotter. Spil selv!",
     matchNotFound: "Managermatch blev ikke fundet",
