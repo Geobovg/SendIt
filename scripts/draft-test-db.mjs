@@ -39,5 +39,6 @@ insert into manager_packs(key,name,price) values
 ('sjeldne_spillere','Sjeldne spillere',200),('jumbo_premium_gull','Jumbo premium gull',300);
 `);
 if (withRewards) await db.exec(readFileSync(new URL("../supabase/migrations/0096_draft_premier.sql", import.meta.url), "utf8"));
+await db.exec(readFileSync(new URL("../supabase/migrations/0103_draft_innsats_150.sql", import.meta.url), "utf8"));
 return db;
 }
