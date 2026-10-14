@@ -228,8 +228,8 @@ export const career = {
     listOnMarket: "اعرض في السوق",
     cancel: "إلغاء",
   },
-  /** Telleren for dagens kamper: spilt, tak og timer til nullstilling ved midnatt. */
-  quota: (used: number, max: number, hours: number) => `${used} من ${max} مباراة مدرب لُعبت اليوم · تُصفَّر خلال حوالي ${hours} ساعة`,
+  /** Telleren for kamper i denne perioden: spilt, tak og timer til neste nullstilling. */
+  quota: (used: number, max: number, hours: number) => `${used} من ${max} مباراة مدرب لُعبت خلال هذه الفترة (6 ساعات) · تُصفَّر خلال حوالي ${hours} ساعة`,
   errors: {
     bothNeedLineup: "يحتاج كلا المديرين إلى 11 لاعبًا صالحًا في التشكيلة الأساسية",
     onlyFriends: "يمكنك تحدي الأصدقاء فقط",
@@ -237,8 +237,8 @@ export const career = {
     pickLineupFirst: "اختر XI قبل قبول مباراة المدير",
     cannotStart: "لا يمكن بدء المباراة",
     hourlyFriendMatchLimit: (max: number) => `يمكنك لعب ${max} مباريات مدرب مباشرة ضد الأصدقاء كحد أقصى خلال ساعة واحدة.`,
-    participantDailyMatchLimit: (max: number) => `وصل أحد اللاعبين إلى حد ${max} مباراة مدرب اليوم.`,
-    dailyMatchLimit: (max: number) => `لقد لعبت ${max} مباراة مدرب اليوم. اخرج والمس العشب يا صديقي!`,
+    participantPeriodMatchLimit: (max: number) => `وصل أحد اللاعبين إلى حد ${max} مباراة مدرب خلال هذه الفترة (6 ساعات).`,
+    periodMatchLimit: (max: number) => `لقد لعبت ${max} مباراة مدرب خلال هذه الفترة (6 ساعات). اخرج والمس العشب يا صديقي!`,
     automatedPlay: "لا يمكن لـ ChatGPT أو أي روبوت آخر لعب المباريات. العب بنفسك!",
     matchNotFound: "لم يتم العثور على تطابق المدير",
     notFinished: "المباراة لم تنته بعد",

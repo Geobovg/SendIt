@@ -228,8 +228,8 @@ export const career = {
     listOnMarket: "Metti sul mercato",
     cancel: "Annulla",
   },
-  /** Telleren for dagens kamper: spilt, tak og timer til nullstilling ved midnatt. */
-  quota: (used: number, max: number, hours: number) => `${used} partite manager su ${max} giocate oggi · si azzera tra circa ${hours} h`,
+  /** Telleren for kamper i denne perioden: spilt, tak og timer til neste nullstilling. */
+  quota: (used: number, max: number, hours: number) => `${used} su ${max} partite manager giocate in questo periodo di 6 ore · si azzera tra circa ${hours} h`,
   errors: {
     bothNeedLineup: "Entrambi gli allenatori hanno bisogno di 11 giocatori validi nell'undici titolare",
     onlyFriends: "Puoi sfidare solo gli amici",
@@ -237,8 +237,8 @@ export const career = {
     pickLineupFirst: "Scegli un XI prima di accettare la partita dell'allenatore",
     cannotStart: "La partita non può essere avviata",
     hourlyFriendMatchLimit: (max: number) => `Puoi giocare al massimo ${max} partite manager dirette contro amici in un’ora.`,
-    participantDailyMatchLimit: (max: number) => `Un giocatore ha raggiunto il limite di ${max} partite manager oggi.`,
-    dailyMatchLimit: (max: number) => `Hai giocato ${max} partite da manager oggi. Vai a toccare l'erba, amico!`,
+    participantPeriodMatchLimit: (max: number) => `Un giocatore ha raggiunto il limite di ${max} partite manager in questo periodo di 6 ore.`,
+    periodMatchLimit: (max: number) => `Hai giocato ${max} partite da manager in questo periodo di 6 ore. Vai a toccare l'erba, amico!`,
     automatedPlay: "Le partite non possono essere giocate da ChatGPT o altri bot. Gioca tu!",
     matchNotFound: "Corrispondenza manager non trovata",
     notFinished: "La partita non è ancora finita",

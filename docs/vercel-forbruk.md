@@ -18,4 +18,4 @@ Nesten hver forespørsel var et funksjonskall: sider som hentet seg selv på nyt
 - Hver `router.refresh()` og hver server action er et funksjonskall som lager hele siden på nytt. Ikke oppdater oftere enn hvert 10. sekund uten en god grunn, og aldri i en skjult fane.
 - Følg tett bare når noe faktisk kan endre seg, som under en sjanse eller i byttevinduet i managerkampen.
 - Nye jobber som kaller appen fra pg_cron, koster et funksjonskall hver gang. Gjør det i databasen hvis det går.
-- Ting som kan gjentas uten stopp (kamper, pakker o.l.), bør ha et tak per bruker, som `DAILY_MATCHES` i `src/lib/match-limit.ts`.
+- Ting som kan gjentas uten stopp (kamper, pakker o.l.), bør ha et tak per bruker, som `PERIOD_MATCHES` i `src/lib/match-limit.ts`.

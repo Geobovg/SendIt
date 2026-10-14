@@ -228,8 +228,8 @@ export const career = {
     listOnMarket: "Mettre en vente sur le marché",
     cancel: "Annuler",
   },
-  /** Telleren for dagens kamper: spilt, tak og timer til nullstilling ved midnatt. */
-  quota: (used: number, max: number, hours: number) => `${used} sur ${max} matchs de manager joués aujourd'hui · remise à zéro dans environ ${hours} h`,
+  /** Telleren for kamper i denne perioden: spilt, tak og timer til neste nullstilling. */
+  quota: (used: number, max: number, hours: number) => `${used} sur ${max} matchs de manager joués pendant cette période de 6 heures · remise à zéro dans environ ${hours} h`,
   errors: {
     bothNeedLineup: "Les deux managers ont besoin de 11 joueurs valides dans leur onze de départ",
     onlyFriends: "Vous ne pouvez défier que vos amis",
@@ -237,8 +237,8 @@ export const career = {
     pickLineupFirst: "Choisissez un XI avant d'accepter le match du manager",
     cannotStart: "Le match ne peut pas démarrer",
     hourlyFriendMatchLimit: (max: number) => `Tu peux jouer au maximum ${max} matchs de manager directs contre des amis en une heure.`,
-    participantDailyMatchLimit: (max: number) => `Un joueur a atteint la limite de ${max} matchs de manager aujourd'hui.`,
-    dailyMatchLimit: (max: number) => `Tu as joué ${max} matchs de manager aujourd'hui. Va toucher de l'herbe, mon pote !`,
+    participantPeriodMatchLimit: (max: number) => `Un joueur a atteint la limite de ${max} matchs de manager pendant cette période de 6 heures.`,
+    periodMatchLimit: (max: number) => `Tu as joué ${max} matchs de manager pendant cette période de 6 heures. Va toucher de l'herbe, mon pote !`,
     automatedPlay: "Les matchs ne peuvent pas être joués par ChatGPT ou d'autres bots. Joue toi-même !",
     matchNotFound: "Correspondance du manager introuvable",
     notFinished: "Le match n'est pas encore terminé",

@@ -156,10 +156,10 @@ export const femmer: Dictionary["femmer"] = {
     opponentTactic: (tactic: string) => `Modstanderen: ${tactic}`,
     penaltyShort: "str.",
   },
-  /** Telleren for dagens kamper: spilt, tak og timer til nullstilling ved midnatt. */
-  quota: (used: number, max: number, hours: number) => `${used} af ${max} femmerkampe spillet i dag · nulstilles om ca. ${hours} t`,
+  /** Telleren for kamper i denne perioden: spilt, tak og timer til neste nullstilling. */
+  quota: (used: number, max: number, hours: number) => `${used} af ${max} femmerkampe spillet i denne 6-timers periode · nulstilles om ca. ${hours} t`,
   errors: {
-    dailyMatchLimit: (max: number) => `Du har spillet ${max} femmerkampe i dag. Gå ud og rør ved græs, ven!`,
+    periodMatchLimit: (max: number) => `Du har spillet ${max} femmerkampe i denne 6-timers periode. Gå ud og rør ved græs, ven!`,
     automatedPlay: "Kampe kan ikke spilles af ChatGPT eller andre robotter. Spil selv!",
     invalidFormation: "Ugyldig formation",
     invalidPack: "Ugyldig pakke",

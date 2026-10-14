@@ -233,8 +233,8 @@ export const career: CareerDict = {
     listOnMarket: "Legg ut på markedet",
     cancel: "Avbryt",
   },
-  /** Telleren for dagens kamper: spilt, tak og timer til nullstilling ved midnatt. */
-  quota: (used: number, max: number, hours: number) => `${used} av ${max} managerkamper spilt i dag · nullstilles om ca. ${hours} t`,
+  /** Telleren for kamper i denne perioden: spilt, tak og timer til neste nullstilling. */
+  quota: (used: number, max: number, hours: number) => `${used} av ${max} managerkamper spilt denne 6-timersperioden · nullstilles om ca. ${hours} t`,
   errors: {
     bothNeedLineup: "Begge managerne må ha 11 gyldige spillere i startelleveren",
     onlyFriends: "Du kan bare utfordre venner",
@@ -242,8 +242,8 @@ export const career: CareerDict = {
     pickLineupFirst: "Velg en ellever før du godtar managerkampen",
     cannotStart: "Kampen kan ikke startes",
     hourlyFriendMatchLimit: (max: number) => `Du kan spille maks ${max} direkte managerkamper mot venner i løpet av én time.`,
-    participantDailyMatchLimit: (max: number) => `En spiller har nådd grensen på ${max} managerkamper i dag.`,
-    dailyMatchLimit: (max: number) => `Du har spilt ${max} managerkamper i dag. Klipp gress kompis!`,
+    participantPeriodMatchLimit: (max: number) => `En spiller har nådd grensen på ${max} managerkamper i denne 6-timersperioden.`,
+    periodMatchLimit: (max: number) => `Du har spilt ${max} managerkamper i denne 6-timersperioden. Klipp gress kompis!`,
     automatedPlay: "Kamper kan ikke spilles av ChatGPT eller andre roboter. Spill selv!",
     matchNotFound: "Fant ikke managerkampen",
     notFinished: "Kampen er ikke ferdig ennå",

@@ -228,8 +228,8 @@ export const career = {
     listOnMarket: "Laita myyntiin markkinoille",
     cancel: "Peruuta",
   },
-  /** Telleren for dagens kamper: spilt, tak og timer til nullstilling ved midnatt. */
-  quota: (used: number, max: number, hours: number) => `${used}/${max} manageriottelua pelattu tänään · nollautuu noin ${hours} h kuluttua`,
+  /** Telleren for kamper i denne perioden: spilt, tak og timer til neste nullstilling. */
+  quota: (used: number, max: number, hours: number) => `${used}/${max} manageriottelua pelattu tällä 6 tunnin jaksolla · nollautuu noin ${hours} h kuluttua`,
   errors: {
     bothNeedLineup: "Molemmat managerit tarvitsevat 11 kelvollista pelaajaa aloitussarjaansa",
     onlyFriends: "Voit haastaa vain ystäviä",
@@ -237,8 +237,8 @@ export const career = {
     pickLineupFirst: "Valitse XI ennen kuin hyväksyt manageriottelun",
     cannotStart: "Ottelua ei voi aloittaa",
     hourlyFriendMatchLimit: (max: number) => `Voit pelata enintään ${max} suoraa manageriottelua ystäviä vastaan tunnissa.`,
-    participantDailyMatchLimit: (max: number) => `Pelaaja on saavuttanut ${max} manageriottelun rajan tänään.`,
-    dailyMatchLimit: (max: number) => `Olet pelannut ${max} manageriottelua tänään. Mene koskettamaan ruohoa, kaveri!`,
+    participantPeriodMatchLimit: (max: number) => `Pelaaja on saavuttanut ${max} manageriottelun rajan tällä 6 tunnin jaksolla.`,
+    periodMatchLimit: (max: number) => `Olet pelannut ${max} manageriottelua tällä 6 tunnin jaksolla. Mene koskettamaan ruohoa, kaveri!`,
     automatedPlay: "ChatGPT tai muut botit eivät voi pelata otteluita. Pelaa itse!",
     matchNotFound: "Managerin ottelua ei löytynyt",
     notFinished: "Ottelu ei ole vielä ohi",

@@ -1,6 +1,6 @@
 import type { MatchQuota } from "@/lib/match-limit";
 
-/** Liten teller som viser hvor mange kamper brukeren har spilt i dag og hvor lenge det er til den nullstilles. */
+/** Liten teller som viser hvor mange kamper brukeren har spilt i denne 6-timersperioden og hvor lenge det er til den nullstilles. */
 export function MatchQuotaBadge({ quota, label }: { quota: MatchQuota | null; label: (used: number, max: number, hours: number) => string }) {
   if (!quota) return null;
   const full = quota.used >= quota.max;

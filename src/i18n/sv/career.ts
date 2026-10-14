@@ -228,8 +228,8 @@ export const career = {
     listOnMarket: "Lägg ut på marknaden",
     cancel: "Avbryt",
   },
-  /** Telleren for dagens kamper: spilt, tak og timer til nullstilling ved midnatt. */
-  quota: (used: number, max: number, hours: number) => `${used} av ${max} managermatcher spelade i dag · nollställs om ca ${hours} tim`,
+  /** Telleren for kamper i denne perioden: spilt, tak og timer til neste nullstilling. */
+  quota: (used: number, max: number, hours: number) => `${used} av ${max} managermatcher spelade under denna 6-timmarsperiod · nollställs om ca ${hours} tim`,
   errors: {
     bothNeedLineup: "Båda tränarna behöver 11 giltiga spelare i sin start XI",
     onlyFriends: "Du kan bara utmana vänner",
@@ -237,8 +237,8 @@ export const career = {
     pickLineupFirst: "Välj en XI innan du accepterar managermatchen",
     cannotStart: "Matchen kan inte startas",
     hourlyFriendMatchLimit: (max: number) => `Du kan spela högst ${max} direkta managermatcher mot vänner under en timme.`,
-    participantDailyMatchLimit: (max: number) => `En spelare har nått gränsen på ${max} managermatcher i dag.`,
-    dailyMatchLimit: (max: number) => `Du har spelat ${max} managermatcher i dag. Gå ut och rör vid gräs, kompis!`,
+    participantPeriodMatchLimit: (max: number) => `En spelare har nått gränsen på ${max} managermatcher under denna 6-timmarsperiod.`,
+    periodMatchLimit: (max: number) => `Du har spelat ${max} managermatcher under denna 6-timmarsperiod. Gå ut och rör vid gräs, kompis!`,
     automatedPlay: "Matcher kan inte spelas av ChatGPT eller andra robotar. Spela själv!",
     matchNotFound: "Managermatchning hittades inte",
     notFinished: "Matchen är inte över än",
