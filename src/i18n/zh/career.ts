@@ -280,7 +280,7 @@ export const career = {
     empty: "这里没有 TOTS 卡。",
   },
   icons: {
-    intro: (count: number) => `${count} 张传奇卡，来自足球史上最伟大的传奇球星。在卡包中比 TOTS 更稀有。`,
+    intro: (count: number) => `${count} 张传奇卡，来自足球史上最伟大的传奇球星。在卡包中非常稀有。`,
     empty: "这里没有传奇卡。",
   },
   honorable: {

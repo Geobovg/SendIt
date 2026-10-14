@@ -280,7 +280,7 @@ export const career = {
     empty: "No TOTS cards here.",
   },
   icons: {
-    intro: (count: number) => `${count} Icon cards of the greatest legends in football history. They're rarer than TOTS in packs.`,
+    intro: (count: number) => `${count} Icon cards of the greatest legends in football history. They're very rare in packs.`,
     empty: "No Icons here.",
   },
   honorable: {

@@ -285,7 +285,7 @@ export const career: CareerDict = {
     empty: "Ingen TOTS-kort her.",
   },
   icons: {
-    intro: (count: number) => `${count} Icon-kort av de største legendene i fotballhistorien. De er sjeldnere enn TOTS i pakker.`,
+    intro: (count: number) => `${count} Icon-kort av de største legendene i fotballhistorien. De er veldig sjeldne i pakker.`,
     empty: "Ingen Icons her.",
   },
   honorable: {
