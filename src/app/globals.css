@@ -910,8 +910,10 @@ body:has(.manager-bottom-nav) .audio-fab {
 
 /* Lysglimt som sveiper over kortet når det er på plass. */
 .pack-shine {
-  position: relative;
+  position: absolute;
+  inset: 0;
   overflow: hidden;
+  pointer-events: none;
   border-radius: 1rem;
 }
 

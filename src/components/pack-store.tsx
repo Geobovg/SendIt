@@ -171,15 +171,11 @@ function PackReveal({ pulls, packName, jackpot, onClose }: { pulls: PackPull[]; 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {pulls.map((pull, pullIndex) => {
           const sold = soldIds.has(pull.card_id);
-          const bigPull = pull.overall >= walkoutFrom || Boolean(pull.special);
-          const pullGlow = pull.special ? specialStyles[pull.special].glow : glowFor(pull.overall);
           const sent = kept.has(pull.card_id);
           const canSend = !sold && !sent && (pull.tradable || Boolean(pull.special));
           const status = sold ? tp.sold : sent ? tp.sentToClub : <>{pull.location === "storage" ? tp.toStorage : tp.inSquad}{pull.duplicate ? tp.duplicate : ""}{pull.tradable ? "" : tp.untradable}</>;
           return <div key={pull.card_id} className={`pack-label-rise grid gap-1 ${sold ? "opacity-40" : ""}`} style={{ animationDelay: `${Math.min(pullIndex, 11) * 70}ms` }}>
-            <div className="rounded-2xl" style={bigPull && !sold ? { boxShadow: `0 0 1.6rem ${pullGlow}` } : undefined}>
-              {canSend ? <button type="button" aria-expanded={picked === pull.card_id} onClick={() => setPicked((current) => current === pull.card_id ? null : pull.card_id)} className={`rounded-2xl text-left ${picked === pull.card_id ? "ring-2 ring-accent" : ""}`}><PlayerCardFace player={pull} eager /></button> : <PlayerCardFace player={pull} eager />}
-            </div>
+            {canSend ? <button type="button" aria-expanded={picked === pull.card_id} onClick={() => setPicked((current) => current === pull.card_id ? null : pull.card_id)} className={`rounded-2xl text-left ${picked === pull.card_id ? "ring-2 ring-accent" : ""}`}><PlayerCardFace player={pull} eager /></button> : <PlayerCardFace player={pull} eager />}
             {canSend && picked === pull.card_id ? <button type="button" className={`${buttonClass} justify-self-center`} onClick={() => setConfirmingKeep(pull)}>{tp.sendToClub}</button> : null}
             <p className={`text-center text-xs ${sent ? "font-semibold text-emerald-300" : "text-white/70"}`}>{status}</p>
           </div>;
@@ -202,7 +198,7 @@ function PackReveal({ pulls, packName, jackpot, onClose }: { pulls: PackPull[]; 
         </div> : null}
 
         {card && revealed ? <div className="relative grid gap-2">
-          <div className={walkout ? "pack-card-walkout w-72" : "pack-card-enter w-72"}><div className={walkout ? "pack-shine" : undefined}><PlayerCardFace player={card} eager /></div></div>
+          <div className={walkout ? "pack-card-walkout w-72" : "pack-card-enter w-72"}><div className="relative"><PlayerCardFace player={card} eager />{walkout ? <div className="pack-shine" aria-hidden /> : null}</div></div>
           <p className="pack-label-rise text-center text-sm text-white/75">
             {card.special === "inform" ? tp.informPulled : card.special ? `${t.career.special.badge[card.special]}!` : walkout ? tp.bigCard : ""} {card.location === "storage" ? tp.placedInStorage : tp.placedInSquad}{card.duplicate ? tp.alreadyOwned : ""}
           </p>
