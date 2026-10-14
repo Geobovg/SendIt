@@ -157,7 +157,7 @@ export const femmer: Dictionary["femmer"] = {
     penaltyShort: "rp.",
   },
   errors: {
-    dailyMatchLimit: (max: number) => `Olet pelannut ${max} Femmer-ottelua viimeisen vuorokauden aikana. Mene koskettamaan ruohoa, kaveri!`,
+    dailyMatchLimit: (max: number) => `Olet pelannut ${max} Femmer-ottelua tänään. Mene koskettamaan ruohoa, kaveri!`,
     automatedPlay: "ChatGPT tai muut botit eivät voi pelata otteluita. Pelaa itse!",
     invalidFormation: "Virheellinen muodostelma",
     invalidPack: "Virheellinen paketti",

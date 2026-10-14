@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createDraftTestDb } from "./draft-test-db.mjs";
 const db = await createDraftTestDb(true);
-await db.exec(readFileSync(new URL('../supabase/migrations/0097_managerkamp_grenser.sql',import.meta.url),'utf8'));
+for (const file of ['0097_managerkamp_grenser.sql','0098_managerkamp_grense_per_dag.sql']) await db.exec(readFileSync(new URL('../supabase/migrations/'+file,import.meta.url),'utf8'));
 const query=async(sql,args=[]) => (await db.query(sql,args)).rows;
 const one=async(sql,args=[]) => (await query(sql,args))[0];
 const user=async() => {
@@ -10,13 +10,16 @@ const user=async() => {
   await query('insert into player_profiles(user_id,manager_budget) values($1,100)',[id]);
   return id;
 };
-const seed=async(home,away=null,{direct=false,age='5 minutes',mode='manager',status='completed'}={}) => {
+// age: 'today' = midnight Oslo time (earliest moment that counts today), 'yesterday' = one minute before it, otherwise an interval ago.
+const seed=async(home,away=null,{direct=false,age='0 seconds',mode='manager',status='completed'}={}) => {
   const challenge=direct?crypto.randomUUID():null;
-  return (await one("insert into career_matches(mode,status,home_user_id,away_user_id,challenge_id,started_at) values($1,$2,$3,$4,$5,now()-$6::interval) returning id",[mode,status,home,away,challenge,age])).id;
+  const midnight="date_trunc('day',now() at time zone 'Europe/Oslo') at time zone 'Europe/Oslo'";
+  const startedAt=age==='today'?midnight:age==='yesterday'?`${midnight}-interval '1 minute'`:`now()-'${age}'::interval`;
+  return (await one(`insert into career_matches(mode,status,home_user_id,away_user_id,challenge_id,started_at) values($1,$2,$3,$4,$5,${startedAt}) returning id`,[mode,status,home,away,challenge])).id;
 };
 // Daily: draft RPC shares the same counter with AI/season matches, and the 40th is allowed.
 const a=await user();
-for(let n=0;n<39;n++) await seed(a,null,{age:'2 hours'});
+for(let n=0;n<39;n++) await seed(a,null,{age:'today'});
 const draft=(await one('select start_draft($1,null) as id',[a])).id;
 await query("update career_drafts set status='active' where id=$1",[draft]);
 const ai={name:'AI',rating:80,team:{}};
@@ -39,25 +42,32 @@ const lobby=(await one("insert into career_matches(mode,status,home_user_id,away
 await assert.rejects(()=>query("update career_matches set status='live',started_at=now() where id=$1",[lobby]),/Maks 5 direkte/);
 assert.equal((await one('select status from career_matches where id=$1',[lobby])).status,'lobby');
 
-// Old direct games fall outside the rolling hour but still count toward the day.
+// Old direct games fall outside the rolling hour.
 const e=await user(),f=await user();
 for(let n=0;n<5;n++) await seed(e,f,{direct:true,age:'61 minutes'});
 for(let n=0;n<5;n++) await seed(e,f,{direct:true});
 await assert.rejects(()=>seed(e,f,{direct:true}),/Maks 5 direkte/);
-// Other modes and games older than 24 hours do not use the manager daily quota.
+// Other modes and games from before today's midnight (Oslo) do not use the manager daily quota.
 const g=await user();
 for(let n=0;n<42;n++) await seed(g,null,{mode:'other'});
-for(let n=0;n<42;n++) await seed(g,null,{age:'25 hours'});
+for(let n=0;n<42;n++) await seed(g,null,{age:'yesterday'});
 await seed(g);
+// The quota resets at midnight, not 24 hours after each game: games from just before midnight never count, games from just after always do.
+const k=await user();
+for(let n=0;n<40;n++) await seed(k,null,{age:'yesterday'});
+await seed(k);
+const l=await user();
+for(let n=0;n<40;n++) await seed(l,null,{age:'today'});
+await assert.rejects(()=>seed(l),/grensen på 40/);
 
 // A second player cannot start a draft game against someone who has used all 40 daily slots.
 const h=await user(),i=await user();
-for(let n=0;n<40;n++) await seed(h,null,{age:'2 hours'});
+for(let n=0;n<40;n++) await seed(h,null,{age:'today'});
 await assert.rejects(()=>seed(i,h),/grensen på 40/);
 // A started game uses one slot even if it is not completed yet.
 const j=await user();
-for(let n=0;n<39;n++) await seed(j,null,{age:'2 hours'});
+for(let n=0;n<39;n++) await seed(j,null,{age:'today'});
 await seed(j,null,{status:'live'});
 await assert.rejects(()=>seed(j),/grensen på 40/);
-console.log('Match limits passed: draft inside 40/day, 5 direct friend games/hour, rolling windows, both participants, lobby rollback and continuation at cap.');
+console.log('Match limits passed: draft inside 40/day, 5 direct friend games/hour, daily reset at Oslo midnight, rolling hour, both participants, lobby rollback and continuation at cap.');
 await db.close();
