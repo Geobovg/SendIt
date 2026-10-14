@@ -17,6 +17,7 @@ const packNames: Record<string, string> = {
   premium_gull: "Pacchetto Oro Premium",
   sjeldne_spillere: "Giocatori rari",
   jumbo_premium_gull: "Pacchetto Oro Premium Jumbo",
+  skadoosh_dude: "Skadoosh dude",
 };
 
 const packDescriptions: Record<string, string> = {
@@ -36,7 +37,8 @@ const packDescriptions: Record<string, string> = {
   gull_spillere: "Cinque carte, con almeno una da 78 o più garantita.",
   premium_gull: "Sei carte, con almeno due da 80 o più garantite.",
   sjeldne_spillere: "Cinque carte, tutte da 80 o più, e almeno una 83+. Max 3 al giorno.",
-  jumbo_premium_gull: "Dodici carte, tutte 79+, con tre 80+ e una 83+ garantite. Max 3 al giorno.",
+  jumbo_premium_gull: "Otto carte, tutte 79+, con tre 80+ e una 83+ garantite. Max 3 al giorno.",
+  skadoosh_dude: "Quindici carte, tutte 80+, con una 88+, due 86+ e quattro 84+ garantite.",
 };
 
 export const market = {

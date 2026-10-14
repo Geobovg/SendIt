@@ -17,6 +17,7 @@ const packNames: Record<string, string> = {
   premium_gull: "Premium-kultapakkaus",
   sjeldne_spillere: "Harvinaiset pelaajat",
   jumbo_premium_gull: "Jumbo premium -kulta",
+  skadoosh_dude: "Skadoosh dude",
 };
 
 const packDescriptions: Record<string, string> = {
@@ -36,7 +37,8 @@ const packDescriptions: Record<string, string> = {
   gull_spillere: "Viisi korttia, vähintään yksi 78 tai parempi taattu.",
   premium_gull: "Kuusi korttia, vähintään kaksi 80 tai parempaa taattu.",
   sjeldne_spillere: "Viisi korttia, kaikki 80 tai parempia, ja vähintään yksi 83+. Enintään 3 päivässä.",
-  jumbo_premium_gull: "Kaksitoista korttia, kaikki 79+, kolme 80+ ja yksi 83+ taattu. Enintään 3 päivässä.",
+  jumbo_premium_gull: "Kahdeksan korttia, kaikki 79+, kolme 80+ ja yksi 83+ taattu. Enintään 3 päivässä.",
+  skadoosh_dude: "Viisitoista korttia, kaikki 80+, yksi 88+, kaksi 86+ ja neljä 84+ taattu.",
 };
 
 export const market = {
