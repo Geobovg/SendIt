@@ -12,7 +12,7 @@ const user = async (mb=100,tokens=0) => {
 const wallet = (id) => one("select manager_budget as mb,draft_tokens as tokens from player_profiles where user_id=$1",[id]);
 const prices = new Map((await query('select key,price from manager_packs')).map(p=>[p.key,p.price]));
 const options = await query('select * from career_draft_reward_options order by mode,wins,id');
-const value = (o)=>o.mb+o.tokens*50+o.packs.reduce((sum,p)=>sum+p.quantity*prices.get(p.key),0);
+const value = (o)=>o.mb+o.tokens*150+o.packs.reduce((sum,p)=>sum+p.quantity*prices.get(p.key),0);
 for (const mode of ['solo','room']) {
   const max = mode==='solo'?5:3;
   let previousMin = 0;
@@ -46,7 +46,7 @@ for (const option of options) {
   await query('delete from career_draft_reward_options where mode=$1 and wins=$2 and id<>$3',[option.mode,option.wins,option.id]);
   const id=await user(100);
   const room=option.mode==='room'?(await one('insert into career_draft_rooms(host_id) values($1) returning id',[id])).id:null;
-  const draft=(await one("insert into career_drafts(user_id,room_id,status,wins,entry_fee) values($1,$2,'active',$3,50) returning id",[id,room,option.wins])).id;
+  const draft=(await one("insert into career_drafts(user_id,room_id,status,wins,entry_fee) values($1,$2,'active',$3,150) returning id",[id,room,option.wins])).id;
   await one("select finish_draft($1,$2)",[draft,option.wins===(option.mode==='solo'?5:3)?'champion':'eliminated']);
   const result=await one('select reward_mb,reward_packs,reward_tokens,reward_option_id from career_drafts where id=$1',[draft]);
   assert.deepEqual(result,{reward_mb:option.mb,reward_packs:option.packs,reward_tokens:option.tokens,reward_option_id:option.id});
@@ -58,7 +58,7 @@ for (const option of options) {
   await query('rollback');
 }
 // Explicit payment choice: a token never pays MB and does not get converted to MB on cancellation.
-const tokenHost=await user(0,2), guest=await user(100,1);
+const tokenHost=await user(0,2), guest=await user(200,1);
 const room=(await one('select create_draft_room_with_payment($1,$2,true) as id',[tokenHost,[guest]])).id;
 assert.deepEqual(await wallet(tokenHost),{mb:0,tokens:1});
 await one('select start_draft_with_payment($1,$2,false)',[guest,room]);
@@ -66,7 +66,7 @@ assert.deepEqual(await wallet(guest),{mb:50,tokens:1});
 await one('select leave_draft_room($1,$2)',[tokenHost,room]);
 await one('select leave_draft_room($1,$2)',[tokenHost,room]).then(()=>assert.fail('cancelled room must reject second refund'),()=>{});
 assert.deepEqual(await wallet(tokenHost),{mb:0,tokens:2});
-assert.deepEqual(await wallet(guest),{mb:100,tokens:1});
+assert.deepEqual(await wallet(guest),{mb:200,tokens:1});
 
 const empty=await user(100,0);
 await assert.rejects(()=>one('select start_draft_with_payment($1,null,true)',[empty]),/Du har ingen draft tokens/);
@@ -75,10 +75,10 @@ assert.equal((await one('select count(*)::int as n from career_drafts where user
 // A guest can also pay with a token and leave without affecting the host's entry.
 const guestRoom=(await one('select create_draft_room_with_payment($1,$2,true) as id',[tokenHost,[guest]])).id;
 await one('select start_draft_with_payment($1,$2,true)',[guest,guestRoom]);
-assert.deepEqual(await wallet(guest),{mb:100,tokens:0});
+assert.deepEqual(await wallet(guest),{mb:200,tokens:0});
 await one('select leave_draft_room($1,$2)',[guest,guestRoom]);
 await one('select leave_draft_room($1,$2)',[guest,guestRoom]);
-assert.deepEqual(await wallet(guest),{mb:100,tokens:1});
+assert.deepEqual(await wallet(guest),{mb:200,tokens:1});
 assert.deepEqual(await wallet(tokenHost),{mb:0,tokens:1});
 await one('select leave_draft_room($1,$2)',[tokenHost,guestRoom]);
 assert.deepEqual(await wallet(tokenHost),{mb:0,tokens:2});
@@ -94,7 +94,7 @@ assert.deepEqual(await wallet(tokenHost),{mb:0,tokens:2});
 // Real weighted draws vary but remain inside the zero-win pool, including for giving up before a match.
 const seen=new Set();
 for (let i=0;i<80;i++) {
-  const id=await user(100);
+  const id=await user(200);
   const draft=(await one('select start_draft_with_payment($1,null,false) as id',[id])).id;
   await one("select finish_draft($1,'eliminated')",[draft]);
   const {reward_option_id}=await one('select reward_option_id from career_drafts where id=$1',[draft]);

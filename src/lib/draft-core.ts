@@ -6,7 +6,7 @@ import type { ManagerPlayerSnapshot, ManagerTeamSnapshot } from "./manager-match
 import type { SpecialKind } from "./special-cards";
 
 /** Holdes lik draft_entry_fee() i databasen. */
-export const DRAFT_ENTRY_FEE = 50;
+export const DRAFT_ENTRY_FEE = 150;
 /** Solo: fem runder mot AI. Venneturnering: åtte lag, tre runder. */
 export const SOLO_ROUNDS = 5;
 export const ROOM_ROUNDS = 3;

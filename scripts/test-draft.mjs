@@ -9,7 +9,7 @@ const one = async (sql, params) => (await q(sql, params))[0];
 const users = [];
 for (const name of ["geo", "anna", "bob"]) {
   const { id } = await one("insert into profiles (username) values ($1) returning id", [name]);
-  await q("insert into player_profiles (user_id, manager_budget) values ($1, 100)", [id]);
+  await q("insert into player_profiles (user_id, manager_budget) values ($1, 200)", [id]);
   users.push(id);
 }
 const [geo, anna, bob] = users;
@@ -118,7 +118,7 @@ for (let round = 1; round <= 5; round++) {
   await one("select record_draft_match_result($1,1,0,null,null,1)", [match]);
 }
 assert.deepEqual(await one("select status,wins,reward_mb,reward_pack from career_drafts where id=$1",[champion]), {status:'champion',wins:5,reward_mb:175,reward_pack:'sjeldne_spillere'});
-assert.equal(await budget(geo),425);
+assert.equal(await budget(geo),325);
 assert.equal((await one("select quantity from manager_pack_inventory where user_id=$1 and pack_key='sjeldne_spillere'",[geo])).quantity,1);
 // En kamp som ingen ser på, skal gjøres opp fra deltakerens draftside, uten å berøre andre.
 await q("update career_matches set started_at = now() - interval '10 minutes' where id=$1",[id1]);
@@ -132,6 +132,7 @@ await expectError('played solo cannot join a room', async () => {
 });
 
 // Både vert og invitert kan ta med en uavspilt draft uten ny innsats.
+await q("update player_profiles set manager_budget = 500");
 const {start_draft: hostDraft} = await one("select start_draft($1,null)",[geo]);
 const hostBudget = await budget(geo);
 await q("update career_drafts set status='active',formation='4-3-3',captain_id='captain',players='{\"s0\":{\"name\":\"Keeper\"}}',offers='{\"s1\":[{\"id\":\"saved-choice\"}]}' where id=$1",[hostDraft]);
@@ -151,8 +152,8 @@ assert.equal((await one("select start_draft($1,$2) as id",[anna,transferRoom])).
 assert.equal(await budget(anna),0);
 await expectError('cannot join twice', () => one("select start_draft($1,$2)",[anna,transferRoom]));
 await one("select leave_draft_room($1,$2)",[geo,transferRoom]);
-assert.equal(await budget(geo),hostBudget+50);
-assert.equal(await budget(anna),50);
+assert.equal(await budget(geo),hostBudget+150);
+assert.equal(await budget(anna),150);
 assert.equal((await one("select status from career_drafts where id=$1",[guestDraft])).status,'cancelled');
 // Klienten bruker PostgREST-strengen, ikke JavaScript Date som mister mikrosekundene.
 const beforeTouch = await one("select updated_at::text as stamp from career_drafts where id=$1",[guestDraft]);
