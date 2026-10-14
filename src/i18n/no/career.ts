@@ -13,6 +13,7 @@ export const career: CareerDict = {
   },
   loading: "Laster",
   sections: {
+    draft: "Draft",
     sesong: "Sesong",
     lagtropp: "Tropp",
     klubblager: "Klubblager",

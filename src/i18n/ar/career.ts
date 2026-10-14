@@ -9,6 +9,7 @@ export const career = {
   },
   loading: "جاري التحميل",
   sections: {
+    draft: "درافت",
     sesong: "الموسم",
     lagtropp: "فرقة",
     klubblager: "التخزين",

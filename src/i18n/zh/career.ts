@@ -9,6 +9,7 @@ export const career = {
   },
   loading: "加载中",
   sections: {
+    draft: "选秀",
     sesong: "季节",
     lagtropp: "小队",
     klubblager: "存储",

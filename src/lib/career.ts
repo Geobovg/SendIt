@@ -64,6 +64,7 @@ export async function getCareerMatch(matchId: string, userId: string) {
     // Kamper i AI-sesongen spilles i en arena, og kampskjermen får arenaens stadion og farger.
     db.from("career_season_matches").select("friend_season_id, home_ai_key, away_ai_key, career_ai_seasons(arena, teams)").eq("match_id", matchId).maybeSingle(),
   ]);
+  const { data: draftFixture } = fixture ? { data: null } : await db.from("career_draft_fixtures").select("id").eq("match_id", matchId).maybeSingle();
   const aiSeason = fixture ? (Array.isArray(fixture.career_ai_seasons) ? fixture.career_ai_seasons[0] : fixture.career_ai_seasons) : null;
   const names = new Map((profiles ?? []).map((profile) => [profile.id, profile.username]));
   const clubs = new Map((careers ?? []).map((career) => [career.user_id, career.club_name]));
@@ -82,8 +83,8 @@ export async function getCareerMatch(matchId: string, userId: string) {
     // Klokka forankres i serverens tid, så en nettleser som går feil ikke flytter kampminuttet.
     serverNow: Date.now(),
     arena: (aiSeason?.arena as number | undefined) ?? null,
-    // Etter en vennesesongkamp går du tilbake til vennesesongene, ellers til startsiden i managerkarrieren.
-    returnPath: fixture?.friend_season_id ? "/managerkarriere/sesong?tab=venner" : "/managerkarriere",
+    // Etter en vennesesongkamp går du tilbake til vennesesongene, etter en draftkamp til draften, ellers til startsiden i managerkarrieren.
+    returnPath: fixture?.friend_season_id ? "/managerkarriere/sesong?tab=venner" : draftFixture ? "/managerkarriere/draft" : "/managerkarriere",
     shots: (shots ?? []).map((shot) => ({ minute: shot.minute, kind: shot.kind, side: shot.side, shooterCell: shot.shooter_cell, keeperCell: shot.keeper_cell, outcome: shot.outcome })),
   };
 }
