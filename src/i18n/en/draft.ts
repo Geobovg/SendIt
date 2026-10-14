@@ -52,6 +52,7 @@ export const draft = {
     champion: "Champion! 🏆",
     eliminated: (round: string) => `Knocked out in the ${round.toLowerCase()}`,
     wins: (wins: number, total: number) => `${wins} of ${total} matches won`,
+    record: "Record",
     prize: "Prize",
     packHint: "Your packs are waiting under Packs.",
   },
