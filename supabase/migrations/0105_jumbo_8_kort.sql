@@ -6,6 +6,11 @@
 -- Sjansen for inform og honorable gjelder hvert kort som ikke er garantert. Med åtte kort er fire garantert, så
 -- fire kort kan bli spesialkort, og hvert av dem får høyere sjanse (8 / 4 i stedet for 12 / 8 av kortene).
 
+-- manager_packs.card_count tillot bare 1–12 kort (0023). Skadoosh dude har 15, så grensen heves først.
+-- (Migreringen feilet på akkurat dette ved første kjøring og ble rullet tilbake, så den er aldri brukt i databasen.)
+alter table manager_packs drop constraint if exists manager_packs_card_count_check;
+alter table manager_packs add constraint manager_packs_card_count_check check (card_count between 1 and 15);
+
 update manager_packs set
   card_count = 8,
   description = 'Åtte kort, alle 79+, garantert tre på 80+ og ett på 83+. Maks 3 per dag.'
