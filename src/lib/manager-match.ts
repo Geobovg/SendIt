@@ -1,3 +1,4 @@
+import { chemistryOf, RATING_PER_CHEMISTRY } from "./chemistry";
 import { anyPosition } from "./lineup";
 
 export type ManagerPlayerSnapshot = {
@@ -11,12 +12,26 @@ export type ManagerPlayerSnapshot = {
   accent?: string | null;
   /** Avgjør hvem som tar straffen og hvor mange hjørner han tør sikte på. */
   shooting?: number | null;
+  /** Liga og nasjon (se chemistry.ts). Mangler på Academy-kort, personlige kort og AI-spillere. */
+  league?: string | null;
+  nation?: string | null;
+  /** Et personlig kort har alltid full kjemi. */
+  personal?: boolean | null;
+  /** Bare i kampmotoren: ratingen kjemien la til akkurat nå. `overall` og `shooting` er allerede økt med den. */
+  chem?: number;
 };
 /**
  * `bonus` er en skjult styrke som bare AI-klubber i arena 2–5 har. Den legges på angrep, forsvar,
  * avslutninger og keeper i kampmodellen, men vises aldri som rating på spillerne.
  */
-export type ManagerTeamSnapshot = { userId: string; formation: string; starters: ManagerPlayerSnapshot[]; bench: ManagerPlayerSnapshot[]; bonus?: number };
+export type ManagerTeamSnapshot = {
+  userId: string; formation: string; starters: ManagerPlayerSnapshot[]; bench: ManagerPlayerSnapshot[]; bonus?: number;
+  /**
+   * Oppdiktede AI-klubber og AI-lagene i draft har ikke ekte kjemi: i stedet får hver spiller på banen denne ratingen
+   * (kamper fra versjon 7). Settes den, regnes ikke kjemien ut fra spillerne.
+   */
+  chemistryBonus?: number;
+};
 /**
  * `knockout` settes på kamper som må ha en vinner (kvalik til opprykk): står det likt etter 90′,
  * spilles ekstraomganger, og står det fortsatt likt etter 120′, avgjøres kampen på straffer.
@@ -24,15 +39,20 @@ export type ManagerTeamSnapshot = { userId: string; formation: string; starters:
  * `ratingWeight` forsterker hvor mye ratingforskjellen betyr i åpent spill (1 når den mangler).
  * Vennesesongkamper får en høyere vekt, så det beste laget oftere vinner.
  */
-export type ManagerKickoffEvent = { type: "kickoff"; version: 1 | 2 | 3 | 4 | 5 | 6; home: ManagerTeamSnapshot; away: ManagerTeamSnapshot; knockout?: boolean; ratingWeight?: number };
+export type ManagerKickoffEvent = { type: "kickoff"; version: 1 | 2 | 3 | 4 | 5 | 6 | 7; home: ManagerTeamSnapshot; away: ManagerTeamSnapshot; knockout?: boolean; ratingWeight?: number };
 /**
- * Kamper som startes nå får versjon 6: samme modell som versjon 4 (angrep mot forsvar og avslutter
+ * Kamper som startes nå får versjon 7: som versjon 6, men med kjemi (se chemistry.ts). Hver spiller på banen får
+ * 0–3 kjemipoeng ut fra hvor mange på laget som deler klubb, liga og nasjon, og hvert poeng er +1 effektiv rating i
+ * kampmotoren. Kjemien regnes ut på nytt hvert minutt for dem som står på banen, så bytter og utvisninger merkes.
+ * Eldre kamper beholder modellen de ble startet med.
+ *
+ * Versjon 6: samme modell som versjon 4 (angrep mot forsvar og avslutter
  * mot keeper), men spillerne blir merkbart slitne utover andre omgang, og byttevinduet på 70′ er
  * tilbake. Vinduet står åpent til begge managerne er ferdige, men aldri lenger enn SUB_WINDOW_MAX_MS.
  * AI-klubbene bytter selv. Versjon 5 hadde ingen bytter; eldre kamper beholder klokka og modellen
  * de ble startet med.
  */
-export const MANAGER_KICKOFF_VERSION = 6;
+export const MANAGER_KICKOFF_VERSION = 7;
 export type MatchSide = "home" | "away";
 export type ManagerSubstitutionEvent = { type: "substitution"; side: MatchSide; outId: string; inId: string; minute: number };
 /** En manager er ferdig med byttevinduet – enten fordi han trykket «Ferdig», eller fordi alle tre byttene er brukt. */
@@ -49,7 +69,7 @@ export type ShotKind = "penalty" | "chance";
  * `keeperId` finnes bare på kamper fra versjon 4: hvem som står i mål. `reach` ligger igjen på
  * eldre kamper, men keeperen dekker nå alltid bare ruta han velger.
  */
-export type TimelineShot = { type: "shot"; minute: number; side: MatchSide; kind: ShotKind; takerId: string; taker: string; options: number[]; keeperId?: string | null; reach?: number };
+export type TimelineShot = { type: "shot"; minute: number; side: MatchSide; kind: ShotKind; takerId: string; taker: string; options: number[]; keeperId?: string | null; reach?: number; takerChem?: number; keeperChem?: number };
 export type TimelineEvent = TimelineGoal | TimelineCard | TimelineChance | ManagerSubstitutionEvent | TimelineShot;
 /**
  * Ett spark i straffekonkurransen. Den simuleres ferdig ved avspark – ingen velger noe – og
@@ -229,7 +249,7 @@ export function getManagerKickoff(events: unknown): ManagerKickoffEvent | null {
   const kickoff = events.find((event) => event && typeof event === "object" && (event as { type?: unknown }).type === "kickoff") as Record<string, unknown> | undefined;
   if (!kickoff) return null;
   // Eldre kamper ligger lagret som versjon 1 og 2, uten katalogdata og skuddstat.
-  const known = kickoff.version === 1 || kickoff.version === 2 || kickoff.version === 3 || kickoff.version === 4 || kickoff.version === 5 || kickoff.version === 6;
+  const known = kickoff.version === 1 || kickoff.version === 2 || kickoff.version === 3 || kickoff.version === 4 || kickoff.version === 5 || kickoff.version === 6 || kickoff.version === 7;
   return known && isTeam(kickoff.home) && isTeam(kickoff.away) ? (kickoff as ManagerKickoffEvent) : null;
 }
 
@@ -355,6 +375,20 @@ function lineupAtMinute(team: ManagerTeamSnapshot, substitutions: ManagerSubstit
     bench.splice(benchIndex, 1);
   }
   return { ...team, starters, bench };
+}
+
+/**
+ * Spillerne på banen med kjemien lagt til: `overall` og `shooting` øker med kjemipoengene (+1 per poeng),
+ * og `chem` sier hvor mye. Har laget en fast kjemi (AI), får alle den, ellers regnes den ut fra de som står på banen.
+ * Kamper før versjon 7 har ingen kjemi.
+ */
+export function withChemistry(team: ManagerTeamSnapshot, players: ManagerPlayerSnapshot[], version: number): ManagerPlayerSnapshot[] {
+  if (version < 7) return players;
+  const points = team.chemistryBonus === undefined ? chemistryOf(players) : null;
+  return players.map((player) => {
+    const chem = (points ? points.get(player.id) ?? 0 : team.chemistryBonus ?? 0) * (points ? RATING_PER_CHEMISTRY : 1);
+    return chem > 0 ? { ...player, overall: player.overall + chem, shooting: shootingOf(player) + chem, chem } : { ...player, chem: 0 };
+  });
 }
 
 export function averageOverall(team: ManagerTeamSnapshot | null): number {
@@ -519,7 +553,13 @@ export function penaltyCellChance(shot: TimelineShot, cell: number): number {
 /** Ratingen til keeperen skuddet går mot, eller null på eldre kamper der keeperen ikke telte. */
 export function shotKeeperRating(shot: TimelineShot, players: Map<string, ManagerPlayerSnapshot>): number | null {
   if (shot.keeperId === undefined) return null;
-  return (shot.keeperId ? players.get(shot.keeperId)?.overall : undefined) ?? 40;
+  return ((shot.keeperId ? players.get(shot.keeperId)?.overall : undefined) ?? 40) + (shot.keeperChem ?? 0);
+}
+
+/** Skyttens avslutning med kjemien han hadde da skuddet ble planlagt (kamper fra versjon 7). */
+export function shotTakerShooting(shot: TimelineShot, players: Map<string, ManagerPlayerSnapshot>): number {
+  const taker = players.get(shot.takerId);
+  return (taker ? shootingOf(taker) : 70) + (shot.takerChem ?? 0);
 }
 
 /**
@@ -689,8 +729,8 @@ function simulateMatch(matchId: string, kickoff: ManagerKickoffEvent, substituti
   const lastMinute = kickoff.knockout ? EXTRA_TIME_END : 90;
   for (let minute = 1; minute <= lastMinute; minute += 1) {
     const active = {
-      home: lineupAtMinute(kickoff.home, substitutions.filter((event) => event.side === "home"), minute).starters.filter((player) => !sentOff.has(player.id)),
-      away: lineupAtMinute(kickoff.away, substitutions.filter((event) => event.side === "away"), minute).starters.filter((player) => !sentOff.has(player.id)),
+      home: withChemistry(kickoff.home, lineupAtMinute(kickoff.home, substitutions.filter((event) => event.side === "home"), minute).starters.filter((player) => !sentOff.has(player.id)), kickoff.version),
+      away: withChemistry(kickoff.away, lineupAtMinute(kickoff.away, substitutions.filter((event) => event.side === "away"), minute).starters.filter((player) => !sentOff.has(player.id)), kickoff.version),
     };
 
     for (const side of sides) {
@@ -777,7 +817,8 @@ function simulateMatch(matchId: string, kickoff: ManagerKickoffEvent, substituti
       if (taker && rated) {
         const keeper = keeperOf(active[side === "home" ? "away" : "home"]);
         const options = shotOptions(shootingOf(taker));
-        timeline.push({ type: "shot", minute, side, kind, takerId: taker.id, taker: taker.name, options, keeperId: keeper.id });
+        const keeperChem = active[side === "home" ? "away" : "home"].find((player) => player.id === keeper.id)?.chem ?? 0;
+        timeline.push({ type: "shot", minute, side, kind, takerId: taker.id, taker: taker.name, options, keeperId: keeper.id, ...(kickoff.version >= 7 ? { takerChem: taker.chem ?? 0, keeperChem } : {}) });
       } else if (taker) {
         timeline.push({ type: "shot", minute, side, kind, takerId: taker.id, taker: taker.name, options: shotOptions(shootingOf(taker)) });
       }
@@ -786,8 +827,8 @@ function simulateMatch(matchId: string, kickoff: ManagerKickoffEvent, substituti
 
   const shootout = kickoff.knockout
     ? planShootout(matchId, {
-        home: lineupAtMinute(kickoff.home, substitutions.filter((event) => event.side === "home"), lastMinute + 1).starters.filter((player) => !sentOff.has(player.id)),
-        away: lineupAtMinute(kickoff.away, substitutions.filter((event) => event.side === "away"), lastMinute + 1).starters.filter((player) => !sentOff.has(player.id)),
+        home: withChemistry(kickoff.home, lineupAtMinute(kickoff.home, substitutions.filter((event) => event.side === "home"), lastMinute + 1).starters.filter((player) => !sentOff.has(player.id)), kickoff.version),
+        away: withChemistry(kickoff.away, lineupAtMinute(kickoff.away, substitutions.filter((event) => event.side === "away"), lastMinute + 1).starters.filter((player) => !sentOff.has(player.id)), kickoff.version),
       })
     : [];
   return [kickoff, ...substitutions, ...timeline.sort(byMinute), ...shootout];
@@ -964,8 +1005,9 @@ export function getManagerMatchReport(matchId: string, events: unknown, shots: S
   const saved = (side: MatchSide) => timeline.filter((event) => event.type === "chance" && event.side === side && event.outcome === "save").length;
   const posts = (side: MatchSide) => timeline.filter((event) => event.type === "chance" && event.side === side && event.outcome === "post").length;
   const takenShots = (side: MatchSide) => inWindow.filter((shot) => shot.side === side && shot.outcome !== null).length;
-  const homeStrength = averageOverall(homeTeam);
-  const awayStrength = averageOverall(awayTeam);
+  const withBoost = (team: ManagerTeamSnapshot) => ({ ...team, starters: withChemistry(team, team.starters, kickoff.version) });
+  const homeStrength = averageOverall(withBoost(homeTeam));
+  const awayStrength = averageOverall(withBoost(awayTeam));
   const homePossession = Math.round(bounded(50 + (homeStrength - awayStrength) * 0.72 + (numberFromSeed(`${matchId}:possession`) - .5) * 4, 34, 66));
   // Skudd utenfor mål finnes ikke som hendelse, så de anslås deterministisk ut fra det som skjedde.
   const shotsFor = (side: MatchSide) => score[side] + saved(side) + posts(side) + takenShots(side) + Math.round(numberFromSeed(`${matchId}:${side}:wide`) * 4 + 1);

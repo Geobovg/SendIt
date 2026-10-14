@@ -1,4 +1,5 @@
 import { formations } from "./lineup";
+import { AI_CHEMISTRY_RATING } from "./chemistry";
 import type { ManagerPlayerSnapshot, ManagerTeamSnapshot } from "./manager-match";
 
 /**
@@ -43,7 +44,7 @@ export function aiTeamSnapshot(seasonId: string, team: AiTeam, maxOverall = 95):
   });
   const starters = formations["4-3-3"].map((slot, index) => player(index, slot.position));
   const bench = ["GK", "CB", "CM", "ST"].map((position, index) => player(11 + index, position));
-  return { userId: `ai:${team.key}`, formation: "4-3-3", starters, bench, ...(team.bonus ? { bonus: team.bonus } : {}) };
+  return { userId: `ai:${team.key}`, formation: "4-3-3", starters, bench, chemistryBonus: AI_CHEMISTRY_RATING, ...(team.bonus ? { bonus: team.bonus } : {}) };
 }
 
 const average = (players: ManagerPlayerSnapshot[]) => players.reduce((sum, player) => sum + player.overall, 0) / players.length;

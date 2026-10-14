@@ -47,7 +47,11 @@ _Avoid_: Playoff, Omspill
 
 **SBC**:
 Slått av i migrering 0081, siden ingenting gir premie lenger utenom opprykk. En utfordring i Managerkarrieren der du leverer inn et bestemt antall kort som oppfyller kravene (f.eks. snitt-rating eller antall fra én liga) og får en premie i MB eller pakker. Kortene du leverer er borte for alltid. Forsøkene kan være begrenset per dag (nullstilles kl. 18:00 norsk tid) eller per uke (fredag kl. 18:00). Heter «SBC» på alle språk.
-_Avoid_: Oppdrag, Utfordring alene (tvetydig med vennekamp-utfordringer), Kjemi (finnes ikke i appen)
+_Avoid_: Oppdrag, Utfordring alene (tvetydig med vennekamp-utfordringer)
+
+**Kjemi**:
+FC-inspirert bonus i alle kamper i Managerkarrieren (AI-sesong, vennesesong, vennekamper og draft, men ikke Femmer). Hver spiller i elleveren på banen får 0–3 poeng ut fra hvor mange på laget som deler klubb (2/4/7 spillere gir 1/2/3 poeng), liga (3/5/8) og nasjon (2/5/8), kappet på 3, så laget får maks 33. Spilleren teller selv med, og bare spillerne på banen teller: benk og reserver gir ingenting, og kjemien regnes ut på nytt etter bytter og utvisninger. Liga «other» og ukjente klubber gir ingenting, **inform** og **TOTS** regnes som vanlig-kortet, ikoner og **personlige kort** har alltid 3 (ikoner teller dobbelt for nasjonen og som én ekstra for hver liga på laget). Hvert poeng er +1 effektiv rating i kampmotoren, og kortets egen rating endres aldri. Oppdiktede AI-klubber og AI-lagene i draft har en fast kjemi på +2 rating per spiller i stedet. Gjelder kamper fra versjon 7; «Velg beste tropp» og automatiske lag tar hensyn til den. Regnes i `src/lib/chemistry.ts`, ingen databasekolonne.
+_Avoid_: Lagånd, Synergi
 
 **Spesialkort**:
 Et kort av en spiller som er bedre enn spillerens vanlige kort og har eget utseende. Det er et eget kort: du kan eie både vanlig-kortet og spesialkortet, men bare én av dem kan være i troppen, og de regnes ikke som duplikater av hverandre. Det finnes to typer: **inform** og **TOTS**.

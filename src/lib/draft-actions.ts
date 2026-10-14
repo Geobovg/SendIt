@@ -6,6 +6,7 @@ import { dbErrorMessage, getT } from "@/i18n/server";
 import type { ActionState } from "./actions";
 import { requireUser } from "./auth";
 import { aiDraftTeam, draftColumns, draftPool, drawOptions, type DraftAiSide, type DraftRow, type FixtureRow } from "./draft";
+import { AI_CHEMISTRY_RATING } from "./chemistry";
 import { ALL_SLOT_KEYS, CAPTAIN_KEY, captainSlot, draftComplete, draftFormation, draftRating, draftTeamSnapshot, DRAFT_RATING_WEIGHT, ROOM_SIZE, type DraftPlayer } from "./draft-core";
 import { friendshipId } from "./friends";
 import { formationNames, type Formation } from "./lineup";
@@ -31,6 +32,11 @@ async function saveDraft(db: Db, draft: DraftRow, changes: Partial<Pick<DraftRow
   const { data, error } = await db.from("career_drafts").update(changes).eq("id", draft.id).eq("updated_at", draft.updated_at).select("id");
   if (error) return dbErrorMessage(error);
   return data?.length ? null : (await getT()).draft.errors.busy;
+}
+
+/** AI-lagene i draft har ikke ekte kjemi, men samme faste kjemi som oppdiktede AI-klubber i sesongen. */
+function aiDraftSide(side: DraftAiSide | null): ManagerTeamSnapshot | null {
+  return side?.team ? { ...side.team, chemistryBonus: side.team.chemistryBonus ?? AI_CHEMISTRY_RATING } : null;
 }
 
 export async function startSoloDraftAction(_prev: ActionState, _formData: FormData): Promise<ActionState> {
@@ -184,7 +190,7 @@ export async function playDraftFixtureAction(_prev: ActionState, formData: FormD
   if (limitError) return { error: limitError };
 
   const homeTeam = draftTeamSnapshot(home.user_id, home.formation, home.players ?? {});
-  const awayTeam: ManagerTeamSnapshot | null = away ? draftTeamSnapshot(away.user_id, away.formation, away.players ?? {}) : (fixture.away_ai as DraftAiSide | null)?.team ?? null;
+  const awayTeam: ManagerTeamSnapshot | null = away ? draftTeamSnapshot(away.user_id, away.formation, away.players ?? {}) : aiDraftSide(fixture.away_ai as DraftAiSide | null);
   if (!homeTeam || !awayTeam) return { error: errors.matchNotReady };
   const matchId = crypto.randomUUID();
   // Draftkamper er utslagskamper: likt etter 90′ gir ekstraomganger og straffer.
