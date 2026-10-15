@@ -11,6 +11,7 @@ import { clubCrest } from "@/lib/club-crests";
 import { playerPhoto } from "@/lib/player-photos";
 import {
   shotGoalChance,
+  penaltySaveChance,
   EXTRA_TIME_END,
   getManagerKickoff,
   getManagerMatchReport,
@@ -595,7 +596,7 @@ export function LiveManagerMatch({ match, userId, returnAfterComplete = true, he
             <div className="grid min-w-0 flex-1 gap-2">
               <GoalGrid
                 options={activeShot.options}
-                chanceFor={iAmShooting && taker ? (cell) => shotGoalChance(activeShot, shotTakerShooting(activeShot, players), cell, keeperRating, guessing) : null}
+                chanceFor={iAmKeeping ? (cell) => penaltySaveChance(activeShot, cell) : (cell) => shotGoalChance(activeShot, shotTakerShooting(activeShot, players), cell, keeperRating, guessing)}
                 myCells={myCells}
                 otherCells={otherCells}
                 otherLabel={iAmShooting ? t.match.grid.keeper : t.match.grid.shot}
@@ -610,6 +611,7 @@ export function LiveManagerMatch({ match, userId, returnAfterComplete = true, he
                   startTransition(() => shotAction(data));
                 }}
               />
+              {choosingWindow && myCell === null ? <p className="text-xs font-semibold text-muted">{iAmKeeping ? t.match.grid.percentSave : t.match.grid.percentGoal}</p> : null}
               {keeperLine ? <p className="text-xs font-semibold text-muted">{keeperLine}</p> : null}
               {myCell !== null && choosingWindow ? <p className="text-xs text-muted">{iAmShooting && activeShot.kind === "penalty" ? t.match.shot.waitingForKeeper : t.match.shot.waitingForShot}</p> : null}
               {shotState.error ? <p className="text-xs text-danger">{shotState.error}</p> : null}

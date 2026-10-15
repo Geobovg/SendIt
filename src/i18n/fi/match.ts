@@ -55,6 +55,8 @@ export const match = {
     yours: "SINUN",
     keeper: "SÄILYTTÄJÄ",
     shot: "SHOT",
+    percentGoal: "Prosentti on maalin todennäköisyys",
+    percentSave: "Prosentti on torjuntasi todennäköisyys",
   },
   shot: {
     penaltyTitle: "RANGAISTUS",

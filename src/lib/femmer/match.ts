@@ -192,6 +192,28 @@ export function fiveCellChance(shot: Pick<FiveShot, "kind" | "shooting" | "keepi
   return bounded(base * (placement[cell] ?? 0.8) * Math.exp((shot.shooting - shot.keeping) * 0.02), 0.05, 0.95);
 }
 
+/** Hvor ofte AI-skytteren velger hver rute: de beste rutene oftest. */
+const aiAimWeights = placement.map((value) => value * value);
+const aiAimTotal = aiAimWeights.reduce((sum, value) => sum + value, 0);
+
+/** Sjansen for mål når AI-skytteren treffer en annen rute enn den keeperen kastet seg mot. */
+function aiGoalChance(shot: Pick<FiveShot, "kind" | "shooting" | "keeping">, cell: number) {
+  return Math.min(0.95, fiveCellChance(shot, cell) * 1.15);
+}
+
+/**
+ * Sjansen for at det ikke blir mål når den som spiller står i mål og kaster seg mot en rute:
+ * redning hvis skytteren velger samme rute, ellers kan han fortsatt bomme. Det er dette tallet
+ * som står på ruta, regnet ut fra nøyaktig de samme sannsynlighetene som `resolveFiveShot` bruker.
+ */
+export function fiveKeeperStopChance(shot: Pick<FiveShot, "kind" | "shooting" | "keeping">, keeperCell: number) {
+  let conceded = 0;
+  for (let cell = 0; cell < FIVE_SHOT_CELLS; cell += 1) {
+    if (cell !== keeperCell) conceded += (aiAimWeights[cell] / aiAimTotal) * aiGoalChance(shot, cell);
+  }
+  return 1 - conceded;
+}
+
 /** Om en straffe/sjanse er den som spiller sin (skytter) eller motstanderens (da står man i mål). */
 export function controllerShoots(match: FiveMatchData, shot: FiveShot) {
   return shot.side === (match.controllerSide ?? "home");
@@ -215,13 +237,12 @@ export function resolveFiveShot(match: FiveMatchData, shot: FiveShot, pick: numb
     const saved = (second - chance) / (1 - chance) < 0.7;
     return { shooterCell: cell, keeperCell: saved ? cell : Math.floor(third * FIVE_SHOT_CELLS), outcome: saved ? "saved" : "missed" };
   }
-  const weights = placement.map((value) => value * value);
-  let target = first * weights.reduce((sum, value) => sum + value, 0);
+  let target = first * aiAimTotal;
   let shooterCell = FIVE_SHOT_CELLS - 1;
-  for (let cell = 0; cell < FIVE_SHOT_CELLS; cell += 1) { target -= weights[cell]; if (target <= 0) { shooterCell = cell; break; } }
+  for (let cell = 0; cell < FIVE_SHOT_CELLS; cell += 1) { target -= aiAimWeights[cell]; if (target <= 0) { shooterCell = cell; break; } }
   const keeperCell = pick ?? Math.floor(third * FIVE_SHOT_CELLS);
   if (keeperCell === shooterCell) return { shooterCell, keeperCell, outcome: "saved" };
-  return { shooterCell, keeperCell, outcome: second < Math.min(0.95, fiveCellChance(shot, shooterCell) * 1.15) ? "goal" : "missed" };
+  return { shooterCell, keeperCell, outcome: second < aiGoalChance(shot, shooterCell) ? "goal" : "missed" };
 }
 
 function planShots(seed: string, teams: Record<FiveSide, Placed[]>): FiveShot[] {

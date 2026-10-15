@@ -138,7 +138,7 @@ export const femmer: Dictionary["femmer"] = {
     youSave: (keeper: string, taker: string) => `${keeper} mot ${taker} – hvor kaster du deg?`,
     watching: (taker: string) => `${taker} gjør seg klar…`,
     pickCorner: "Prosenten er sjansen din for mål",
-    pickDive: "Gjett riktig rute for å redde",
+    pickDive: "Prosenten er sjansen for at du stopper den",
     shotOutcome: { goal: "MÅL!", saved: "Reddet!", missed: "Bom!" },
     bench: "Benk",
     win: "Seier!",

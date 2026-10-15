@@ -553,6 +553,16 @@ export function penaltyCellChance(shot: TimelineShot, cell: number): number {
   return 1 - covering / shot.options.length;
 }
 
+/**
+ * Sjansen for redning når en manager står i mål på straffe og kaster seg mot ruta: andelen av
+ * skytterens mulige plasseringer keeperen da dekker. Skytteren (AI, eller en som ikke rakk å
+ * trykke) velger jevnt blant dem, så tallet er nøyaktig. Motstykket til `penaltyCellChance`.
+ */
+export function penaltySaveChance(shot: TimelineShot, keeperCell: number): number {
+  const covered = shot.options.filter((cell) => keeperZone(shot, keeperCell).includes(cell)).length;
+  return covered / shot.options.length;
+}
+
 /** Ratingen til keeperen skuddet går mot, eller null på eldre kamper der keeperen ikke telte. */
 export function shotKeeperRating(shot: TimelineShot, players: Map<string, ManagerPlayerSnapshot>): number | null {
   if (shot.keeperId === undefined) return null;

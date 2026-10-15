@@ -55,6 +55,8 @@ export const match = {
     yours: "你的",
     keeper: "守护者",
     shot: "射击",
+    percentGoal: "百分比是进球概率",
+    percentSave: "百分比是你扑救成功的概率",
   },
   shot: {
     penaltyTitle: "处罚",

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useMemo } from "react";
 import { useT } from "@/i18n/client";
-import { controllerShoots, fiveCellChance, FIVE_SHOT_CELLS, type FiveEvent, type FiveMatchData, type FivePlayer, type FiveShot, type FiveShotResult, type FiveSide } from "@/lib/femmer/match";
+import { controllerShoots, fiveCellChance, fiveKeeperStopChance, FIVE_SHOT_CELLS, type FiveEvent, type FiveMatchData, type FivePlayer, type FiveShot, type FiveShotResult, type FiveSide } from "@/lib/femmer/match";
 import { buildPitchScript, GOAL_HALF_WIDTH, pitchFrame } from "@/lib/femmer/pitch";
 import { playerPhoto } from "@/lib/player-photos";
 
@@ -79,7 +79,7 @@ function ShotStage({ match, shot, result, interactive, secondsLeft, isController
     <div className="absolute rounded-t-md border-[5px] border-b-0 border-white bg-[repeating-linear-gradient(45deg,rgba(255,255,255,.1)_0_5px,transparent_5px_10px),repeating-linear-gradient(-45deg,rgba(255,255,255,.1)_0_5px,transparent_5px_10px)] shadow-[0_8px_20px_rgba(0,0,0,.4)]" style={{ left: `${GOAL.left}%`, top: `${GOAL.top}%`, width: `${GOAL.width}%`, height: `${GOAL.height}%` }}>
       <div className="grid h-full grid-cols-3 grid-rows-2 gap-1 p-1">
         {Array.from({ length: FIVE_SHOT_CELLS }, (_, cell) => <button key={cell} type="button" disabled={!interactive} onClick={() => onPick(cell)} className={`grid place-items-center rounded-md text-sm font-black transition sm:text-base ${interactive ? "border border-lime-300/70 bg-lime-300/10 hover:bg-lime-300/35 active:scale-95" : "border border-transparent"}`}>
-          {!result && interactive ? (shooting ? `${Math.round(fiveCellChance(shot, cell) * 100)}%` : "🧤") : ""}
+          {!result ? `${Math.round((shooting ? fiveCellChance(shot, cell) : fiveKeeperStopChance(shot, cell)) * 100)}%` : ""}
         </button>)}
       </div>
     </div>

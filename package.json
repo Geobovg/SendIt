@@ -12,6 +12,7 @@
     "test:draft": "node scripts/test-draft-generation.mjs && node scripts/test-draft.mjs && node scripts/test-draft-rewards.mjs",
     "test:match-limits": "node scripts/test-match-limits.mjs",
     "test:chemistry": "node scripts/test-chemistry.mjs",
+    "test:shot-chances": "node scripts/test-shot-chances.mjs",
     "sim:arenas": "node scripts/simulate-arenas.mjs",
     "walkout:klipp": "node scripts/walkout-klipp.mjs",
     "walkout:konverter": "node scripts/walkout-konverter.mjs"
