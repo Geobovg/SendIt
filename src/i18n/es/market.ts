@@ -105,6 +105,7 @@ export const market = {
     sold: "Vendida",
     nextCard: "siguiente tarjeta",
     openingCard: "tarjeta reveladora",
+    skipWalkout: "Saltar",
     openingBanner: "APERTURA",
     cardBanner: "TARJETA",
     bigCard: "¡Gran atracción!",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState, type CSSProperties } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import type { ManagerPack, PackShop } from "@/lib/career";
@@ -11,6 +11,7 @@ import { useLocale, useT } from "@/i18n/client";
 import { INTL_LOCALES, type Locale } from "@/i18n/locales";
 import { PlayerCardFace } from "./player-card-face";
 import { ConfirmDialog } from "./confirm-dialog";
+import { qualifiesForWalkout, walkMs, walkoutFrom, WalkoutBackdrop, WalkoutEmbers, WalkoutFigure, WalkoutFlags, WalkoutHandoff, WalkoutPreload } from "./pack-walkout";
 import { SpecialPick } from "./special-pick";
 import { buttonClass, cardClass, secondaryButtonClass } from "./ui";
 import { useScrollLock } from "./use-scroll-lock";
@@ -44,9 +45,6 @@ async function quickSellOnce(prev: QuickSellPackState, formData: FormData): Prom
   const result = await quickSellPackCardsAction(prev, next);
   return { ...result, soldIds: [...already, ...(result.soldIds ?? [])], payout: (prev.payout ?? 0) + (result.payout ?? 0) };
 }
-// Grensa for det store trekket. Alt herfra og opp får walkout slik som i FIFA.
-const walkoutFrom = 86;
-
 function glowFor(overall: number) {
   if (overall >= 90) return "#ff2fb0";
   if (overall >= walkoutFrom) return "#f2c94c";
@@ -102,29 +100,63 @@ function PackOdds({ pack, informFactor }: { pack: ManagerPack; informFactor: num
   </dl>;
 }
 
+// Ett steg i åpningen er ett vanlig kort, eller walkouten. Har pakka to eller flere walkouts,
+// vises de to beste sist, som i FC: den laveste går ut først, så snur kortet seg og den beste kommer.
+type RevealStep = { cards: PackPull[]; walkout: boolean };
+type StageKind = "wait" | "walk" | "card" | "turn";
+
+function buildSteps(pulls: PackPull[]): RevealStep[] {
+  const best = pulls.filter(qualifiesForWalkout).sort((a, b) => b.overall - a.overall).slice(0, 2).reverse();
+  const picked = new Set(best.map((pull) => pull.card_id));
+  const steps: RevealStep[] = pulls.filter((pull) => !picked.has(pull.card_id)).map((pull) => ({ cards: [pull], walkout: false }));
+  return best.length ? [...steps, { cards: best, walkout: true }] : steps;
+}
+
+// Stegene et kort går gjennom. Vanlige kort venter litt før de snus, en walkout går først.
+function stageKinds(step: RevealStep): StageKind[] {
+  if (!step.walkout) return ["wait", "card"];
+  return step.cards.flatMap((_, i): StageKind[] => i ? ["turn", "walk", "card"] : ["walk", "card"]);
+}
+
 function PackReveal({ pulls, packName, jackpot, onClose }: { pulls: PackPull[]; packName: string; jackpot: number; onClose: () => void }) {
   const t = useT(); const tp = t.market.packs;
-  // index -1 mens pakka ryker opp, deretter ett steg per kort, til slutt oppsummeringen.
-  // Index og revealed ligger i samme tilstand, slik at et nytt kort alltid starter
+  // index -1 mens pakka ryker opp, deretter ett steg per kort (eller walkout), til slutt oppsummeringen.
+  // Index og stage ligger i samme tilstand, slik at et nytt kort alltid starter
   // skjult uten at en effekt må nullstille noe.
-  const [phase, setPhase] = useState({ index: -1, revealed: false });
-  const { index, revealed } = phase;
-  const card = index >= 0 && index < pulls.length ? pulls[index] : null;
-  // Et inform-kort får alltid den store animasjonen, uansett rating.
-  const walkout = (card?.overall ?? 0) >= walkoutFrom || Boolean(card?.special);
+  const steps = useMemo(() => buildSteps(pulls), [pulls]);
+  const [phase, setPhase] = useState({ index: -1, stage: 0, skipped: false });
+  const { index, stage, skipped } = phase;
+  const step = index >= 0 && index < steps.length ? steps[index] : null;
+  const kinds = step ? stageKinds(step) : [];
+  const kind = kinds[stage];
+  const lastStage = stage >= kinds.length - 1;
+  // Walkouten har tre stegs per kort (gå, kort, snu), så kortnummeret er stage / 3.
+  const cardIndex = step?.walkout ? Math.floor(stage / 3) : 0;
+  const card = step?.cards[cardIndex] ?? null;
+  const revealed = kind === "card" || kind === "turn";
+  // Alle kort fra 86 og et inform-kort får den store animasjonen, men bare de to beste går ut av tunnelen.
+  const walkout = card ? qualifiesForWalkout(card) : false;
   const glow = card?.special ? specialStyles[card.special].glow : glowFor(card?.overall ?? 0);
 
   useEffect(() => {
     if (index !== -1) return;
-    const timer = setTimeout(() => setPhase({ index: 0, revealed: false }), 900);
+    const timer = setTimeout(() => setPhase({ index: 0, stage: 0, skipped: false }), 900);
     return () => clearTimeout(timer);
   }, [index]);
 
   useEffect(() => {
-    if (!card || revealed) return;
-    const timer = setTimeout(() => setPhase((current) => ({ ...current, revealed: true })), walkout ? 1500 : 650);
+    if (!card) return;
+    // Bevegelse slått av: walkouten hoppes nesten over, kortet vises rett etter.
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let ms: number | null = null;
+    if (kind === "wait") ms = walkout ? 1500 : 650;
+    else if (kind === "walk") ms = reduced ? 600 : walkMs(card);
+    else if (kind === "card" && !lastStage) ms = 2000;
+    else if (kind === "turn") ms = 600;
+    if (ms === null) return;
+    const timer = setTimeout(() => setPhase((current) => ({ ...current, stage: current.stage + 1 })), ms);
     return () => clearTimeout(timer);
-  }, [card, revealed, walkout]);
+  }, [card, kind, lastStage, walkout, stage]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => { if (event.key === "Escape") onClose(); };
@@ -132,8 +164,26 @@ function PackReveal({ pulls, packName, jackpot, onClose }: { pulls: PackPull[]; 
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
-  const next = () => { if (revealed) setPhase((current) => ({ index: current.index + 1, revealed: false })); };
-  const done = index >= pulls.length;
+  // Etter siste kort lukker en mørk skygge seg inn før oppsummeringen vises, så det ikke blir et brått hopp.
+  const [closing, setClosing] = useState(false);
+  useEffect(() => {
+    if (!closing) return;
+    const timer = setTimeout(() => {
+      setPhase({ index: steps.length, stage: 0, skipped: false });
+      setClosing(false);
+    }, 750);
+    return () => clearTimeout(timer);
+  }, [closing, steps.length]);
+
+  const next = () => {
+    if (kind !== "card" || closing) return;
+    if (lastStage && index === steps.length - 1) { setClosing(true); return; }
+    setPhase((current) => lastStage ? { index: current.index + 1, stage: 0, skipped: false } : { ...current, stage: current.stage + 1 });
+  };
+  // Hopp over går rett til siste kort i walkouten, uten flagg og gåing.
+  const skip = () => setPhase((current) => ({ ...current, stage: kinds.length - 1, skipped: true }));
+  const done = index >= steps.length;
+  const shown = steps.slice(0, Math.max(index, 0)).reduce((sum, previous) => sum + previous.cards.length, 0) + cardIndex + 1;
   const best = pulls.reduce((top, pull) => Math.max(top, pull.overall), 0);
   const [sellState, sellAction, sellPending] = useActionState(quickSellOnce, initialQuickSell);
   const soldIds = new Set(sellState.soldIds ?? []);
@@ -153,26 +203,27 @@ function PackReveal({ pulls, packName, jackpot, onClose }: { pulls: PackPull[]; 
         lastes ned mens pakka ryker opp og ligger klare når hvert kort snus. */}
     {done ? null : <div aria-hidden className="pointer-events-none invisible absolute left-0 top-0 w-72 overflow-hidden">
       {pulls.map((pull) => <PlayerCardFace key={pull.card_id} player={pull} eager />)}
+      <WalkoutPreload pulls={pulls} />
     </div>}
     {done ? <div className="grid max-h-full w-full max-w-4xl gap-4 overflow-y-auto">
-      <div className="text-center text-white">
+      <div className="pack-summary-rise text-center text-white" style={{ "--i": 0 } as CSSProperties}>
         <p className="text-xs font-bold tracking-[.3em] text-white/60">{packName.toUpperCase()}</p>
         <h2 className="mt-1 text-3xl font-black">{tp.youGot(pulls.length)}</h2>
         <p className="mt-1 text-sm text-white/70">{tp.bestCard(best)}</p>
         {jackpot ? <p className="pack-label-rise mx-auto mt-3 w-fit rounded-xl border-2 px-5 py-3 text-2xl font-black" style={{ borderColor: specialStyles.personal.border, color: specialStyles.personal.badge, background: "rgba(0,0,0,.45)" }}>{tp.jackpot(jackpot)}</p> : null}
       </div>
       {/* Knappen står øverst og blir liggende når man ruller, så man slipper å bla ned for å gå videre. */}
-      <div className="sticky top-0 z-10 flex flex-wrap justify-center gap-2 py-1"><button className={`${buttonClass} shadow-lg`} onClick={onClose}>{tp.done}</button><QuickSellRest pulls={toSell} action={sellAction} pending={sellPending} /></div>
+      <div className="pack-summary-rise sticky top-0 z-10 flex flex-wrap justify-center gap-2 py-1" style={{ "--i": 1 } as CSSProperties}><button className={`${buttonClass} shadow-lg`} onClick={onClose}>{tp.done}</button><QuickSellRest pulls={toSell} action={sellAction} pending={sellPending} /></div>
       {toSell.length ? <p className="text-center text-sm text-white/70">{tp.pickToKeep}</p> : null}
       {sellState.soldIds?.length ? <p className="text-center text-sm font-semibold text-white">{tp.quickSoldAll(sellState.soldIds.length, sellState.payout ?? 0)}</p> : null}
       {sellState.error ? <p className="text-center text-sm text-danger">{sellState.error}</p> : null}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {pulls.map((pull) => {
+        {pulls.map((pull, i) => {
           const sold = soldIds.has(pull.card_id);
           const sent = kept.has(pull.card_id);
           const canSend = !sold && !sent && (pull.tradable || Boolean(pull.special));
           const status = sold ? tp.sold : sent ? tp.sentToClub : <>{pull.location === "storage" ? tp.toStorage : tp.inSquad}{pull.duplicate ? tp.duplicate : ""}{pull.tradable ? "" : tp.untradable}</>;
-          return <div key={pull.card_id} className={`grid gap-1 ${sold ? "opacity-40" : ""}`}>
+          return <div key={pull.card_id} className={`pack-summary-rise grid gap-1 ${sold ? "opacity-40" : ""}`} style={{ "--i": i + 2 } as CSSProperties}>
             {canSend ? <button type="button" aria-expanded={picked === pull.card_id} onClick={() => setPicked((current) => current === pull.card_id ? null : pull.card_id)} className={`rounded-2xl text-left ${picked === pull.card_id ? "ring-2 ring-accent" : ""}`}><PlayerCardFace player={pull} eager /></button> : <PlayerCardFace player={pull} eager />}
             {canSend && picked === pull.card_id ? <button type="button" className={`${buttonClass} justify-self-center`} onClick={() => setConfirmingKeep(pull)}>{tp.sendToClub}</button> : null}
             <p className={`text-center text-xs ${sent ? "font-semibold text-emerald-300" : "text-white/70"}`}>{status}</p>
@@ -180,29 +231,45 @@ function PackReveal({ pulls, packName, jackpot, onClose }: { pulls: PackPull[]; 
         })}
       </div>
       {confirmingKeep ? <ConfirmDialog message={tp.sendToClubConfirm(confirmingKeep.name)} onCancel={() => setConfirmingKeep(null)} onConfirm={() => { setKept((current) => new Set(current).add(confirmingKeep.card_id)); setConfirmingKeep(null); setPicked(null); }} /> : null}
-    </div> : <button type="button" onClick={next} className="absolute inset-0 grid place-items-center focus:outline-none" aria-label={revealed ? tp.nextCard : tp.openingCard}>
-      <div className={revealed && walkout ? "pack-shake grid place-items-center" : "grid place-items-center"}>
+    </div> : <>
+    {/* Flaggene ligger bak kortet og tones ut når kortet er åpnet. */}
+    {step?.walkout && card && !skipped && (kind === "walk" || kind === "card") ? <WalkoutFlags slug={card.slug} glow={glow} leaving={kind === "card"} /> : null}
+    {step?.walkout && card && !skipped && (kind === "walk" || kind === "card") ? <WalkoutBackdrop key={`lys-${card.card_id}`} pull={card} glow={glow} leaving={kind === "card"} /> : null}
+    {step?.walkout && card && !skipped && kind === "card" ? <WalkoutEmbers key={`gnister-${card.card_id}`} glow={glow} /> : null}
+    <button type="button" onClick={next} className="absolute inset-0 grid place-items-center focus:outline-none" aria-label={kind === "card" ? tp.nextCard : tp.openingCard}>
+      <div className={kind === "card" && walkout && !skipped && !step?.walkout ? "pack-shake relative grid place-items-center" : "relative grid place-items-center"}>
         {card ? <div className="pack-rays" style={{ "--pack-glow": glow } as CSSProperties} /> : null}
-        {card && !revealed && walkout ? <div className="pack-door" style={{ "--pack-glow": glow } as CSSProperties} /> : null}
-        {card && revealed && walkout ? <div className="pack-flash" /> : null}
+        {card && kind === "wait" && walkout ? <div className="pack-door" style={{ "--pack-glow": glow } as CSSProperties} /> : null}
+        {card && kind === "card" && walkout && !skipped && !step?.walkout ? <div className="pack-flash" /> : null}
+        {card && kind === "card" && step?.walkout && !skipped ? <div className="pointer-events-none absolute inset-0 grid place-items-center"><WalkoutHandoff key={card.card_id} pull={card} glow={glow} /></div> : null}
 
         {index === -1 ? <div className="pack-tear grid h-72 w-56 place-items-center rounded-2xl border border-white/25 bg-[linear-gradient(145deg,#12261a,#061009)] text-center text-white shadow-2xl">
           <div><p className="text-xs font-bold tracking-[.3em] text-white/60">{tp.openingBanner}</p><p className="mt-2 px-3 text-xl font-black">{packName}</p>{jackpot ? <p className="mt-3 px-3 text-lg font-black" style={{ color: specialStyles.personal.badge }}>{tp.jackpot(jackpot)}</p> : null}</div>
         </div> : null}
 
-        {card && !revealed ? <div className="relative grid h-[27rem] w-72 place-items-center rounded-2xl border border-white/25 bg-black/50 text-white shadow-2xl">
+        {card && kind === "walk" ? <WalkoutFigure pull={card} glow={glow} /> : null}
+
+        {card && kind === "wait" ? <div className="relative grid h-[27rem] w-72 place-items-center rounded-2xl border border-white/25 bg-black/50 text-white shadow-2xl">
           <div className="text-center"><p className="text-5xl font-black">{card.position}</p><p className="mt-2 text-xs font-bold tracking-[.3em] text-white/60">{card.special ? `★ ${t.career.special.badge[card.special]}` : walkout ? "…" : tp.cardBanner}</p></div>
         </div> : null}
 
         {card && revealed ? <div className="relative grid gap-2">
-          <div className={walkout ? "pack-card-walkout w-72" : "pack-card-enter w-72"}><PlayerCardFace player={card} eager /></div>
+          <div className={`relative ${kind === "turn" ? "pack-card-turn-out w-72" : step?.walkout && !skipped ? "pack-card-after-walkout w-72" : walkout && !skipped ? "pack-card-walkout w-72" : "pack-card-enter w-72"}`}>
+            <PlayerCardFace player={card} eager />
+            {step?.walkout && !skipped && kind === "card" ? <div aria-hidden className="pack-card-shine" /> : null}
+          </div>
           <p className="pack-label-rise text-center text-sm text-white/75">
             {card.special === "inform" ? tp.informPulled : card.special ? `${t.career.special.badge[card.special]}!` : walkout ? tp.bigCard : ""} {card.location === "storage" ? tp.placedInStorage : tp.placedInSquad}{card.duplicate ? tp.alreadyOwned : ""}
           </p>
-          <p className="text-center text-xs text-white/50">{tp.progress(index + 1, pulls.length)}</p>
+          <p className="text-center text-xs text-white/50">{tp.progress(shown, pulls.length)}</p>
         </div> : null}
       </div>
-    </button>}
+    </button>
+    {step?.walkout && !lastStage ? <button type="button" onClick={skip} className="absolute right-3 top-3 z-10 rounded-full border border-white/25 bg-black/40 px-3 py-1 text-xs font-semibold text-white/80 backdrop-blur hover:text-white">{tp.skipWalkout} »</button> : null}
+    </>}
+    {/* Skyggen som lukker seg over det siste kortet og åpner seg igjen over oppsummeringen. */}
+    {closing ? <div aria-hidden className="pack-veil pack-veil-in" /> : null}
+    {done ? <div aria-hidden className="pack-veil pack-veil-out" /> : null}
   </div>, document.body);
 }
 

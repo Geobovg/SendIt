@@ -731,6 +731,886 @@ body:has(.manager-bottom-nav) .audio-fab {
   }
 }
 
+/* Walkout: spilleren går ut av lysdøra som en silhuett, med nasjonsflagg på begge sider.
+   Varigheten settes per kort med --walk-ms (lengre for 90+ og ikoner). */
+.walkout-scene {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  width: min(24rem, 80vw);
+}
+
+.walkout-door {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  width: 1px;
+  height: 80vmin;
+  translate: -50% -50%;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, var(--pack-glow, #f2c94c), transparent);
+  box-shadow: 0 0 6rem 2rem var(--pack-glow, #f2c94c);
+  animation: pack-door-open calc(var(--approach-ms) * 0.6) ease-out var(--intro-ms) both;
+}
+
+.walkout-pulse {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  width: 28rem;
+  max-width: 120vw;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, var(--pack-glow, #f2c94c) 0, transparent 65%);
+  animation: walkout-pulse calc(var(--approach-ms) * 0.5) ease-in-out var(--intro-ms) 2 both;
+}
+
+@keyframes walkout-pulse {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* Scenen der spilleren går: en kvadratisk boks for sprite-walkouten, stående når det er et klipp. */
+.walkout-stage {
+  --w: min(19rem, 76vw);
+  position: relative;
+  width: var(--w);
+  aspect-ratio: 1;
+}
+
+.walkout-stage-clip {
+  --w: min(26rem, 80vw);
+  aspect-ratio: 3 / 4;
+}
+
+.walkout-clip {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.walkout-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: -0.4rem;
+  width: min(15rem, 55vw);
+  height: 1.6rem;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.75), transparent);
+  animation: walkout-shadow var(--approach-ms) cubic-bezier(0.3, 0.55, 0.3, 1) var(--intro-ms) both;
+}
+
+@keyframes walkout-shadow {
+  from {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Silhuetten går mot kameraet: bildene i sprite-arket byttes med steg, mens figuren vokser ut av lyset.
+   Mot slutten lyses den opp og forsvinner i glimtet, og spillerbildet tar over. */
+.walkout-sprite {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  height: 100%;
+  aspect-ratio: 1 / 2;
+  translate: -50% 0;
+  background: url("/walkouts/sprite-walk.png") 0 0 / 800% 100% no-repeat;
+  transform-origin: 50% 100%;
+  filter: brightness(0.14) drop-shadow(0 0 1rem var(--pack-glow));
+  animation:
+    walkout-walk 0.9s steps(8, jump-none) infinite,
+    walkout-sprite-approach var(--approach-ms) cubic-bezier(0.3, 0.55, 0.3, 1) var(--intro-ms) both;
+}
+
+@keyframes walkout-walk {
+  to {
+    background-position: 100% 0;
+  }
+}
+
+@keyframes walkout-sprite-approach {
+  0% {
+    opacity: 0;
+    transform: scale(0.22);
+    filter: brightness(0.05) drop-shadow(0 0 0.4rem var(--pack-glow));
+  }
+  12% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+    transform: scale(0.96);
+    filter: brightness(0.3) drop-shadow(0 0 1.6rem var(--pack-glow));
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+    filter: brightness(3) drop-shadow(0 0 3rem var(--pack-glow));
+  }
+}
+
+/* Skyggen: kortbildet hans, mørkt med lysrand, kommer opp av tåka og nærmere. Bildet er avskåret
+   ved midjen, så den nederste delen tones ut i tåka. Han vokser hele veien og krymper aldri. Mot
+   slutten lyses han opp, tåka letter, og bildet blir til kortbildet i samme størrelse og posisjon. */
+@property --walkout-fade {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+
+.walkout-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transform-origin: 50% 60%;
+  animation:
+    walkout-shade-approach var(--approach-ms) cubic-bezier(0.4, 0, 0.3, 1) var(--intro-ms) both,
+    walkout-shade-out 0.01s linear calc(var(--end-ms) + 0.4s) forwards;
+}
+
+.walkout-bust {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom;
+  --walkout-fade: 100%;
+  mask-image: linear-gradient(#000 calc(var(--walkout-fade) - 42%), transparent var(--walkout-fade));
+  transform-origin: 50% 100%;
+  animation: walkout-bust-lift calc(var(--approach-ms) * 0.3) ease-in var(--end-ms) both;
+}
+
+@keyframes walkout-shade-approach {
+  0% {
+    opacity: 0;
+    transform: translateY(calc(var(--w) * 0.03)) scale(0.45);
+    filter: brightness(0.08) saturate(0.5) drop-shadow(0 0 0.12rem rgba(255, 255, 255, 0.8)) drop-shadow(0 0 0.5rem var(--pack-glow));
+  }
+  20% {
+    opacity: 1;
+  }
+  65% {
+    transform: translateY(0) scale(0.78);
+    filter: brightness(0.26) saturate(0.6) drop-shadow(0 0 0.14rem rgba(255, 255, 255, 0.75)) drop-shadow(0 0 1.3rem var(--pack-glow));
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(0) scale(0.96);
+    filter: brightness(0.6) saturate(0.85) drop-shadow(0 0 0.12rem rgba(255, 255, 255, 0.4)) drop-shadow(0 0 1.6rem var(--pack-glow));
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: brightness(1) saturate(1) drop-shadow(0 0 0 rgba(255, 255, 255, 0)) drop-shadow(0 0 2rem var(--pack-glow));
+  }
+}
+
+/* Tåka letter når han har stoppet. */
+@keyframes walkout-bust-lift {
+  to {
+    --walkout-fade: 160%;
+  }
+}
+
+/* Når det ferdige kortbildet har tatt over, må skyggen vekk så den ikke synes under feiringen. */
+@keyframes walkout-shade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* Tåka nederst som skjuler at bildet slutter ved midjen. */
+.walkout-fog {
+  position: absolute;
+  left: -15%;
+  right: -15%;
+  bottom: -12%;
+  height: 46%;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 45% 55% at 25% 70%, color-mix(in srgb, var(--pack-glow) 32%, transparent), transparent 70%),
+    radial-gradient(ellipse 50% 50% at 70% 60%, color-mix(in srgb, var(--pack-glow) 24%, transparent), transparent 70%),
+    radial-gradient(ellipse 70% 60% at 50% 100%, rgba(3, 7, 5, 0.9), transparent 75%);
+  filter: blur(0.6rem);
+  animation:
+    walkout-fog-drift 5s ease-in-out infinite alternate,
+    walkout-fog-out 0.8s ease-in var(--end-ms) both;
+}
+
+@keyframes walkout-fog-drift {
+  from {
+    translate: -3% 0;
+  }
+  to {
+    translate: 3% -2%;
+  }
+}
+
+@keyframes walkout-fog-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* Lysglimtet der silhuetten blir til spilleren. */
+.walkout-burst {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  width: 34rem;
+  max-width: 130vw;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, #fff 0, var(--pack-glow) 28%, transparent 62%);
+  animation: walkout-burst 1.6s ease-in-out calc(var(--intro-ms) + var(--approach-ms) * 0.9) both;
+}
+
+@keyframes walkout-burst {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  45% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.3);
+  }
+}
+
+/* Spillerbildet kommer inn i lysglimtet og feirer. */
+.walkout-figure {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom;
+  opacity: 0;
+  filter: drop-shadow(0 0 2rem var(--pack-glow));
+  animation: walkout-figure-in 0.4s ease-out var(--end-ms) forwards;
+}
+
+@keyframes walkout-figure-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Spillerbildet etter gåingen ligger i en egen boks over skyggen. */
+.walkout-final {
+  position: absolute;
+  inset: 0;
+}
+
+.walkout-rating {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  font-size: 4.6rem;
+  line-height: 1;
+  font-style: italic;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+  text-shadow: 0 0 1rem var(--pack-glow), 0 0 2.6rem var(--pack-glow), 0 0.25rem 0 rgba(0, 0, 0, 0.45);
+  animation: pack-label-rise 0.8s ease-out calc(var(--end-ms) + 0.5s) both;
+}
+
+.walkout-rating small {
+  font-size: 1.4rem;
+  letter-spacing: 0.08em;
+  opacity: 0.85;
+}
+
+.walkout-handoff .walkout-rating {
+  animation: none;
+}
+
+.walkout-label {
+  animation: pack-label-rise 0.6s ease-out calc(var(--intro-ms) + var(--approach-ms) * 0.9) both;
+}
+
+.walkout-flags {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.walkout-flag {
+  --w: min(46vw, 26rem);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin-block: auto;
+  width: var(--w);
+  height: calc(var(--w) * 0.667);
+  background: var(--flag, linear-gradient(135deg, var(--pack-glow, #f2c94c), transparent)) center / contain no-repeat;
+  animation:
+    walkout-flag-in 1.3s cubic-bezier(0.2, 0.8, 0.3, 1) both,
+    walkout-flag-wave 2.4s ease-in-out infinite alternate;
+}
+
+.walkout-flag-left {
+  --from: -100%;
+  --tilt: 12deg;
+  left: -4%;
+  background-position: left center;
+  mask-image: linear-gradient(90deg, #000 25%, transparent 82%);
+  transform-origin: left center;
+}
+
+.walkout-flag-right {
+  --from: 100%;
+  --tilt: -12deg;
+  right: -4%;
+  background-position: right center;
+  mask-image: linear-gradient(270deg, #000 25%, transparent 82%);
+  transform-origin: right center;
+}
+
+@keyframes walkout-flag-in {
+  from {
+    opacity: 0;
+    translate: var(--from) 0;
+  }
+  to {
+    opacity: 0.92;
+    translate: 0 0;
+  }
+}
+
+@keyframes walkout-flag-wave {
+  from {
+    transform: perspective(40rem) rotateY(var(--tilt)) skewY(-2deg) scaleY(1);
+  }
+  to {
+    transform: perspective(40rem) rotateY(calc(var(--tilt) * -0.35)) skewY(2deg) scaleY(1.07);
+  }
+}
+
+/* Når kortet er åpnet, toner flaggene ut. */
+.walkout-flags-out .walkout-flag {
+  animation:
+    walkout-flag-out 1.3s ease-in 0.6s both,
+    walkout-flag-wave 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes walkout-flag-out {
+  from {
+    opacity: 0.92;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* FC-walkouten: stadionlys som slås på, nasjon, posisjon og klubb som slår inn, kamerablitser fra
+   publikum, flammesøyler når han lyses opp, og konfetti og trykkbølge når kortet vises. Alt er CSS. */
+.walkout-backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.walkout-lamp {
+  position: absolute;
+  top: -0.4rem;
+  left: calc(8% + var(--i) * 21%);
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-left: -0.75rem;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 1.2rem 0.5rem rgba(255, 255, 255, 0.9), 0 0 3rem 1.2rem var(--pack-glow);
+  opacity: 0;
+  animation: walkout-lamp-on 0.6s linear calc(var(--i) * 0.2s + 0.15s) forwards;
+}
+
+.walkout-lamp::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16rem;
+  height: 78vh;
+  translate: -50% 0;
+  rotate: calc((var(--i) - 2) * 9deg);
+  transform-origin: 50% 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.32), transparent 85%);
+  clip-path: polygon(46% 0, 54% 0, 100% 100%, 0 100%);
+}
+
+/* Lysene flimrer på før de blir stående. */
+@keyframes walkout-lamp-on {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.95;
+  }
+  35% {
+    opacity: 0.15;
+  }
+  55% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.walkout-sweep {
+  position: absolute;
+  bottom: -10vh;
+  width: 14rem;
+  height: 120vh;
+  transform-origin: 50% 100%;
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0.2), transparent 80%);
+  clip-path: polygon(44% 100%, 56% 100%, 100% 0, 0 0);
+  opacity: 0;
+  animation:
+    walkout-sweep 3.4s ease-in-out 0.6s infinite alternate,
+    walkout-sweep-in 0.8s ease-out 0.6s forwards;
+}
+
+.walkout-sweep-1 {
+  left: 6%;
+  --from: -28deg;
+  --to: 24deg;
+}
+
+.walkout-sweep-2 {
+  right: 6%;
+  --from: 28deg;
+  --to: -24deg;
+}
+
+@keyframes walkout-sweep {
+  from {
+    rotate: var(--from);
+  }
+  to {
+    rotate: var(--to);
+  }
+}
+
+@keyframes walkout-sweep-in {
+  to {
+    opacity: 1;
+  }
+}
+
+.walkout-crowd {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  animation: walkout-sweep-in 0.8s ease-out calc(var(--intro-ms) * 0.6) forwards;
+}
+
+.walkout-camera {
+  position: absolute;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0.6rem 0.25rem rgba(255, 255, 255, 0.9);
+  opacity: 0;
+  animation: walkout-camera var(--p) linear var(--d) infinite;
+}
+
+@keyframes walkout-camera {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  2% {
+    opacity: 1;
+    transform: scale(1.8);
+  }
+  6%,
+  100% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+
+.walkout-pyro {
+  position: absolute;
+  bottom: 0;
+  width: 5rem;
+  height: 60vh;
+}
+
+.walkout-pyro-left {
+  left: 3%;
+}
+
+.walkout-pyro-right {
+  right: 3%;
+}
+
+.walkout-flame {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 100%;
+  background: radial-gradient(ellipse 50% 70% at 50% 100%, rgba(255, 255, 255, 0.95) 0, #ffd34a 20%, #ff7a1a 48%, rgba(255, 60, 0, 0) 76%);
+  filter: blur(3px);
+  opacity: 0;
+  animation:
+    walkout-flame-grow 0.45s cubic-bezier(0.2, 0.9, 0.3, 1) var(--end-ms) forwards,
+    walkout-flame-flicker 0.16s ease-in-out var(--end-ms) infinite alternate,
+    walkout-flame-out 0.7s ease-in calc(var(--end-ms) + var(--hold-ms) - 0.7s) forwards;
+}
+
+@keyframes walkout-flame-grow {
+  from {
+    opacity: 1;
+    transform: scaleY(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes walkout-flame-flicker {
+  from {
+    scale: 1 1;
+  }
+  to {
+    scale: 0.94 1.08;
+  }
+}
+
+@keyframes walkout-flame-out {
+  to {
+    opacity: 0;
+  }
+}
+
+.walkout-spark {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 0.3rem;
+  height: 0.3rem;
+  border-radius: 50%;
+  background: #ffd34a;
+  box-shadow: 0 0 0.5rem 0.1rem #ff9a2e;
+  opacity: 0;
+  animation: walkout-spark var(--dur) ease-out calc(var(--end-ms) + var(--delay)) infinite;
+}
+
+@keyframes walkout-spark {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--x), calc(var(--y) * -1));
+  }
+}
+
+/* Introen: flagg, posisjon og klubbmerke slår inn ett om gangen. */
+.walkout-intro {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.walkout-intro-item {
+  grid-area: 1 / 1;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  animation: walkout-intro-pop 1.4s cubic-bezier(0.2, 0.9, 0.3, 1) var(--at) forwards;
+}
+
+.walkout-intro-item::after {
+  content: "";
+  position: absolute;
+  width: 12rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 3px solid var(--pack-glow);
+  opacity: 0;
+  animation: walkout-intro-ring 1.4s ease-out var(--at) both;
+}
+
+@keyframes walkout-intro-pop {
+  0% {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+  18% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  78% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes walkout-intro-ring {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  18% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2);
+  }
+}
+
+.walkout-intro-position {
+  font-size: 6.5rem;
+  line-height: 1;
+  font-style: italic;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 0 1rem var(--pack-glow), 0 0 3rem var(--pack-glow), 0 0.3rem 0 rgba(0, 0, 0, 0.5);
+}
+
+/* Gnister som stiger sakte når kortet toner inn. */
+.walkout-embers {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.walkout-ember {
+  position: absolute;
+  bottom: -1rem;
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0, var(--pack-glow) 55%, transparent 75%);
+  opacity: 0;
+  animation: walkout-ember var(--dur) ease-out var(--delay) forwards;
+}
+
+@keyframes walkout-ember {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  20% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), -85vh);
+  }
+}
+
+/* Stadionlys og flammer toner ut når kortet vises, i stedet for å forsvinne. */
+.walkout-backdrop-out {
+  animation: walkout-backdrop-out 1.8s ease-in-out forwards;
+}
+
+@keyframes walkout-backdrop-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* Spillerbildet toner langsomt ut mens kortet toner inn. */
+.walkout-handoff {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  animation: walkout-handoff-out 1.6s ease-in-out forwards;
+}
+
+.walkout-handoff .walkout-label {
+  animation: none;
+}
+
+.walkout-handoff-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom;
+  filter: drop-shadow(0 0 2rem var(--pack-glow));
+}
+
+@keyframes walkout-handoff-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Lag som animeres får egen komposisjon, så overgangen ikke hakker. */
+.walkout-shade,
+.walkout-handoff,
+.walkout-backdrop-out,
+.pack-card-after-walkout {
+  will-change: transform, opacity;
+}
+
+.pack-card-shine {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 1rem;
+  pointer-events: none;
+}
+
+.pack-card-shine::after {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background: linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, 0.65) 50%, transparent 62%);
+  animation: pack-card-shine 1.2s ease-out 0.7s both;
+}
+
+@keyframes pack-card-shine {
+  from {
+    transform: translateX(-70%);
+  }
+  to {
+    transform: translateX(70%);
+  }
+}
+
+/* Kortet etter walkouten: vokser inn med et lysglimt der spilleren sto. */
+.pack-card-after-walkout {
+  animation: pack-card-after-walkout 1.6s ease-in-out 0.3s both;
+}
+
+@keyframes pack-card-after-walkout {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Når to walkouts kommer i samme pakke snur det første kortet seg bort før den beste går ut. */
+.pack-card-turn-out {
+  animation: pack-card-turn-out 0.6s ease-in both;
+}
+
+@keyframes pack-card-turn-out {
+  from {
+    opacity: 1;
+    transform: perspective(1200px) rotateY(0deg) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: perspective(1200px) rotateY(90deg) scale(0.9);
+  }
+}
+
+/* Overgangen fra pakkeåpningen til oppsummeringen: en mørk skygge lukker seg inn fra kantene over det
+   siste kortet, og åpner seg igjen over oppsummeringen, mens kortene glir opp ett etter ett. */
+@property --veil-hole {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 120%;
+}
+
+.pack-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 45%, transparent calc(var(--veil-hole) - 35%), #000 var(--veil-hole));
+}
+
+.pack-veil-in {
+  animation: pack-veil-in 0.75s ease-in both;
+}
+
+@keyframes pack-veil-in {
+  from {
+    opacity: 0;
+    --veil-hole: 120%;
+  }
+  to {
+    opacity: 1;
+    --veil-hole: 0%;
+  }
+}
+
+.pack-veil-out {
+  animation: pack-veil-out 1.4s ease-out both;
+}
+
+@keyframes pack-veil-out {
+  from {
+    opacity: 1;
+    --veil-hole: 0%;
+  }
+  to {
+    opacity: 0;
+    --veil-hole: 120%;
+  }
+}
+
+.pack-summary-rise {
+  animation: pack-summary-rise 0.8s cubic-bezier(0.2, 0.8, 0.3, 1) calc(var(--i, 0) * 120ms + 350ms) both;
+}
+
+@keyframes pack-summary-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.2rem) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* Selve pakka før den åpnes. */
 .pack-idle {
   animation: pack-idle 2.4s ease-in-out infinite;
@@ -799,12 +1679,37 @@ body:has(.manager-bottom-nav) .audio-fab {
   }
 
   .pack-door,
-  .pack-flash {
+  .pack-flash,
+  .walkout-door,
+  .walkout-pulse,
+  .walkout-figure,
+  .pack-veil,
+  .walkout-backdrop,
+  .walkout-intro,
+  .walkout-embers,
+  .walkout-handoff,
+  .pack-card-shine,
+  .walkout-sprite,
+  .walkout-shade,
+  .walkout-fog,
+  .walkout-burst,
+  .walkout-clip,
+  .walkout-shadow,
+  .walkout-label {
     display: none;
   }
 
+  .walkout-flag,
+  .walkout-flags-out .walkout-flag {
+    animation: none;
+    opacity: 0.5;
+  }
+
+  .pack-summary-rise,
   .pack-card-enter,
   .pack-card-walkout,
+  .pack-card-after-walkout,
+  .pack-card-turn-out,
   .pack-shake,
   .pack-idle,
   .pack-tear,

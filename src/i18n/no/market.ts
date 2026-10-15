@@ -108,6 +108,7 @@ export const market: MarketDict = {
     sold: "Solgt",
     nextCard: "Neste kort",
     openingCard: "Åpner kort",
+    skipWalkout: "Hopp over",
     openingBanner: "ÅPNER",
     cardBanner: "KORT",
     bigCard: "Stort kort!",
