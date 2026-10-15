@@ -101,7 +101,7 @@ export async function pickDraftPlayerAction(key: string, optionId: string): Prom
   let target = key; let captain = draft.captain_id;
   if (key === CAPTAIN_KEY) {
     if (draft.captain_id) return { error: errors.slotFilled };
-    const slot = captainSlot(formation, players, option.position);
+    const slot = captainSlot(formation, players, option);
     if (!slot) return { error: errors.invalidSlot };
     target = slot; captain = option.id;
   } else if (players[key]) return { error: errors.slotFilled };

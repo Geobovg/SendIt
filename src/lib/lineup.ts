@@ -36,11 +36,29 @@ const positionGroups = [
 // Personlige kort (migrering 0063) har denne posisjonen og kan spille hvor som helst.
 export const anyPosition = "ALL";
 
-export function canPlayPosition(naturalPosition: string, targetPosition: string) {
-  return naturalPosition === anyPosition || positionGroups.some((group) => group.includes(naturalPosition) && group.includes(targetPosition));
+// `altPositions` er de andre posisjonene spilleren også spiller i virkeligheten (migrering 0109). De teller som
+// hovedposisjonen, så Kimmich (CDM, alt CM/RB) kan stå som høyreback uten straff.
+export function canPlayPosition(naturalPosition: string, targetPosition: string, altPositions: readonly string[] = []) {
+  return naturalPosition === anyPosition || [naturalPosition, ...altPositions].some((position) => positionGroups.some((group) => group.includes(position) && group.includes(targetPosition)));
 }
 
-type SelectableCard = { id: string; position: string; overall: number };
+/** Alle posisjonene kortet er oppført med: hovedposisjonen først, så de alternative. */
+export function cardPositions(card: { position: string; altPositions?: readonly string[] }): string[] {
+  return [card.position, ...(card.altPositions ?? []).filter((position) => position !== card.position)];
+}
+
+/** Som `canPlayPosition`, men for et helt kort. */
+export function cardCanPlay(card: { position: string; altPositions?: readonly string[] }, targetPosition: string) {
+  return canPlayPosition(card.position, targetPosition, card.altPositions);
+}
+
+/** Posisjonen kortet spiller på plassen sin: en spiller som står på en alternativ posisjon, spiller den (som et kort som kan alt). */
+export function positionInSlot<T extends { position: string; altPositions?: readonly string[] }>(card: T, slotPosition: string): T {
+  if (card.position === slotPosition || (card.position !== anyPosition && canPlayPosition(card.position, slotPosition))) return card;
+  return cardCanPlay(card, slotPosition) ? { ...card, position: slotPosition } : card;
+}
+
+type SelectableCard = { id: string; position: string; overall: number; altPositions?: readonly string[] };
 
 // Fyller plassene fra puljene i rekkefølge. I hver pulje får kortene med fast posisjon velge først,
 // så et kort som kan spille alt ikke tar keeperplassen fra keeperen. Det settes inn der det trengs etterpå.
@@ -48,10 +66,16 @@ function fillSlots<T extends SelectableCard>(slots: FormationSlot[], pools: T[][
   const lineup: (T | null)[] = slots.map(() => null);
   const left = pools.map((pool) => [...pool]);
   for (const pool of left) {
-    for (const versatile of [false, true]) {
+    // Først kortene som passer med hovedposisjonen, så de som bare passer med en alternativ posisjon
+    // (en midtbanespiller som også kan spille back, tar ikke backplassen fra en ekte back), til slutt de som kan alt.
+    for (const pass of ["primary", "alternative", "versatile"] as const) {
       slots.forEach((slot, index) => {
         if (lineup[index]) return;
-        const matchIndex = pool.findIndex((card) => (card.position === anyPosition) === versatile && canPlayPosition(card.position, slot.position));
+        const matchIndex = pool.findIndex((card) => {
+          if (pass === "versatile") return card.position === anyPosition;
+          if (card.position === anyPosition) return false;
+          return pass === "primary" ? canPlayPosition(card.position, slot.position) : cardCanPlay(card, slot.position);
+        });
         if (matchIndex >= 0) lineup[index] = pool.splice(matchIndex, 1)[0];
       });
     }
@@ -68,7 +92,7 @@ export function pickBestLineup<T extends SelectableCard>(cards: T[], formation: 
   const { lineup, rest } = fillSlots(slots, [sorted.filter((card) => card.position !== anyPosition)]);
   // Kort som kan spille alt, tar plassen til den svakeste i elleveren (eller en som står feil) når det er bedre.
   // En keeper som står i mål, byttes ikke ut automatisk; vil man ha kortet i mål, kan man flytte det dit selv.
-  const strength = (card: T | null, index: number) => (!card || !canPlayPosition(card.position, slots[index].position) ? -1 : slots[index].position === "GK" ? Infinity : card.overall);
+  const strength = (card: T | null, index: number) => (!card || !cardCanPlay(card, slots[index].position) ? -1 : slots[index].position === "GK" ? Infinity : card.overall);
   for (const versatile of sorted.filter((card) => card.position === anyPosition)) {
     const weakest = lineup.reduce((best, card, index) => (strength(card, index) < strength(lineup[best], best) ? index : best), 0);
     if (versatile.overall > strength(lineup[weakest], weakest)) {
@@ -94,7 +118,7 @@ export function pickBestLineupWithChemistry<T extends SelectableCard & Chemistry
 
   const worth = (lineup: T[]) => {
     const points = chemistryOf(lineup);
-    return lineup.reduce((sum, card, index) => sum + (canPlayPosition(card.position, slots[index].position) ? card.overall : 0) + (points.get(card.id) ?? 0) * RATING_PER_CHEMISTRY, 0);
+    return lineup.reduce((sum, card, index) => sum + (cardCanPlay(card, slots[index].position) ? card.overall : 0) + (points.get(card.id) ?? 0) * RATING_PER_CHEMISTRY, 0);
   };
   const climb = (start: T[]) => {
     const lineup = [...start];
@@ -104,7 +128,7 @@ export function pickBestLineupWithChemistry<T extends SelectableCard & Chemistry
       const inLineup = new Set(lineup.map((card) => card.id));
       for (let index = 0; index < lineup.length; index += 1) {
         for (const card of cards) {
-          if (inLineup.has(card.id) || !canPlayPosition(card.position, slots[index].position)) continue;
+          if (inLineup.has(card.id) || !cardCanPlay(card, slots[index].position)) continue;
           // Keeperen byttes bare mot en annen keeper; et kort som kan spille alt, tar aldri keeperplassen.
           if (slots[index].position === "GK" && card.position !== "GK") continue;
           const value = worth([...lineup.slice(0, index), card, ...lineup.slice(index + 1)]);

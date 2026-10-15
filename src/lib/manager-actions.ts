@@ -147,11 +147,11 @@ export async function saveManagerLineupAction(_prev: ActionState, formData: Form
   const ids = [...starters, ...bench];
   if (new Set(ids).size !== ids.length) return { error: errors.duplicatePick };
   const db = supabaseAdmin();
-  const { data: ownedCards, error: cardsError } = await db.from("manager_cards").select("id, position, location").eq("owner_id", user.id).in("id", ids);
+  const { data: ownedCards, error: cardsError } = await db.from("manager_cards").select("id, position, alt_positions, location").eq("owner_id", user.id).in("id", ids);
   if (cardsError) return { error: await dbErrorMessage(cardsError) };
   if (ownedCards?.length !== ids.length || ownedCards.some((card) => card.location !== "squad")) return { error: errors.unusableCard };
-  const positions = new Map((ownedCards ?? []).map((card) => [card.id, card.position]));
-  if (starters.some((id, index) => !canPlayPosition(positions.get(id) ?? "", formations[formation][index].position))) return { error: errors.wrongPosition };
+  const positions = new Map((ownedCards ?? []).map((card) => [card.id, card]));
+  if (starters.some((id, index) => !canPlayPosition(positions.get(id)?.position ?? "", formations[formation][index].position, positions.get(id)?.alt_positions ?? []))) return { error: errors.wrongPosition };
   const { error } = await db.rpc("save_manager_lineup", { target_user: user.id, next_formation: formation, next_starters: starters, next_bench: bench });
   if (error) return { error: await dbErrorMessage(error, { stripPrefix: true }) };
   revalidatePath("/managerkarriere");

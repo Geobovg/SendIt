@@ -1,7 +1,7 @@
 // Draft i managerkarrieren (migrering 0095). Denne fila brukes både på serveren og i nettleseren:
 // plassene i laget, premietabellen og hvordan en draft blir til et lag i kampmotoren.
 import { chemistryOf, teamChemistry } from "./chemistry";
-import { canPlayPosition, formationNames, formations, pickBestLineupWithChemistry, rearrangeLineup, type Formation } from "./lineup";
+import { cardCanPlay, formationNames, formations, pickBestLineupWithChemistry, positionInSlot, rearrangeLineup, type Formation } from "./lineup";
 import type { ManagerPlayerSnapshot, ManagerTeamSnapshot } from "./manager-match";
 import type { SpecialKind } from "./special-cards";
 
@@ -48,17 +48,23 @@ export function slotLabel(key: string, formation: Formation): string | null {
   return null;
 }
 
-/** Om et kort med `position` kan trekkes til plassen. Reservene kan være hva som helst. */
-export function slotAccepts(key: string, formation: Formation, position: string): boolean {
-  if (key === CAPTAIN_KEY) return formations[formation].some((slot) => canPlayPosition(position, slot.position));
-  if (key.startsWith("s")) { const slot = formations[formation][Number(key.slice(1))]; return Boolean(slot) && canPlayPosition(position, slot.position); }
-  if (key.startsWith("b")) return (benchPositions[Number(key.slice(1))] ?? []).some((role) => canPlayPosition(position, role));
+/** Det plasseringen ser på: hovedposisjonen og de alternative (migrering 0109). */
+export type PositionedCard = { position: string; altPositions?: readonly string[] };
+const asCard = (card: string | PositionedCard): PositionedCard => (typeof card === "string" ? { position: card } : card);
+
+/** Om kortet kan trekkes til plassen. Reservene kan være hva som helst. */
+export function slotAccepts(key: string, formation: Formation, cardOrPosition: string | PositionedCard): boolean {
+  const card = asCard(cardOrPosition);
+  if (key === CAPTAIN_KEY) return formations[formation].some((slot) => cardCanPlay(card, slot.position));
+  if (key.startsWith("s")) { const slot = formations[formation][Number(key.slice(1))]; return Boolean(slot) && cardCanPlay(card, slot.position); }
+  if (key.startsWith("b")) return (benchPositions[Number(key.slice(1))] ?? []).some((role) => cardCanPlay(card, role));
   return RESERVE_KEYS.includes(key);
 }
 
 /** Første ledige plass i elleveren som kapteinen kan spille på. */
-export function captainSlot(formation: Formation, players: Record<string, DraftPlayer>, position: string): string | null {
-  return STARTER_KEYS.find((key, index) => !players[key] && canPlayPosition(position, formations[formation][index].position)) ?? null;
+export function captainSlot(formation: Formation, players: Record<string, DraftPlayer>, cardOrPosition: string | PositionedCard): string | null {
+  const card = asCard(cardOrPosition);
+  return STARTER_KEYS.find((key, index) => !players[key] && cardCanPlay(card, formations[formation][index].position)) ?? null;
 }
 
 export function draftComplete(players: Record<string, DraftPlayer>): boolean {
@@ -87,21 +93,21 @@ export function draftChemistryByKey(players: Record<string, DraftPlayer>): Recor
  * han gir de andre. null for benk og reserver, som ikke teller.
  */
 export function draftChemistryGain(players: Record<string, DraftPlayer>, formation: Formation, key: string, candidate: DraftPlayer): number | null {
-  const target = key === CAPTAIN_KEY ? captainSlot(formation, players, candidate.position) : STARTER_KEYS.includes(key) ? key : null;
+  const target = key === CAPTAIN_KEY ? captainSlot(formation, players, candidate) : STARTER_KEYS.includes(key) ? key : null;
   if (!target) return null;
   return draftChemistry({ ...players, [target]: candidate }) - draftChemistry(Object.fromEntries(Object.entries(players).filter(([slot]) => slot !== target)));
 }
 
 /** Bare det kampmotoren trenger, så kampplanen ikke blir full av attributter. */
 export function toSnapshot(player: DraftPlayer): ManagerPlayerSnapshot {
-  return { id: player.id, name: player.name, position: player.position, overall: player.overall, slug: player.slug ?? null, club: player.club ?? null, accent: player.accent ?? null, league: player.league ?? null, nation: player.nation ?? null };
+  return { id: player.id, name: player.name, position: player.position, ...(player.altPositions?.length ? { altPositions: player.altPositions } : {}), overall: player.overall, slug: player.slug ?? null, club: player.club ?? null, accent: player.accent ?? null, league: player.league ?? null, nation: player.nation ?? null };
 }
 
 /** Draften som lag i kampmotoren: elleveren og benken. Reservene spiller ikke. */
 export function draftTeamSnapshot(userId: string, formationValue: string | null, players: Record<string, DraftPlayer>): ManagerTeamSnapshot | null {
   const formation = draftFormation(formationValue);
   if (!formation) return null;
-  const starters = STARTER_KEYS.map((key) => players[key]);
+  const starters = STARTER_KEYS.map((key, index) => players[key] && positionInSlot(players[key], formations[formation][index].position));
   if (starters.some((player) => !player)) return null;
   const bench = BENCH_KEYS.map((key) => players[key]).filter((player): player is DraftPlayer => Boolean(player));
   return { userId, formation, starters: starters.map(toSnapshot), bench: bench.map(toSnapshot) };
@@ -116,7 +122,7 @@ export function outOfPosition(players: Record<string, DraftPlayer>, formation: F
   for (const [index, key] of STARTER_KEYS.entries()) {
     const player = players[key];
     const position = formations[formation][index].position;
-    if (player && !canPlayPosition(player.position, position)) return { player, position };
+    if (player && !cardCanPlay(player, position)) return { player, position };
   }
   return null;
 }

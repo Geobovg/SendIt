@@ -3,7 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import { useLocale, useT } from "@/i18n/client";
 import type { Dictionary } from "@/i18n/dictionaries";
-import { canPlayPosition } from "@/lib/lineup";
+import { cardCanPlay } from "@/lib/lineup";
 import { autoFill, autoFillPartial, placeCards, requirementStatus, sbcSatisfied, sbcSlots, suggestCards, teamRating, type SbcCard, type SbcChallenge, type SbcRequirement } from "@/lib/sbc";
 import { specialStyles } from "@/lib/special-cards";
 import { completeSbcAction } from "@/lib/sbc-actions";
@@ -198,7 +198,7 @@ function CardPicker({ position, cards, suggestions, current, onPick, onClose }: 
   const nations = [...new Set(cards.map((card) => card.nation).filter((code): code is string => Boolean(code)))].sort((a, b) => nationName(locale, a).localeCompare(nationName(locale, b), locale));
   const min = minRating === "" ? null : Number(minRating); const max = maxRating === "" ? null : Number(maxRating);
   const list = cards
-    .filter((card) => (!onlyPosition || !position || canPlayPosition(card.position, position)) && (!needle || card.name.toLowerCase().includes(needle))
+    .filter((card) => (!onlyPosition || !position || cardCanPlay(card, position)) && (!needle || card.name.toLowerCase().includes(needle))
       && (!league || card.league === league) && (!club || card.club === club) && (!nation || card.nation === nation)
       && (min === null || card.overall >= min) && (max === null || card.overall <= max))
     .sort((a, b) => (sort === "name" ? a.name.localeCompare(b.name, locale) : sort === "high" ? b.overall - a.overall : a.overall - b.overall) || a.name.localeCompare(b.name, locale));
