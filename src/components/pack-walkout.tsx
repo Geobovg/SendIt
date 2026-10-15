@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useState, type CSSProperties } from "react";
 import { preload } from "react-dom";
-import { useT } from "@/i18n/client";
 import type { PackPull } from "@/lib/manager-actions";
 import { clubCrest } from "@/lib/club-crests";
 import { playerFlag } from "@/lib/player-nationalities";
@@ -46,9 +45,10 @@ export function walkTiming(pull: PackPull) {
   const clip = clipFor(pull.slug);
   if (clip) return { intro: 0, approach: clip.ms * 0.8, celebrate: clip.ms * 0.2, total: clip.ms + 300 };
   const epic = isEpicWalkout(pull);
-  const intro = 3000;
-  const approach = epic ? 4400 : 3300;
-  const celebrate = epic ? 2200 : 1800;
+  const intro = 4000;
+  const approach = epic ? 4800 : 3800;
+  // Feiringen starter 0,4 sekunder etter at kortbildet har tatt over fra skyggen.
+  const celebrate = epic ? 2600 : 2200;
   return { intro, approach, celebrate, total: intro + approach + celebrate };
 }
 
@@ -108,7 +108,8 @@ export function WalkoutFlags({ slug, glow, leaving }: { slug: string; glow: stri
 // Laster klippene og sprite-arket mens pakka ryker opp, så walkouten ikke hakker.
 // Et klipp som ikke er lastet ned i tide, spilles bare av der det er kommet.
 export function WalkoutPreload({ pulls }: { pulls: PackPull[] }) {
-  preload(spriteSrc, { as: "image" });
+  // Sprite-arket brukes bare av spillere uten kortbilde.
+  if (pulls.some((pull) => qualifiesForWalkout(pull) && !playerPhoto(pull.slug))) preload(spriteSrc, { as: "image" });
   return <>{pulls.filter(qualifiesForWalkout).map((pull) => {
     const clip = clipFor(pull.slug);
     return clip ? <video key={pull.card_id} src={clip.src} preload="auto" muted playsInline /> : null;
@@ -119,7 +120,6 @@ export function WalkoutPreload({ pulls }: { pulls: PackPull[] }) {
 // av kortbildet sitt (så silhuetten er hans egen), lyses opp, og blir til kortbildet i samme størrelse
 // og posisjon, som feirer.
 export function WalkoutFigure({ pull, glow }: { pull: PackPull; glow: string }) {
-  const t = useT();
   const [failed, setFailed] = useState(false);
   const clip = failed ? null : clipFor(pull.slug);
   const photo = playerPhoto(pull.slug);
@@ -152,39 +152,48 @@ export function WalkoutFigure({ pull, glow }: { pull: PackPull; glow: string }) 
           {callout ? <p className="walkout-callout">{callout}</p> : null}
         </>}
     </div>
-    <div className="walkout-label text-center text-white">
-      <p className="text-2xl font-black uppercase tracking-wide">{pull.name}</p>
-      <p className="mt-1 text-xs font-semibold uppercase tracking-[.2em] text-white/70">{t.career.clubName(pull.club)}</p>
-    </div>
+    <WalkoutLabel pull={pull} />
   </div>;
+}
+
+// Navnet med klubbmerket under.
+function WalkoutLabel({ pull }: { pull: PackPull }) {
+  return <div className="walkout-label grid justify-items-center gap-2 text-center text-white">
+    <p className="text-2xl font-black uppercase tracking-wide">{pull.name}</p>
+    <ClubBadge club={pull.club} className="h-11 w-11 text-sm" imgClass="h-8 w-8" />
+  </div>;
+}
+
+// Klubbmerket i en hvit sirkel. Klubber uten merke får forbokstavene i stedet.
+function ClubBadge({ club, className, imgClass }: { club: string; className: string; imgClass: string }) {
+  const crest = clubCrest(club);
+  if (crest) return <span className={`grid place-items-center rounded-full bg-white/95 shadow-lg ring-2 ring-white/40 ${className}`}><Image src={crest} alt="" width={96} height={96} className={`object-contain ${imgClass}`} /></span>;
+  const initials = club.split(/[\s-]+/).filter(Boolean).map((word) => word[0]).join("").slice(0, 3).toUpperCase();
+  return <span className={`grid place-items-center rounded-full bg-black/60 font-black text-white ring-2 ring-white/60 ${className}`}>{initials}</span>;
 }
 
 // Introen: først flagget, så posisjonen, så klubbmerket, hver med en ring som sprer seg.
 function WalkoutIntro({ pull }: { pull: PackPull }) {
-  const t = useT();
   const flag = playerFlag(pull.slug);
-  const crest = clubCrest(pull.club);
   return <div aria-hidden className="walkout-intro">
-    <div className="walkout-intro-item" style={{ "--at": "0.3s" } as CSSProperties}>
-      {flag ? <Image src={flag} alt="" width={176} height={117} unoptimized className="h-[7.5rem] w-44 rounded-xl object-cover shadow-2xl ring-2 ring-white/70" /> : null}
+    <div className="walkout-intro-item" style={{ "--at": "0.4s" } as CSSProperties}>
+      {flag ? <Image src={flag} alt="" width={176} height={120} unoptimized className="h-[7.5rem] w-44 rounded-xl object-cover shadow-2xl ring-2 ring-white/70" /> : null}
     </div>
-    <div className="walkout-intro-item" style={{ "--at": "1.1s" } as CSSProperties}>
+    <div className="walkout-intro-item" style={{ "--at": "1.7s" } as CSSProperties}>
       <span className="walkout-intro-position">{pull.position}</span>
     </div>
-    <div className="walkout-intro-item" style={{ "--at": "1.9s" } as CSSProperties}>
-      {crest
-        ? <span className="grid h-36 w-36 place-items-center rounded-full bg-white/95 shadow-2xl ring-4 ring-white/40"><Image src={crest} alt="" width={96} height={96} className="h-24 w-24 object-contain" /></span>
-        : <span className="max-w-[16rem] text-center text-3xl font-black uppercase text-white">{t.career.clubName(pull.club)}</span>}
+    <div className="walkout-intro-item" style={{ "--at": "3s" } as CSSProperties}>
+      <ClubBadge club={pull.club} className="h-40 w-40 text-5xl ring-4" imgClass="h-28 w-28" />
     </div>
   </div>;
 }
 
 // Stadionen rundt: lysene slås på ett og ett, lyskastere sveiper, publikum blitzer med kamera og
 // flammesøyler skyter opp i det spilleren lyses opp. Ligger over hele skjermen bak kortet.
-export function WalkoutBackdrop({ pull, glow }: { pull: PackPull; glow: string }) {
+export function WalkoutBackdrop({ pull, glow, leaving }: { pull: PackPull; glow: string; leaving: boolean }) {
   if (clipFor(pull.slug)) return null;
   const range = (count: number) => Array.from({ length: count }, (_, i) => i);
-  return <div aria-hidden className="walkout-backdrop" style={walkVars(pull, glow)}>
+  return <div aria-hidden className={`walkout-backdrop ${leaving ? "walkout-backdrop-out" : ""}`} style={walkVars(pull, glow)}>
     {range(5).map((i) => <div key={i} className="walkout-lamp" style={{ "--i": i } as CSSProperties} />)}
     <div className="walkout-sweep walkout-sweep-1" />
     <div className="walkout-sweep walkout-sweep-2" />
@@ -204,16 +213,27 @@ export function WalkoutBackdrop({ pull, glow }: { pull: PackPull; glow: string }
   </div>;
 }
 
-// Når kortet vises: konfetti i kortets farger, en trykkbølge og en lysstripe.
-export function WalkoutConfetti({ glow }: { glow: string }) {
-  const colors = [glow, "#ffffff", "#f2c94c", "#ff5a5f", "#4cc9f0"];
-  return <div aria-hidden className="walkout-confetti" style={{ "--pack-glow": glow } as CSSProperties}>
-    <div className="walkout-shock" />
-    <div className="walkout-streak" />
-    {Array.from({ length: 34 }, (_, i) => <span key={i} className="walkout-piece" style={{
-      left: `${(i * 29 + 11) % 100}%`, "--c": colors[i % colors.length],
-      "--delay": `${((i * 0.07) % 1.2).toFixed(2)}s`, "--dur": `${(2.2 + (i % 7) * 0.35).toFixed(2)}s`,
-      "--dx": `${((i * 37) % 120) - 60}px`, "--spin": `${((i % 2) * 2 - 1) * (360 + (i % 5) * 120)}deg`,
+// Etter walkouten: rolige gnister som stiger sakte opp mens kortet toner inn.
+export function WalkoutEmbers({ glow }: { glow: string }) {
+  return <div aria-hidden className="walkout-embers" style={{ "--pack-glow": glow } as CSSProperties}>
+    {Array.from({ length: 26 }, (_, i) => <span key={i} className="walkout-ember" style={{
+      left: `${(i * 37 + 9) % 100}%`, "--s": `${(0.25 + (i % 4) * 0.12).toFixed(2)}rem`,
+      "--dx": `${((i * 29) % 90) - 45}px`, "--delay": `${((i * 0.19) % 2.4).toFixed(2)}s`, "--dur": `${(4.5 + (i % 6) * 0.6).toFixed(1)}s`,
     } as CSSProperties} />)}
+  </div>;
+}
+
+// Kortbildet står igjen i feiringens siste stilling og toner langsomt ut mens kortet toner inn,
+// så overgangen blir en myk kryssoning i stedet for et brått bytte.
+export function WalkoutHandoff({ pull, glow, celebration }: { pull: PackPull; glow: string; celebration: Celebration }) {
+  const photo = playerPhoto(pull.slug);
+  if (!photo || clipFor(pull.slug)) return null;
+  return <div aria-hidden className="walkout-handoff" style={walkVars(pull, glow)}>
+    <div className="walkout-stage">
+      <div className={`walkout-celebrate walkout-c-${celebration}`} style={{ animationDuration: "1ms", animationDelay: "0s" }}>
+        <Image src={photo} alt="" width={256} height={256} className="walkout-handoff-photo" />
+      </div>
+    </div>
+    <WalkoutLabel pull={pull} />
   </div>;
 }
