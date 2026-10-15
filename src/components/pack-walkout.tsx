@@ -10,7 +10,6 @@ import { playerPhoto } from "@/lib/player-photos";
 import { walkoutClips } from "@/lib/walkout-clips";
 
 const spriteSrc = "/walkouts/sprite-walk.png";
-const legsSrc = "/walkouts/sprite-legs.png";
 
 // Safari spiller bare HEVC med gjennomsiktig bakgrunn, de andre bare WebM.
 function isSafari() {
@@ -54,17 +53,18 @@ export function walkMs(pull: PackPull) {
   return walkTiming(pull).total;
 }
 
-// Vi har bare ett stillbilde per spiller, så feiringen er en bevegelse av hele kroppen.
-// Signaturfeiringene ligger her; alle andre får en knyttneve-feiring.
-//   siu: hopp med snurr og armene ut (Ronaldo)   crouch: setter seg ned (meditasjon, bønn)
-//   wide: strekker seg ut med armene ut           bounce: danser
-//   pose: stopper og stiller seg opp
-export type Celebration = "siu" | "crouch" | "wide" | "bounce" | "pose" | "pump";
+// Vi har bare ett stillbilde per spiller, så feiringen er en bevegelse av hele kroppen, ofte med en
+// effekt rundt. Ingen av dem krymper spilleren. Signaturfeiringene ligger her; alle andre får en knyttneve.
+//   siu: hopp med snurr (Ronaldo)       zen: senker seg i meditasjon, med ringer (Haaland)
+//   sky: ser opp i en lysstråle (Messi)  wide: strekker seg ut med armene ut
+//   bounce: danser                       pose: stirrer rett fram og vokser
+export type Celebration = "siu" | "zen" | "sky" | "wide" | "bounce" | "pose" | "pump";
 
 const celebrations: Record<string, Celebration> = {
   "cristiano-ronaldo": "siu",
-  haaland: "crouch",
-  salah: "crouch",
+  haaland: "zen",
+  messi: "sky",
+  salah: "wide",
   bellingham: "wide",
   "jobe-bellingham": "wide",
   "antoine-griezmann": "bounce",
@@ -72,9 +72,11 @@ const celebrations: Record<string, Celebration> = {
   "lamine-yamal": "bounce",
   vinicius: "bounce",
   mbappe: "pose",
-  messi: "pose",
   kane: "pose",
 };
+
+// Tekst som slår inn under feiringen.
+const callouts: Record<string, string> = { "cristiano-ronaldo": "SIUUU!" };
 
 export function celebrationFor(slug: string): Celebration {
   return celebrations[slug] ?? "pump";
@@ -95,16 +97,15 @@ export function WalkoutFlags({ slug, glow, leaving }: { slug: string; glow: stri
 // Et klipp som ikke er lastet ned i tide, spilles bare av der det er kommet.
 export function WalkoutPreload({ pulls }: { pulls: PackPull[] }) {
   preload(spriteSrc, { as: "image" });
-  preload(legsSrc, { as: "image" });
   return <>{pulls.filter(qualifiesForWalkout).map((pull) => {
     const clip = clipFor(pull.slug);
     return clip ? <video key={pull.card_id} src={clip.src} preload="auto" muted playsInline /> : null;
   })}</>;
 }
 
-// Spilleren går mot kameraet. Har han et klipp, spilles det. Ellers går han som en skygge: overkroppen
-// er kortbildet hans (så silhuetten får hans egne konturer) og beina kommer fra sprite-arket. Han
-// lyses opp i det han kommer fram, og bildet blir til kortbildet i samme størrelse og posisjon.
+// Spilleren går mot kameraet. Har han et klipp, spilles det. Ellers kommer han opp av tåka som en skygge
+// av kortbildet sitt (så silhuetten er hans egen), lyses opp, og blir til kortbildet i samme størrelse
+// og posisjon, som feirer.
 export function WalkoutFigure({ pull, glow }: { pull: PackPull; glow: string }) {
   const t = useT();
   const [failed, setFailed] = useState(false);
@@ -114,6 +115,8 @@ export function WalkoutFigure({ pull, glow }: { pull: PackPull; glow: string }) 
   const { approach, celebrate, total } = walkTiming(pull);
   // Overkroppen vugger bare hele sykluser (0,9 sekunder), så den står rolig i det han stopper.
   const bobCount = 2 * Math.floor(approach / 900);
+  const celebration = celebrationFor(pull.slug);
+  const callout = callouts[pull.slug];
   const style = { "--pack-glow": glow, "--walk-ms": `${total}ms`, "--approach-ms": `${approach}ms`, "--celebrate-ms": `${celebrate}ms`, "--bob-count": bobCount } as CSSProperties;
   return <div className={`walkout-scene ${epic ? "walkout-epic" : ""}`} style={style}>
     <div className="walkout-door" />
@@ -124,17 +127,20 @@ export function WalkoutFigure({ pull, glow }: { pull: PackPull; glow: string }) 
         ? <video className="walkout-clip" src={clip.src} autoPlay muted playsInline preload="auto" onError={() => setFailed(true)} />
         : <>
           {photo
-            ? <div className="walkout-body">
-              <div className="walkout-legs" />
+            ? <div className="walkout-shade">
               <Image src={photo} alt="" width={256} height={256} priority className="walkout-bust" />
+              <div className="walkout-fog" />
             </div>
             : <div className="walkout-sprite" />}
           <div className="walkout-burst" />
-          <div className={`walkout-celebrate walkout-c-${celebrationFor(pull.slug)}`}>
+          {celebration === "zen" ? <><div className="walkout-aura" /><div className="walkout-aura walkout-aura-2" /></> : null}
+          {celebration === "sky" ? <div className="walkout-beam" /> : null}
+          <div className={`walkout-celebrate walkout-c-${celebration}`}>
             {photo
               ? <Image src={photo} alt="" width={256} height={256} priority className="walkout-figure" />
               : <div className="walkout-figure grid place-items-center text-8xl font-black text-white">{pull.position}</div>}
           </div>
+          {callout ? <p className="walkout-callout">{callout}</p> : null}
         </>}
     </div>
     <div className="walkout-label text-center text-white">

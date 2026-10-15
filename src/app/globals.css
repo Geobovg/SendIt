@@ -780,7 +780,7 @@ body:has(.manager-bottom-nav) .audio-fab {
 
 /* Scenen der spilleren går: en kvadratisk boks for sprite-walkouten, stående når det er et klipp. */
 .walkout-stage {
-  --w: min(24rem, 80vw);
+  --w: min(19rem, 76vw);
   position: relative;
   width: var(--w);
   aspect-ratio: 1;
@@ -867,51 +867,49 @@ body:has(.manager-bottom-nav) .audio-fab {
   }
 }
 
-/* Skyggen: kortbildet er overkroppen og sprite-arket gir beina, i en boks som er dobbelt så høy som
-   scenen. I siste posisjon ligger kortbildet nøyaktig der det ferdige kortbildet vises, og beina
-   henger under scenen. Han kommer nærmere og nærmere, beina forsvinner ut av bildet, og så lyses han opp. */
-.walkout-body {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 200%;
-  pointer-events: none;
-  transform-origin: 50% 0;
-  animation:
-    walkout-body-approach var(--approach-ms) cubic-bezier(0.3, 0.55, 0.3, 1) both,
-    walkout-body-out 0.05s linear var(--approach-ms) forwards;
+/* Skyggen: kortbildet hans, mørkt med lysrand, kommer opp av tåka og nærmere. Bildet er avskåret
+   ved midjen, så den nederste delen tones ut i tåka. Han vokser hele veien og krymper aldri. Mot
+   slutten lyses han opp, tåka letter, og bildet blir til kortbildet i samme størrelse og posisjon. */
+@property --walkout-fade {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
 }
 
-.walkout-legs {
+.walkout-shade {
   position: absolute;
   inset: 0;
-  background: url("/walkouts/sprite-legs.png") 0 0 / 800% 100% no-repeat;
-  filter: brightness(0.12);
+  pointer-events: none;
+  transform-origin: 50% 60%;
   animation:
-    walkout-walk 0.9s steps(8, jump-none) infinite,
-    walkout-legs-out var(--approach-ms) linear both;
+    walkout-shade-approach var(--approach-ms) cubic-bezier(0.3, 0.55, 0.3, 1) both,
+    walkout-shade-out 0.05s linear var(--approach-ms) forwards;
 }
 
 .walkout-bust {
   position: absolute;
-  left: 0;
-  top: 0;
+  inset: 0;
   width: 100%;
-  height: 50%;
+  height: 100%;
   object-fit: contain;
+  object-position: bottom;
+  --walkout-fade: 100%;
+  mask-image: linear-gradient(#000 calc(var(--walkout-fade) - 42%), transparent var(--walkout-fade));
+  transform-origin: 50% 100%;
   animation:
-    walkout-bust-bob 0.45s ease-in-out var(--bob-count) both,
-    walkout-bust-sway 0.9s ease-in-out calc(var(--bob-count) / 2) both;
+    walkout-bust-step 0.45s ease-in-out var(--bob-count) both,
+    walkout-bust-sway 0.9s ease-in-out calc(var(--bob-count) / 2) both,
+    walkout-bust-lift calc(var(--approach-ms) * 0.45) ease-in var(--approach-ms) both;
 }
 
-@keyframes walkout-bust-bob {
+/* Hvert skritt: kroppen løftes litt og kommer en tanke nærmere. */
+@keyframes walkout-bust-step {
   0%,
   100% {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
   50% {
-    transform: translateY(-2.7%);
+    transform: translateY(-2.4%) scale(1.02);
   }
 }
 
@@ -920,53 +918,85 @@ body:has(.manager-bottom-nav) .audio-fab {
   50%,
   100% {
     translate: 0 0;
+    rotate: 0deg;
   }
   25% {
-    translate: 1.95% 0;
+    translate: 1.8% 0;
+    rotate: 1.1deg;
   }
   75% {
-    translate: -1.95% 0;
+    translate: -1.8% 0;
+    rotate: -1.1deg;
   }
 }
 
-@keyframes walkout-legs-out {
-  0%,
-  62% {
-    opacity: 1;
-  }
-  90%,
-  100% {
-    opacity: 0;
-  }
-}
-
-@keyframes walkout-body-approach {
+@keyframes walkout-shade-approach {
   0% {
     opacity: 0;
-    transform: translateY(calc(var(--w) * 0.62)) scale(0.2);
-    filter: brightness(0.04) saturate(0.6) drop-shadow(0 0 0.4rem var(--pack-glow));
+    transform: translateY(calc(var(--w) * 0.03)) scale(0.42);
+    filter: brightness(0.1) saturate(0.5) drop-shadow(0 0 0.12rem rgba(255, 255, 255, 0.8)) drop-shadow(0 0 0.5rem var(--pack-glow));
   }
   12% {
     opacity: 1;
   }
   60% {
-    transform: translateY(calc(var(--w) * 0.2)) scale(0.62);
-    filter: brightness(0.12) saturate(0.6) drop-shadow(0 0 1.4rem var(--pack-glow));
+    transform: translateY(0) scale(0.76);
+    filter: brightness(0.3) saturate(0.6) drop-shadow(0 0 0.14rem rgba(255, 255, 255, 0.75)) drop-shadow(0 0 1.3rem var(--pack-glow));
   }
   88% {
     opacity: 1;
-    transform: translateY(calc(var(--w) * 0.03)) scale(0.97);
-    filter: brightness(0.4) saturate(0.8) drop-shadow(0 0 1.6rem var(--pack-glow));
+    transform: translateY(0) scale(0.97);
+    filter: brightness(0.62) saturate(0.85) drop-shadow(0 0 0.12rem rgba(255, 255, 255, 0.4)) drop-shadow(0 0 1.6rem var(--pack-glow));
   }
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
-    filter: brightness(1) saturate(1) drop-shadow(0 0 2rem var(--pack-glow));
+    filter: brightness(1) saturate(1) drop-shadow(0 0 0 rgba(255, 255, 255, 0)) drop-shadow(0 0 2rem var(--pack-glow));
+  }
+}
+
+/* Tåka letter når han har stoppet. */
+@keyframes walkout-bust-lift {
+  to {
+    --walkout-fade: 160%;
   }
 }
 
 /* Når det ferdige kortbildet har tatt over, må skyggen vekk så den ikke synes under feiringen. */
-@keyframes walkout-body-out {
+@keyframes walkout-shade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* Tåka nederst som skjuler at bildet slutter ved midjen. */
+.walkout-fog {
+  position: absolute;
+  left: -15%;
+  right: -15%;
+  bottom: -12%;
+  height: 46%;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 45% 55% at 25% 70%, color-mix(in srgb, var(--pack-glow) 32%, transparent), transparent 70%),
+    radial-gradient(ellipse 50% 50% at 70% 60%, color-mix(in srgb, var(--pack-glow) 24%, transparent), transparent 70%),
+    radial-gradient(ellipse 70% 60% at 50% 100%, rgba(3, 7, 5, 0.9), transparent 75%);
+  filter: blur(0.6rem);
+  animation:
+    walkout-fog-drift 5s ease-in-out infinite alternate,
+    walkout-fog-out 0.8s ease-in var(--approach-ms) both;
+}
+
+@keyframes walkout-fog-drift {
+  from {
+    translate: -3% 0;
+  }
+  to {
+    translate: 3% -2%;
+  }
+}
+
+@keyframes walkout-fog-out {
   to {
     opacity: 0;
   }
@@ -1037,8 +1067,12 @@ body:has(.manager-bottom-nav) .audio-fab {
   animation-name: walkout-siu;
 }
 
-.walkout-c-crouch {
-  animation-name: walkout-crouch;
+.walkout-c-zen {
+  animation-name: walkout-zen;
+}
+
+.walkout-c-sky {
+  animation-name: walkout-sky;
 }
 
 .walkout-c-wide {
@@ -1057,46 +1091,66 @@ body:has(.manager-bottom-nav) .audio-fab {
   animation-name: walkout-pump;
 }
 
-/* Ronaldo: setter seg, hopper, snurrer rundt i lufta og lander med armene ut. */
+/* Ingen av feiringene krymper spilleren: de løfter, snurrer, vipper og vokser. */
+
+/* Ronaldo: tar sats, hopper, snurrer rundt i lufta og lander med armene ut. */
 @keyframes walkout-siu {
   0% {
-    transform: scale(1);
+    transform: translateY(0) scale(1);
   }
-  18% {
-    transform: scale(1.06, 0.88);
-  }
-  48% {
-    transform: perspective(1000px) translateY(-6.5rem) rotateY(180deg) scale(1.04);
-  }
-  74% {
-    transform: perspective(1000px) translateY(0) rotateY(360deg) scale(1.1, 0.9);
-  }
-  86%,
-  100% {
-    transform: perspective(1000px) rotateY(360deg) scale(1.2, 1.04);
-  }
-}
-
-/* Haaland (meditasjon) og Salah (på kne): setter seg ned og blir sittende. */
-@keyframes walkout-crouch {
-  0% {
-    transform: scale(1);
+  15% {
+    transform: translateY(0.4rem) scale(1);
   }
   45% {
-    transform: scale(1.08, 0.68);
+    transform: perspective(1000px) translateY(-6rem) rotateY(180deg) scale(1.05);
   }
+  72% {
+    transform: perspective(1000px) translateY(0) rotateY(360deg) scale(1.08);
+  }
+  85%,
   100% {
-    transform: scale(1.08, 0.7);
+    transform: perspective(1000px) translateY(0) rotateY(360deg) scale(1.14, 1.06);
   }
 }
 
+/* Haaland: setter seg i ro og meditasjon. Kroppen senkes sakte og puster. */
+@keyframes walkout-zen {
+  0% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(1.8rem);
+  }
+  62% {
+    transform: translateY(1.5rem) scale(1.03);
+  }
+  82% {
+    transform: translateY(1.8rem);
+  }
+  100% {
+    transform: translateY(1.6rem) scale(1.03);
+  }
+}
+
+/* Messi: ser opp og peker mot himmelen. */
+@keyframes walkout-sky {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  35%,
+  100% {
+    transform: translateY(-0.8rem) rotate(-4deg) scale(1.06);
+  }
+}
+
+/* Armene ut: strekker seg ut til siden. */
 @keyframes walkout-wide {
   0% {
     transform: scale(1);
   }
   40%,
   100% {
-    transform: scale(1.22, 1.06);
+    transform: scale(1.2, 1.06);
   }
 }
 
@@ -1109,28 +1163,26 @@ body:has(.manager-bottom-nav) .audio-fab {
     transform: translateY(-2.4rem) rotate(-5deg);
   }
   32% {
-    transform: translateY(0) rotate(0deg) scale(1.04, 0.95);
+    transform: translateY(0) rotate(0deg);
   }
   48% {
     transform: translateY(-2.4rem) rotate(5deg);
   }
   64% {
-    transform: translateY(0) rotate(0deg) scale(1.04, 0.95);
+    transform: translateY(0) rotate(0deg);
   }
   82% {
     transform: translateY(-3.2rem) rotate(-3deg) scale(1.06);
   }
 }
 
+/* Mbappé og Kane: stirrer rett fram og vokser sakte. */
 @keyframes walkout-pose {
   0% {
     transform: scale(1);
   }
-  35% {
-    transform: scale(1.14) rotate(-3deg);
-  }
   100% {
-    transform: scale(1.14) rotate(-3deg);
+    transform: scale(1.14);
   }
 }
 
@@ -1139,17 +1191,108 @@ body:has(.manager-bottom-nav) .audio-fab {
   0% {
     transform: translateY(0) scale(1);
   }
-  25% {
-    transform: translateY(0) scale(1.05, 0.92);
-  }
-  50% {
+  45% {
     transform: translateY(-2.6rem) rotate(-3deg) scale(1.08);
   }
   75% {
-    transform: translateY(0) scale(1.1, 0.95);
+    transform: translateY(0) scale(1.08);
   }
   100% {
     transform: translateY(0) scale(1.1);
+  }
+}
+
+/* Signaturfeiringer med effekt: ringer rundt Haaland, lysstråle på Messi og «SIUUU!» for Ronaldo. */
+.walkout-aura {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  width: 60%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  pointer-events: none;
+  border: 2px solid var(--pack-glow);
+  opacity: 0;
+  animation: walkout-aura 1.6s ease-out var(--approach-ms) forwards;
+}
+
+.walkout-aura-2 {
+  animation-delay: calc(var(--approach-ms) + 0.5s);
+}
+
+@keyframes walkout-aura {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.1);
+  }
+}
+
+.walkout-beam {
+  position: absolute;
+  left: 50%;
+  top: -60vh;
+  bottom: 30%;
+  width: 55%;
+  translate: -50% 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.55) 70%, transparent);
+  clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
+  opacity: 0;
+  animation: walkout-beam var(--celebrate-ms) ease-out var(--approach-ms) both;
+}
+
+@keyframes walkout-beam {
+  0% {
+    opacity: 0;
+  }
+  25%,
+  70% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+
+.walkout-callout {
+  position: absolute;
+  left: 50%;
+  top: -0.5rem;
+  translate: -50% 0;
+  white-space: nowrap;
+  font-size: 2.6rem;
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: #fff;
+  text-shadow: 0 0 1rem var(--pack-glow), 0 0 2.4rem var(--pack-glow), 0 0.2rem 0 rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  opacity: 0;
+  animation: walkout-callout calc(var(--celebrate-ms) * 0.6) ease-out calc(var(--approach-ms) + var(--celebrate-ms) * 0.35) both;
+}
+
+@keyframes walkout-callout {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  25% {
+    opacity: 1;
+    transform: scale(1.25);
+  }
+  45%,
+  85% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.9;
+    transform: scale(1);
   }
 }
 
@@ -1232,7 +1375,7 @@ body:has(.manager-bottom-nav) .audio-fab {
   }
 }
 
-/* Kortet etter walkouten: slår inn med et lysglimt der spilleren sto. */
+/* Kortet etter walkouten: vokser inn med et lysglimt der spilleren sto. */
 .pack-card-after-walkout {
   animation: pack-card-after-walkout 1.1s cubic-bezier(0.19, 1, 0.22, 1) both;
 }
@@ -1240,12 +1383,12 @@ body:has(.manager-bottom-nav) .audio-fab {
 @keyframes pack-card-after-walkout {
   0% {
     opacity: 0;
-    transform: scale(1.25);
-    filter: brightness(4);
+    transform: scale(0.88);
+    filter: brightness(3.5);
   }
   35% {
     opacity: 1;
-    filter: brightness(1.9);
+    filter: brightness(1.8);
   }
   100% {
     opacity: 1;
@@ -1343,7 +1486,11 @@ body:has(.manager-bottom-nav) .audio-fab {
   .walkout-pulse,
   .walkout-figure,
   .walkout-sprite,
-  .walkout-body,
+  .walkout-shade,
+  .walkout-fog,
+  .walkout-aura,
+  .walkout-beam,
+  .walkout-callout,
   .walkout-burst,
   .walkout-clip,
   .walkout-shadow,
