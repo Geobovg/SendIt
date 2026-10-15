@@ -778,30 +778,55 @@ body:has(.manager-bottom-nav) .audio-fab {
   }
 }
 
+/* Skrittene: kroppen løftes og vugger litt til hver side, og stopper rett når han er framme. */
 .walkout-bob {
   position: relative;
-  animation: walkout-bob 0.62s ease-in-out infinite alternate;
+  animation: walkout-bob 0.6s ease-in-out var(--steps) alternate both;
 }
 
 @keyframes walkout-bob {
   from {
-    transform: translateY(0.3rem) rotate(-0.8deg);
+    transform: translateY(0.35rem) rotate(-1.6deg);
   }
   to {
-    transform: translateY(-0.3rem) rotate(0.8deg);
+    transform: translateY(-0.45rem) rotate(1.6deg);
   }
 }
 
+.walkout-shadow {
+  position: absolute;
+  left: 50%;
+  top: calc(min(24rem, 80vw) - 1.1rem);
+  width: min(15rem, 55vw);
+  height: 1.6rem;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.75), transparent);
+  animation: walkout-shadow var(--approach-ms) cubic-bezier(0.3, 0.55, 0.3, 1) both;
+}
+
+@keyframes walkout-shadow {
+  from {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Selve gåinga: han kommer ut av lyset, blir større og får farger. Han er synlig
+   med lysrand hele veien, men fargene kommer først mot slutten. */
 .walkout-figure {
   width: min(24rem, 80vw);
   height: auto;
   aspect-ratio: 1;
   object-fit: contain;
   object-position: bottom;
-  animation: walkout-figure var(--walk-ms) cubic-bezier(0.3, 0.55, 0.3, 1) both;
+  animation: walkout-figure var(--approach-ms) cubic-bezier(0.3, 0.55, 0.3, 1) both;
 }
 
-/* Mørk til godt ut i gangen: først de siste tretti prosentene lyser han opp. */
 @keyframes walkout-figure {
   0% {
     opacity: 0;
@@ -811,19 +836,149 @@ body:has(.manager-bottom-nav) .audio-fab {
   15% {
     opacity: 1;
   }
-  70% {
-    transform: scale(0.92);
-    filter: brightness(0) drop-shadow(0 0 1.4rem var(--pack-glow));
+  55% {
+    transform: scale(0.8);
+    filter: brightness(0.22) saturate(0.6) drop-shadow(0 0 1.2rem var(--pack-glow));
   }
   100% {
     opacity: 1;
     transform: scale(1);
-    filter: brightness(1) drop-shadow(0 0 2rem var(--pack-glow));
+    filter: brightness(1) saturate(1) drop-shadow(0 0 2rem var(--pack-glow));
+  }
+}
+
+/* Feiringen starter når han har stoppet. Navnet står igjen under. */
+.walkout-celebrate {
+  position: relative;
+  transform-origin: 50% 100%;
+  animation-duration: var(--celebrate-ms);
+  animation-delay: var(--approach-ms);
+  animation-fill-mode: both;
+  animation-timing-function: ease-in-out;
+}
+
+.walkout-c-siu {
+  animation-name: walkout-siu;
+}
+
+.walkout-c-crouch {
+  animation-name: walkout-crouch;
+}
+
+.walkout-c-wide {
+  animation-name: walkout-wide;
+}
+
+.walkout-c-bounce {
+  animation-name: walkout-bounce;
+}
+
+.walkout-c-pose {
+  animation-name: walkout-pose;
+}
+
+.walkout-c-pump {
+  animation-name: walkout-pump;
+}
+
+/* Ronaldo: setter seg, hopper, snurrer rundt i lufta og lander med armene ut. */
+@keyframes walkout-siu {
+  0% {
+    transform: scale(1);
+  }
+  18% {
+    transform: scale(1.06, 0.88);
+  }
+  48% {
+    transform: perspective(1000px) translateY(-6.5rem) rotateY(180deg) scale(1.04);
+  }
+  74% {
+    transform: perspective(1000px) translateY(0) rotateY(360deg) scale(1.1, 0.9);
+  }
+  86%,
+  100% {
+    transform: perspective(1000px) rotateY(360deg) scale(1.2, 1.04);
+  }
+}
+
+/* Haaland (meditasjon) og Salah (på kne): setter seg ned og blir sittende. */
+@keyframes walkout-crouch {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.08, 0.68);
+  }
+  100% {
+    transform: scale(1.08, 0.7);
+  }
+}
+
+@keyframes walkout-wide {
+  0% {
+    transform: scale(1);
+  }
+  40%,
+  100% {
+    transform: scale(1.22, 1.06);
+  }
+}
+
+@keyframes walkout-bounce {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  16% {
+    transform: translateY(-2.4rem) rotate(-5deg);
+  }
+  32% {
+    transform: translateY(0) rotate(0deg) scale(1.04, 0.95);
+  }
+  48% {
+    transform: translateY(-2.4rem) rotate(5deg);
+  }
+  64% {
+    transform: translateY(0) rotate(0deg) scale(1.04, 0.95);
+  }
+  82% {
+    transform: translateY(-3.2rem) rotate(-3deg) scale(1.06);
+  }
+}
+
+@keyframes walkout-pose {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.14) rotate(-3deg);
+  }
+  100% {
+    transform: scale(1.14) rotate(-3deg);
+  }
+}
+
+/* De andre: en knyttneve opp, med et lite hopp. */
+@keyframes walkout-pump {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  25% {
+    transform: translateY(0) scale(1.05, 0.92);
+  }
+  50% {
+    transform: translateY(-2.6rem) rotate(-3deg) scale(1.08);
+  }
+  75% {
+    transform: translateY(0) scale(1.1, 0.95);
+  }
+  100% {
+    transform: translateY(0) scale(1.1);
   }
 }
 
 .walkout-label {
-  animation: pack-label-rise 0.6s ease-out calc(var(--walk-ms) * 0.82) both;
+  animation: pack-label-rise 0.6s ease-out calc(var(--approach-ms) * 0.85) both;
 }
 
 .walkout-flags {
@@ -1011,8 +1166,13 @@ body:has(.manager-bottom-nav) .audio-fab {
   .walkout-door,
   .walkout-pulse,
   .walkout-figure,
+  .walkout-shadow,
   .walkout-label {
     display: none;
+  }
+
+  .walkout-celebrate {
+    animation: none;
   }
 
   .walkout-flag,

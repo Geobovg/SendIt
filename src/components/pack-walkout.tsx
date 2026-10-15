@@ -20,9 +20,42 @@ export function isEpicWalkout(pull: PackPull) {
   return pull.overall >= 90 || pull.special === "icon";
 }
 
-// Hvor lenge spilleren går før kortet vises. Navnet kommer først helt på slutten.
+// Spilleren går først mot kameraet og feirer deretter. Kortet vises når feiringen er over.
+export function walkTiming(pull: PackPull) {
+  const epic = isEpicWalkout(pull);
+  const approach = epic ? 4200 : 3000;
+  const celebrate = epic ? 2200 : 1800;
+  return { approach, celebrate, total: approach + celebrate };
+}
+
 export function walkMs(pull: PackPull) {
-  return isEpicWalkout(pull) ? 5600 : 3800;
+  return walkTiming(pull).total;
+}
+
+// Vi har bare ett stillbilde per spiller, så feiringen er en bevegelse av hele kroppen.
+// Signaturfeiringene ligger her; alle andre får en knyttneve-feiring.
+//   siu: hopp med snurr og armene ut (Ronaldo)   crouch: setter seg ned (meditasjon, bønn)
+//   wide: strekker seg ut med armene ut           bounce: danser
+//   pose: stopper og stiller seg opp
+export type Celebration = "siu" | "crouch" | "wide" | "bounce" | "pose" | "pump";
+
+const celebrations: Record<string, Celebration> = {
+  "cristiano-ronaldo": "siu",
+  haaland: "crouch",
+  salah: "crouch",
+  bellingham: "wide",
+  "jobe-bellingham": "wide",
+  "antoine-griezmann": "bounce",
+  neymar: "bounce",
+  "lamine-yamal": "bounce",
+  vinicius: "bounce",
+  mbappe: "pose",
+  messi: "pose",
+  kane: "pose",
+};
+
+export function celebrationFor(slug: string): Celebration {
+  return celebrations[slug] ?? "pump";
 }
 
 // Flagget til spillerens nasjon, stort på hver sin side av skjermen mens kortet åpnes.
@@ -36,19 +69,25 @@ export function WalkoutFlags({ slug, glow, leaving }: { slug: string; glow: stri
   </div>;
 }
 
-// Spilleren går mot kameraet som en mørk silhuett med lysrand, og blir først lyst opp helt på slutten.
+// Spilleren går mot kameraet i skygge, blir lyst opp underveis og feirer til slutt.
 export function WalkoutFigure({ pull, glow }: { pull: PackPull; glow: string }) {
   const t = useT();
   const photo = playerPhoto(pull.slug);
   const epic = isEpicWalkout(pull);
-  const style = { "--pack-glow": glow, "--walk-ms": `${walkMs(pull)}ms` } as CSSProperties;
+  const { approach, celebrate, total } = walkTiming(pull);
+  // Antall halve skritt mens han går, alltid et partall så han står rett når han stopper.
+  const steps = Math.max(2, 2 * Math.round(approach / 1200));
+  const style = { "--pack-glow": glow, "--walk-ms": `${total}ms`, "--approach-ms": `${approach}ms`, "--celebrate-ms": `${celebrate}ms`, "--steps": steps } as CSSProperties;
   return <div className={`walkout-scene ${epic ? "walkout-epic" : ""}`} style={style}>
     <div className="walkout-door" />
     {epic ? <div className="walkout-pulse" /> : null}
-    <div className="walkout-bob">
-      {photo
-        ? <Image src={photo} alt="" width={256} height={256} priority className="walkout-figure" />
-        : <div className="walkout-figure grid place-items-center text-8xl font-black text-white">{pull.position}</div>}
+    <div className="walkout-shadow" />
+    <div className={`walkout-celebrate walkout-c-${celebrationFor(pull.slug)}`}>
+      <div className="walkout-bob">
+        {photo
+          ? <Image src={photo} alt="" width={256} height={256} priority className="walkout-figure" />
+          : <div className="walkout-figure grid place-items-center text-8xl font-black text-white">{pull.position}</div>}
+      </div>
     </div>
     <div className="walkout-label text-center text-white">
       <p className="text-2xl font-black uppercase tracking-wide">{pull.name}</p>
