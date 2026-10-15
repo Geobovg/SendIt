@@ -1,11 +1,29 @@
 "use client";
 
 import Image from "next/image";
-import type { CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
+import { preload } from "react-dom";
 import { useT } from "@/i18n/client";
 import type { PackPull } from "@/lib/manager-actions";
 import { playerFlag } from "@/lib/player-nationalities";
 import { playerPhoto } from "@/lib/player-photos";
+import { walkoutClips } from "@/lib/walkout-clips";
+
+const spriteSrc = "/walkouts/sprite-walk.png";
+
+// Safari spiller bare HEVC med gjennomsiktig bakgrunn, de andre bare WebM.
+function isSafari() {
+  return /^((?!chrome|chromium|android|crios|fxios).)*safari/i.test(navigator.userAgent);
+}
+
+// Klippet som kan spilles i denne nettleseren, eller null: da brukes sprite-walkouten.
+function clipFor(slug: string) {
+  const clip = walkoutClips[slug];
+  if (!clip || typeof navigator === "undefined") return null;
+  const mov = isSafari();
+  if (mov && !clip.mov) return null;
+  return { ms: clip.ms, src: `/walkouts/${slug}.${mov ? "mov" : "webm"}` };
+}
 
 // Grensa for det store trekket. Alt herfra og opp får walkout slik som i FIFA.
 export const walkoutFrom = 86;
@@ -21,7 +39,10 @@ export function isEpicWalkout(pull: PackPull) {
 }
 
 // Spilleren går først mot kameraet og feirer deretter. Kortet vises når feiringen er over.
+// Et klipp bestemmer selv hvor lenge det varer: gåingen er de første 80 prosentene.
 export function walkTiming(pull: PackPull) {
+  const clip = clipFor(pull.slug);
+  if (clip) return { approach: clip.ms * 0.8, celebrate: clip.ms * 0.2, total: clip.ms + 300 };
   const epic = isEpicWalkout(pull);
   const approach = epic ? 4200 : 3000;
   const celebrate = epic ? 2200 : 1800;
@@ -69,25 +90,42 @@ export function WalkoutFlags({ slug, glow, leaving }: { slug: string; glow: stri
   </div>;
 }
 
-// Spilleren går mot kameraet i skygge, blir lyst opp underveis og feirer til slutt.
+// Laster klippene og sprite-arket mens pakka ryker opp, så walkouten ikke hakker.
+// Et klipp som ikke er lastet ned i tide, spilles bare av der det er kommet.
+export function WalkoutPreload({ pulls }: { pulls: PackPull[] }) {
+  preload(spriteSrc, { as: "image" });
+  return <>{pulls.filter(qualifiesForWalkout).map((pull) => {
+    const clip = clipFor(pull.slug);
+    return clip ? <video key={pull.card_id} src={clip.src} preload="auto" muted playsInline /> : null;
+  })}</>;
+}
+
+// Spilleren går mot kameraet. Har han et klipp, spilles det. Ellers går en silhuett (sprite-ark)
+// mot kameraet, lyses opp i et glimt og blir til spillerbildet, som feirer med hele kroppen.
 export function WalkoutFigure({ pull, glow }: { pull: PackPull; glow: string }) {
   const t = useT();
+  const [failed, setFailed] = useState(false);
+  const clip = failed ? null : clipFor(pull.slug);
   const photo = playerPhoto(pull.slug);
   const epic = isEpicWalkout(pull);
   const { approach, celebrate, total } = walkTiming(pull);
-  // Antall halve skritt mens han går, alltid et partall så han står rett når han stopper.
-  const steps = Math.max(2, 2 * Math.round(approach / 1200));
-  const style = { "--pack-glow": glow, "--walk-ms": `${total}ms`, "--approach-ms": `${approach}ms`, "--celebrate-ms": `${celebrate}ms`, "--steps": steps } as CSSProperties;
+  const style = { "--pack-glow": glow, "--walk-ms": `${total}ms`, "--approach-ms": `${approach}ms`, "--celebrate-ms": `${celebrate}ms` } as CSSProperties;
   return <div className={`walkout-scene ${epic ? "walkout-epic" : ""}`} style={style}>
     <div className="walkout-door" />
     {epic ? <div className="walkout-pulse" /> : null}
-    <div className="walkout-shadow" />
-    <div className={`walkout-celebrate walkout-c-${celebrationFor(pull.slug)}`}>
-      <div className="walkout-bob">
-        {photo
-          ? <Image src={photo} alt="" width={256} height={256} priority className="walkout-figure" />
-          : <div className="walkout-figure grid place-items-center text-8xl font-black text-white">{pull.position}</div>}
-      </div>
+    <div className={`walkout-stage ${clip ? "walkout-stage-clip" : ""}`}>
+      <div className="walkout-shadow" />
+      {clip
+        ? <video className="walkout-clip" src={clip.src} autoPlay muted playsInline preload="auto" onError={() => setFailed(true)} />
+        : <>
+          <div className="walkout-sprite" />
+          <div className="walkout-burst" />
+          <div className={`walkout-celebrate walkout-c-${celebrationFor(pull.slug)}`}>
+            {photo
+              ? <Image src={photo} alt="" width={256} height={256} priority className="walkout-figure" />
+              : <div className="walkout-figure grid place-items-center text-8xl font-black text-white">{pull.position}</div>}
+          </div>
+        </>}
     </div>
     <div className="walkout-label text-center text-white">
       <p className="text-2xl font-black uppercase tracking-wide">{pull.name}</p>

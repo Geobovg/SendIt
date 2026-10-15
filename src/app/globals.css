@@ -778,25 +778,31 @@ body:has(.manager-bottom-nav) .audio-fab {
   }
 }
 
-/* Skrittene: kroppen løftes og vugger litt til hver side, og stopper rett når han er framme. */
-.walkout-bob {
+/* Scenen der spilleren går: en kvadratisk boks for sprite-walkouten, stående når det er et klipp. */
+.walkout-stage {
   position: relative;
-  animation: walkout-bob 0.6s ease-in-out var(--steps) alternate both;
+  width: min(24rem, 80vw);
+  aspect-ratio: 1;
 }
 
-@keyframes walkout-bob {
-  from {
-    transform: translateY(0.35rem) rotate(-1.6deg);
-  }
-  to {
-    transform: translateY(-0.45rem) rotate(1.6deg);
-  }
+.walkout-stage-clip {
+  width: min(26rem, 80vw);
+  aspect-ratio: 3 / 4;
+}
+
+.walkout-clip {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
 }
 
 .walkout-shadow {
   position: absolute;
   left: 50%;
-  top: calc(min(24rem, 80vw) - 1.1rem);
+  bottom: -0.4rem;
   width: min(15rem, 55vw);
   height: 1.6rem;
   translate: -50% 0;
@@ -816,40 +822,105 @@ body:has(.manager-bottom-nav) .audio-fab {
   }
 }
 
-/* Selve gåinga: han kommer ut av lyset, blir større og får farger. Han er synlig
-   med lysrand hele veien, men fargene kommer først mot slutten. */
-.walkout-figure {
-  width: min(24rem, 80vw);
-  height: auto;
-  aspect-ratio: 1;
-  object-fit: contain;
-  object-position: bottom;
-  animation: walkout-figure var(--approach-ms) cubic-bezier(0.3, 0.55, 0.3, 1) both;
+/* Silhuetten går mot kameraet: bildene i sprite-arket byttes med steg, mens figuren vokser ut av lyset.
+   Mot slutten lyses den opp og forsvinner i glimtet, og spillerbildet tar over. */
+.walkout-sprite {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  height: 100%;
+  aspect-ratio: 1 / 2;
+  translate: -50% 0;
+  background: url("/walkouts/sprite-walk.png") 0 0 / 800% 100% no-repeat;
+  transform-origin: 50% 100%;
+  filter: brightness(0.14) drop-shadow(0 0 1rem var(--pack-glow));
+  animation:
+    walkout-walk 0.9s steps(8, jump-none) infinite,
+    walkout-sprite-approach var(--approach-ms) cubic-bezier(0.3, 0.55, 0.3, 1) both;
 }
 
-@keyframes walkout-figure {
+@keyframes walkout-walk {
+  to {
+    background-position: 100% 0;
+  }
+}
+
+@keyframes walkout-sprite-approach {
   0% {
     opacity: 0;
-    transform: scale(0.28);
-    filter: brightness(0) drop-shadow(0 0 0.5rem var(--pack-glow));
+    transform: scale(0.22);
+    filter: brightness(0.05) drop-shadow(0 0 0.4rem var(--pack-glow));
   }
-  15% {
+  12% {
     opacity: 1;
   }
-  55% {
-    transform: scale(0.8);
-    filter: brightness(0.22) saturate(0.6) drop-shadow(0 0 1.2rem var(--pack-glow));
+  88% {
+    opacity: 1;
+    transform: scale(0.96);
+    filter: brightness(0.3) drop-shadow(0 0 1.6rem var(--pack-glow));
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+    filter: brightness(3) drop-shadow(0 0 3rem var(--pack-glow));
+  }
+}
+
+/* Lysglimtet der silhuetten blir til spilleren. */
+.walkout-burst {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  width: 34rem;
+  max-width: 130vw;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, #fff 0, var(--pack-glow) 28%, transparent 62%);
+  animation: walkout-burst 0.7s ease-out calc(var(--approach-ms) * 0.93) both;
+}
+
+@keyframes walkout-burst {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  35% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.3);
+  }
+}
+
+/* Spillerbildet kommer inn i lysglimtet og feirer. */
+.walkout-figure {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom;
+  animation: walkout-figure-in 0.5s ease-out var(--approach-ms) both;
+}
+
+@keyframes walkout-figure-in {
+  0% {
+    opacity: 0;
+    transform: scale(1.12);
+    filter: brightness(3) drop-shadow(0 0 2rem var(--pack-glow));
   }
   100% {
     opacity: 1;
     transform: scale(1);
-    filter: brightness(1) saturate(1) drop-shadow(0 0 2rem var(--pack-glow));
+    filter: brightness(1) drop-shadow(0 0 2rem var(--pack-glow));
   }
 }
 
 /* Feiringen starter når han har stoppet. Navnet står igjen under. */
 .walkout-celebrate {
-  position: relative;
+  position: absolute;
+  inset: 0;
   transform-origin: 50% 100%;
   animation-duration: var(--celebrate-ms);
   animation-delay: var(--approach-ms);
@@ -978,7 +1049,7 @@ body:has(.manager-bottom-nav) .audio-fab {
 }
 
 .walkout-label {
-  animation: pack-label-rise 0.6s ease-out calc(var(--approach-ms) * 0.85) both;
+  animation: pack-label-rise 0.6s ease-out calc(var(--approach-ms) * 0.9) both;
 }
 
 .walkout-flags {
@@ -1166,6 +1237,9 @@ body:has(.manager-bottom-nav) .audio-fab {
   .walkout-door,
   .walkout-pulse,
   .walkout-figure,
+  .walkout-sprite,
+  .walkout-burst,
+  .walkout-clip,
   .walkout-shadow,
   .walkout-label {
     display: none;
@@ -1176,8 +1250,7 @@ body:has(.manager-bottom-nav) .audio-fab {
   }
 
   .walkout-flag,
-  .walkout-flags-out .walkout-flag,
-  .walkout-bob {
+  .walkout-flags-out .walkout-flag {
     animation: none;
     opacity: 0.5;
   }

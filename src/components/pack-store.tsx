@@ -11,7 +11,7 @@ import { useLocale, useT } from "@/i18n/client";
 import { INTL_LOCALES, type Locale } from "@/i18n/locales";
 import { PlayerCardFace } from "./player-card-face";
 import { ConfirmDialog } from "./confirm-dialog";
-import { qualifiesForWalkout, walkMs, walkoutFrom, WalkoutFigure, WalkoutFlags } from "./pack-walkout";
+import { qualifiesForWalkout, walkMs, walkoutFrom, WalkoutFigure, WalkoutFlags, WalkoutPreload } from "./pack-walkout";
 import { SpecialPick } from "./special-pick";
 import { buttonClass, cardClass, secondaryButtonClass } from "./ui";
 import { useScrollLock } from "./use-scroll-lock";
@@ -191,6 +191,7 @@ function PackReveal({ pulls, packName, jackpot, onClose }: { pulls: PackPull[]; 
         lastes ned mens pakka ryker opp og ligger klare når hvert kort snus. */}
     {done ? null : <div aria-hidden className="pointer-events-none invisible absolute left-0 top-0 w-72 overflow-hidden">
       {pulls.map((pull) => <PlayerCardFace key={pull.card_id} player={pull} eager />)}
+      <WalkoutPreload pulls={pulls} />
     </div>}
     {done ? <div className="grid max-h-full w-full max-w-4xl gap-4 overflow-y-auto">
       <div className="text-center text-white">
