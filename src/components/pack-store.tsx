@@ -164,8 +164,20 @@ function PackReveal({ pulls, packName, jackpot, onClose }: { pulls: PackPull[]; 
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
+  // Etter siste kort lukker en mørk skygge seg inn før oppsummeringen vises, så det ikke blir et brått hopp.
+  const [closing, setClosing] = useState(false);
+  useEffect(() => {
+    if (!closing) return;
+    const timer = setTimeout(() => {
+      setPhase({ index: steps.length, stage: 0, skipped: false });
+      setClosing(false);
+    }, 750);
+    return () => clearTimeout(timer);
+  }, [closing, steps.length]);
+
   const next = () => {
-    if (kind !== "card") return;
+    if (kind !== "card" || closing) return;
+    if (lastStage && index === steps.length - 1) { setClosing(true); return; }
     setPhase((current) => lastStage ? { index: current.index + 1, stage: 0, skipped: false } : { ...current, stage: current.stage + 1 });
   };
   // Hopp over går rett til siste kort i walkouten, uten flagg og gåing.
@@ -194,24 +206,24 @@ function PackReveal({ pulls, packName, jackpot, onClose }: { pulls: PackPull[]; 
       <WalkoutPreload pulls={pulls} />
     </div>}
     {done ? <div className="grid max-h-full w-full max-w-4xl gap-4 overflow-y-auto">
-      <div className="text-center text-white">
+      <div className="pack-summary-rise text-center text-white" style={{ "--i": 0 } as CSSProperties}>
         <p className="text-xs font-bold tracking-[.3em] text-white/60">{packName.toUpperCase()}</p>
         <h2 className="mt-1 text-3xl font-black">{tp.youGot(pulls.length)}</h2>
         <p className="mt-1 text-sm text-white/70">{tp.bestCard(best)}</p>
         {jackpot ? <p className="pack-label-rise mx-auto mt-3 w-fit rounded-xl border-2 px-5 py-3 text-2xl font-black" style={{ borderColor: specialStyles.personal.border, color: specialStyles.personal.badge, background: "rgba(0,0,0,.45)" }}>{tp.jackpot(jackpot)}</p> : null}
       </div>
       {/* Knappen står øverst og blir liggende når man ruller, så man slipper å bla ned for å gå videre. */}
-      <div className="sticky top-0 z-10 flex flex-wrap justify-center gap-2 py-1"><button className={`${buttonClass} shadow-lg`} onClick={onClose}>{tp.done}</button><QuickSellRest pulls={toSell} action={sellAction} pending={sellPending} /></div>
+      <div className="pack-summary-rise sticky top-0 z-10 flex flex-wrap justify-center gap-2 py-1" style={{ "--i": 1 } as CSSProperties}><button className={`${buttonClass} shadow-lg`} onClick={onClose}>{tp.done}</button><QuickSellRest pulls={toSell} action={sellAction} pending={sellPending} /></div>
       {toSell.length ? <p className="text-center text-sm text-white/70">{tp.pickToKeep}</p> : null}
       {sellState.soldIds?.length ? <p className="text-center text-sm font-semibold text-white">{tp.quickSoldAll(sellState.soldIds.length, sellState.payout ?? 0)}</p> : null}
       {sellState.error ? <p className="text-center text-sm text-danger">{sellState.error}</p> : null}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {pulls.map((pull) => {
+        {pulls.map((pull, i) => {
           const sold = soldIds.has(pull.card_id);
           const sent = kept.has(pull.card_id);
           const canSend = !sold && !sent && (pull.tradable || Boolean(pull.special));
           const status = sold ? tp.sold : sent ? tp.sentToClub : <>{pull.location === "storage" ? tp.toStorage : tp.inSquad}{pull.duplicate ? tp.duplicate : ""}{pull.tradable ? "" : tp.untradable}</>;
-          return <div key={pull.card_id} className={`grid gap-1 ${sold ? "opacity-40" : ""}`}>
+          return <div key={pull.card_id} className={`pack-summary-rise grid gap-1 ${sold ? "opacity-40" : ""}`} style={{ "--i": i + 2 } as CSSProperties}>
             {canSend ? <button type="button" aria-expanded={picked === pull.card_id} onClick={() => setPicked((current) => current === pull.card_id ? null : pull.card_id)} className={`rounded-2xl text-left ${picked === pull.card_id ? "ring-2 ring-accent" : ""}`}><PlayerCardFace player={pull} eager /></button> : <PlayerCardFace player={pull} eager />}
             {canSend && picked === pull.card_id ? <button type="button" className={`${buttonClass} justify-self-center`} onClick={() => setConfirmingKeep(pull)}>{tp.sendToClub}</button> : null}
             <p className={`text-center text-xs ${sent ? "font-semibold text-emerald-300" : "text-white/70"}`}>{status}</p>
@@ -255,6 +267,9 @@ function PackReveal({ pulls, packName, jackpot, onClose }: { pulls: PackPull[]; 
     </button>
     {step?.walkout && !lastStage ? <button type="button" onClick={skip} className="absolute right-3 top-3 z-10 rounded-full border border-white/25 bg-black/40 px-3 py-1 text-xs font-semibold text-white/80 backdrop-blur hover:text-white">{tp.skipWalkout} »</button> : null}
     </>}
+    {/* Skyggen som lukker seg over det siste kortet og åpner seg igjen over oppsummeringen. */}
+    {closing ? <div aria-hidden className="pack-veil pack-veil-in" /> : null}
+    {done ? <div aria-hidden className="pack-veil pack-veil-out" /> : null}
   </div>, document.body);
 }
 

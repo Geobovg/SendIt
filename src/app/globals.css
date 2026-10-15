@@ -1550,6 +1550,67 @@ body:has(.manager-bottom-nav) .audio-fab {
   }
 }
 
+/* Overgangen fra pakkeåpningen til oppsummeringen: en mørk skygge lukker seg inn fra kantene over det
+   siste kortet, og åpner seg igjen over oppsummeringen, mens kortene glir opp ett etter ett. */
+@property --veil-hole {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 120%;
+}
+
+.pack-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 45%, transparent calc(var(--veil-hole) - 35%), #000 var(--veil-hole));
+}
+
+.pack-veil-in {
+  animation: pack-veil-in 0.75s ease-in both;
+}
+
+@keyframes pack-veil-in {
+  from {
+    opacity: 0;
+    --veil-hole: 120%;
+  }
+  to {
+    opacity: 1;
+    --veil-hole: 0%;
+  }
+}
+
+.pack-veil-out {
+  animation: pack-veil-out 1.4s ease-out both;
+}
+
+@keyframes pack-veil-out {
+  from {
+    opacity: 1;
+    --veil-hole: 0%;
+  }
+  to {
+    opacity: 0;
+    --veil-hole: 120%;
+  }
+}
+
+.pack-summary-rise {
+  animation: pack-summary-rise 0.8s cubic-bezier(0.2, 0.8, 0.3, 1) calc(var(--i, 0) * 120ms + 350ms) both;
+}
+
+@keyframes pack-summary-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.2rem) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* Selve pakka før den åpnes. */
 .pack-idle {
   animation: pack-idle 2.4s ease-in-out infinite;
@@ -1622,6 +1683,7 @@ body:has(.manager-bottom-nav) .audio-fab {
   .walkout-door,
   .walkout-pulse,
   .walkout-figure,
+  .pack-veil,
   .walkout-backdrop,
   .walkout-intro,
   .walkout-embers,
@@ -1643,6 +1705,7 @@ body:has(.manager-bottom-nav) .audio-fab {
     opacity: 0.5;
   }
 
+  .pack-summary-rise,
   .pack-card-enter,
   .pack-card-walkout,
   .pack-card-after-walkout,
