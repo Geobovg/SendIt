@@ -780,13 +780,14 @@ body:has(.manager-bottom-nav) .audio-fab {
 
 /* Scenen der spilleren går: en kvadratisk boks for sprite-walkouten, stående når det er et klipp. */
 .walkout-stage {
+  --w: min(24rem, 80vw);
   position: relative;
-  width: min(24rem, 80vw);
+  width: var(--w);
   aspect-ratio: 1;
 }
 
 .walkout-stage-clip {
-  width: min(26rem, 80vw);
+  --w: min(26rem, 80vw);
   aspect-ratio: 3 / 4;
 }
 
@@ -866,6 +867,111 @@ body:has(.manager-bottom-nav) .audio-fab {
   }
 }
 
+/* Skyggen: kortbildet er overkroppen og sprite-arket gir beina, i en boks som er dobbelt så høy som
+   scenen. I siste posisjon ligger kortbildet nøyaktig der det ferdige kortbildet vises, og beina
+   henger under scenen. Han kommer nærmere og nærmere, beina forsvinner ut av bildet, og så lyses han opp. */
+.walkout-body {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 200%;
+  pointer-events: none;
+  transform-origin: 50% 0;
+  animation:
+    walkout-body-approach var(--approach-ms) cubic-bezier(0.3, 0.55, 0.3, 1) both,
+    walkout-body-out 0.05s linear var(--approach-ms) forwards;
+}
+
+.walkout-legs {
+  position: absolute;
+  inset: 0;
+  background: url("/walkouts/sprite-legs.png") 0 0 / 800% 100% no-repeat;
+  filter: brightness(0.12);
+  animation:
+    walkout-walk 0.9s steps(8, jump-none) infinite,
+    walkout-legs-out var(--approach-ms) linear both;
+}
+
+.walkout-bust {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 50%;
+  object-fit: contain;
+  animation:
+    walkout-bust-bob 0.45s ease-in-out var(--bob-count) both,
+    walkout-bust-sway 0.9s ease-in-out calc(var(--bob-count) / 2) both;
+}
+
+@keyframes walkout-bust-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2.7%);
+  }
+}
+
+@keyframes walkout-bust-sway {
+  0%,
+  50%,
+  100% {
+    translate: 0 0;
+  }
+  25% {
+    translate: 1.95% 0;
+  }
+  75% {
+    translate: -1.95% 0;
+  }
+}
+
+@keyframes walkout-legs-out {
+  0%,
+  62% {
+    opacity: 1;
+  }
+  90%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes walkout-body-approach {
+  0% {
+    opacity: 0;
+    transform: translateY(calc(var(--w) * 0.62)) scale(0.2);
+    filter: brightness(0.04) saturate(0.6) drop-shadow(0 0 0.4rem var(--pack-glow));
+  }
+  12% {
+    opacity: 1;
+  }
+  60% {
+    transform: translateY(calc(var(--w) * 0.2)) scale(0.62);
+    filter: brightness(0.12) saturate(0.6) drop-shadow(0 0 1.4rem var(--pack-glow));
+  }
+  88% {
+    opacity: 1;
+    transform: translateY(calc(var(--w) * 0.03)) scale(0.97);
+    filter: brightness(0.4) saturate(0.8) drop-shadow(0 0 1.6rem var(--pack-glow));
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: brightness(1) saturate(1) drop-shadow(0 0 2rem var(--pack-glow));
+  }
+}
+
+/* Når det ferdige kortbildet har tatt over, må skyggen vekk så den ikke synes under feiringen. */
+@keyframes walkout-body-out {
+  to {
+    opacity: 0;
+  }
+}
+
 /* Lysglimtet der silhuetten blir til spilleren. */
 .walkout-burst {
   position: absolute;
@@ -901,18 +1007,17 @@ body:has(.manager-bottom-nav) .audio-fab {
   height: 100%;
   object-fit: contain;
   object-position: bottom;
-  animation: walkout-figure-in 0.5s ease-out var(--approach-ms) both;
+  opacity: 0;
+  animation: walkout-figure-in 0.6s ease-out var(--approach-ms) forwards;
 }
 
 @keyframes walkout-figure-in {
   0% {
-    opacity: 0;
-    transform: scale(1.12);
+    opacity: 1;
     filter: brightness(3) drop-shadow(0 0 2rem var(--pack-glow));
   }
   100% {
     opacity: 1;
-    transform: scale(1);
     filter: brightness(1) drop-shadow(0 0 2rem var(--pack-glow));
   }
 }
@@ -1238,6 +1343,7 @@ body:has(.manager-bottom-nav) .audio-fab {
   .walkout-pulse,
   .walkout-figure,
   .walkout-sprite,
+  .walkout-body,
   .walkout-burst,
   .walkout-clip,
   .walkout-shadow,

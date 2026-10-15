@@ -1,6 +1,8 @@
-# Tegner sprite-arket til walkouten: 8 bilder av en figur som går mot kameraet (hvit på gjennomsiktig).
-# CSS farger den mørk og legger lysrand på, se .walkout-sprite i globals.css.
-# Kjøres med `python3 scripts/lag-walkout-sprite.py`, og skriver public/walkouts/sprite-walk.png.
+# Tegner sprite-arkene til walkouten: 8 bilder av en figur som går mot kameraet (hvit på gjennomsiktig).
+# CSS farger den mørk og legger lysrand på, se .walkout-sprite og .walkout-legs i globals.css.
+#   sprite-walk.png: hele figuren, brukes for spillere uten bilde.
+#   sprite-legs.png: bare hofter og bein. Spillerbildet (overkroppen) settes oppå, så silhuetten får spillerens egne konturer.
+# Kjøres med `python3 scripts/lag-walkout-sprite.py`, og skriver begge filene til public/walkouts.
 import math
 from PIL import Image, ImageDraw
 
@@ -13,7 +15,7 @@ def capsule(d, a, b, r):
         d.ellipse([p[0] - r, p[1] - r, p[0] + r, p[1] + r], fill=255)
 
 
-def frame(k):
+def frame(k, legs_only=False):
     img = Image.new("L", (W * SS, H * SS), 0)
     d = ImageDraw.Draw(img)
     phase = 2 * math.pi * k / FRAMES
@@ -44,6 +46,13 @@ def frame(k):
         capsule(d, elbow, hand, s(12))
         d.ellipse([hand[0] - s(11), hand[1] - s(11), hand[0] + s(11), hand[1] + s(11)], fill=255)
 
+    if legs_only:
+        # Hoftene dekker skjøten mot spillerbildet, som slutter rundt midjen.
+        d.rounded_rectangle([s(cx - 46), s(top + 226), s(cx + 46), s(top + 290)], radius=s(22), fill=255)
+        mask = img.resize((W, H), Image.LANCZOS)
+        mask.paste(0, (0, 0, W, int(top + 226) - 14))  # alt over hoftene hører til spillerbildet
+        return mask
+
     # Overkropp (trøye), nakke og hode.
     d.rounded_rectangle([s(cx - 62), s(top + 92), s(cx + 62), s(top + 150)], radius=s(26), fill=255)
     d.polygon([P(cx - 56, top + 120), P(cx + 56, top + 120), P(cx + 44, top + 262), P(cx - 44, top + 262)], fill=255)
@@ -53,11 +62,15 @@ def frame(k):
     return img.resize((W, H), Image.LANCZOS)
 
 
-sheet = Image.new("RGBA", (W * FRAMES, H), (0, 0, 0, 0))
-for k in range(FRAMES):
-    mask = frame(k)
-    white = Image.new("RGBA", (W, H), (255, 255, 255, 0))
-    white.putalpha(mask)
-    sheet.paste(white, (k * W, 0))
-sheet.save("public/walkouts/sprite-walk.png", optimize=True)
-print("public/walkouts/sprite-walk.png", sheet.size)
+def save(name, legs_only):
+    sheet = Image.new("RGBA", (W * FRAMES, H), (0, 0, 0, 0))
+    for k in range(FRAMES):
+        white = Image.new("RGBA", (W, H), (255, 255, 255, 0))
+        white.putalpha(frame(k, legs_only))
+        sheet.paste(white, (k * W, 0))
+    sheet.save(f"public/walkouts/{name}", optimize=True)
+    print(f"public/walkouts/{name}", sheet.size)
+
+
+save("sprite-walk.png", False)
+save("sprite-legs.png", True)

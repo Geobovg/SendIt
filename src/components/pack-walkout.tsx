@@ -10,6 +10,7 @@ import { playerPhoto } from "@/lib/player-photos";
 import { walkoutClips } from "@/lib/walkout-clips";
 
 const spriteSrc = "/walkouts/sprite-walk.png";
+const legsSrc = "/walkouts/sprite-legs.png";
 
 // Safari spiller bare HEVC med gjennomsiktig bakgrunn, de andre bare WebM.
 function isSafari() {
@@ -94,14 +95,16 @@ export function WalkoutFlags({ slug, glow, leaving }: { slug: string; glow: stri
 // Et klipp som ikke er lastet ned i tide, spilles bare av der det er kommet.
 export function WalkoutPreload({ pulls }: { pulls: PackPull[] }) {
   preload(spriteSrc, { as: "image" });
+  preload(legsSrc, { as: "image" });
   return <>{pulls.filter(qualifiesForWalkout).map((pull) => {
     const clip = clipFor(pull.slug);
     return clip ? <video key={pull.card_id} src={clip.src} preload="auto" muted playsInline /> : null;
   })}</>;
 }
 
-// Spilleren går mot kameraet. Har han et klipp, spilles det. Ellers går en silhuett (sprite-ark)
-// mot kameraet, lyses opp i et glimt og blir til spillerbildet, som feirer med hele kroppen.
+// Spilleren går mot kameraet. Har han et klipp, spilles det. Ellers går han som en skygge: overkroppen
+// er kortbildet hans (så silhuetten får hans egne konturer) og beina kommer fra sprite-arket. Han
+// lyses opp i det han kommer fram, og bildet blir til kortbildet i samme størrelse og posisjon.
 export function WalkoutFigure({ pull, glow }: { pull: PackPull; glow: string }) {
   const t = useT();
   const [failed, setFailed] = useState(false);
@@ -109,7 +112,9 @@ export function WalkoutFigure({ pull, glow }: { pull: PackPull; glow: string }) 
   const photo = playerPhoto(pull.slug);
   const epic = isEpicWalkout(pull);
   const { approach, celebrate, total } = walkTiming(pull);
-  const style = { "--pack-glow": glow, "--walk-ms": `${total}ms`, "--approach-ms": `${approach}ms`, "--celebrate-ms": `${celebrate}ms` } as CSSProperties;
+  // Overkroppen vugger bare hele sykluser (0,9 sekunder), så den står rolig i det han stopper.
+  const bobCount = 2 * Math.floor(approach / 900);
+  const style = { "--pack-glow": glow, "--walk-ms": `${total}ms`, "--approach-ms": `${approach}ms`, "--celebrate-ms": `${celebrate}ms`, "--bob-count": bobCount } as CSSProperties;
   return <div className={`walkout-scene ${epic ? "walkout-epic" : ""}`} style={style}>
     <div className="walkout-door" />
     {epic ? <div className="walkout-pulse" /> : null}
@@ -118,7 +123,12 @@ export function WalkoutFigure({ pull, glow }: { pull: PackPull; glow: string }) 
       {clip
         ? <video className="walkout-clip" src={clip.src} autoPlay muted playsInline preload="auto" onError={() => setFailed(true)} />
         : <>
-          <div className="walkout-sprite" />
+          {photo
+            ? <div className="walkout-body">
+              <div className="walkout-legs" />
+              <Image src={photo} alt="" width={256} height={256} priority className="walkout-bust" />
+            </div>
+            : <div className="walkout-sprite" />}
           <div className="walkout-burst" />
           <div className={`walkout-celebrate walkout-c-${celebrationFor(pull.slug)}`}>
             {photo
