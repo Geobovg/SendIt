@@ -18,3 +18,16 @@ Med fem arenaer på plass viste det seg at lagene man faktisk kan bygge, ikke ko
 Selv i divisjon 10 i arena 4 og 5 rykket et lag på 90 bare opp 23 % og 8 % av sesongene. AI-ratingen pluss den skjulte bonusen (+4 på Camp Nou) pluss kjemien lå over det laget kan bli: det beste kortet i katalogen er 92, og snittet i det beste mulige laget er rundt 89–92. Kampmotoren er flat, så en ratingforskjell på 5 gir bare omtrent ett poeng mer eller mindre per fem kamper.
 
 Derfor er ratingene i arena 2–5 trukket ned til 80–85, 82–87, 84–89 og 85–90, og den skjulte bonusen er 0, 1, 1 og 2 (arena 1 er som før). Med det rykker et lag på 90 opp omtrent 80 % av sesongene i divisjon 10 i arena 2, 70 % i arena 3, 60 % i arena 4 og 47 % i arena 5. I divisjon 1 er sjansen rundt 30 %, 20 %, 13 % og 10 %, og et lag på 94 har rundt 20 % på Camp Nou. Toppen av stigen er fortsatt for de beste lagene, men ikke umulig. Sesonger som pågår, fikk de nye ratingene på kampene som ikke er spilt. Simuleringen bruker lag der alle på banen har samme rating, så ekte lag med blandet rating kan komme litt annerledes ut. Den ligger i `scripts/simulate-arenas.mjs` (`npm run sim:arenas`). Ser det for lett eller for hardt ut etter noen uker, er det bare ratingene og bonusene i `src/lib/arenas.ts` og en ny migrering som skal justeres.
+
+## Justert i migrering 0108: hele stigen var for vanskelig
+
+Etter 0107 hadde et lag på 90 fortsatt bare rundt 25–30 % sjanse for opprykk fra divisjon 1 både i Gamle Gress og på Ullevaal, og et 90-lag tar tid å bygge. Toppen av Gamle Gress (84, favoritt 89) var dessuten like vanskelig som toppen av Ullevaal. Kampmotoren har mye tilfeldighet, og fra divisjon 6 må man vinne serien, så selv et lag som er klart bedre enn snittet taper ofte serien til favoritten.
+
+Derfor er hele stigen trukket ned: 58–80, 76–81, 77–82, 79–84 og 81–86. Favoritten ligger nå +3 over divisjonsratingen i arena 1 og +2 i resten (var +5 og +3 i arena 1 og 2), og den skjulte bonusen er 0, 0, 1, 1 og 1. Simulert med 300 sesonger, uten kvalik for andreplass (tallene svinger 5–10 prosentpoeng mellom kjøringer):
+
+| Lag | A1 div 1 | A2 div 1 | A3 div 1 | A4 div 1 | A5 div 1 |
+| --- | --- | --- | --- | --- | --- |
+| Snitt 90 | 54 % | 50 % | 40 % | 33 % | 21 % |
+| Snitt 94 | 79 % | 75 % | 68 % | 55 % | 45 % |
+
+Divisjon 10 i neste arena er fortsatt lettere enn divisjon 1 i arenaen før, så det er ingen vegg rett etter et arenaopprykk. Samtidig sluttet brukerlag som motstandere å bli fulle av 99-spillere når de ble løftet til divisjonsratingen, noe som gjorde Ullevaal vanskeligere enn simuleringen viste.

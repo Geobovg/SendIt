@@ -3,7 +3,7 @@ import { AI_CHEMISTRY_RATING } from "./chemistry";
 import type { ManagerPlayerSnapshot, ManagerTeamSnapshot } from "./manager-match";
 
 /**
- * `bonus` er den skjulte styrken AI-klubbene får fra arena 2 (se arenas.ts). Eldre sesonger har den ikke.
+ * `bonus` er den skjulte styrken AI-klubbene får fra arena 3 (se arenas.ts). Eldre sesonger har den ikke.
  * Er motstanderen en annen brukers lag, har den `user_id` og `manager` (brukernavnet), og `name` er klubbnavnet.
  */
 /**
@@ -49,19 +49,22 @@ export function aiTeamSnapshot(seasonId: string, team: AiTeam, maxOverall = 95):
 
 const average = (players: ManagerPlayerSnapshot[]) => players.reduce((sum, player) => sum + player.overall, 0) / players.length;
 
+/** Hvor langt over klubbens rating den beste spilleren på et skalert brukerlag kan være. */
+const USER_OPPONENT_SPREAD = 6;
+
 /**
- * En annen brukers lag som motstander i sesongen: samme spillere og formasjon, men alle ratingene flyttes like mye
- * så snittet av de elleve som starter blir klubbens rating. Da er laget like vanskelig som en AI-klubb i samme
- * divisjon, uansett hvor godt laget egentlig er. Siden heter `ai:` så den byttes og venter som en AI-klubb.
+ * En annen brukers lag som motstander i sesongen: samme spillere og formasjon, men ratingene flyttes så snittet av
+ * de elleve som starter blir klubbens rating. Da er laget like vanskelig som en AI-klubb i samme divisjon, uansett
+ * hvor godt laget egentlig er. Avstanden mellom spillerne beholdes, men klemmes sammen når den beste ville havnet mer
+ * enn USER_OPPONENT_SPREAD over klubbens rating (eller over taket), og når den svakeste ville havnet under 45.
+ * Ellers ble et svakt lag som løftes mye, fullt av 99-spillere. Siden heter `ai:` så den byttes og venter som en AI-klubb.
  */
 export function userTeamAsOpponent(source: ManagerTeamSnapshot, team: AiTeam, maxOverall = 95): ManagerTeamSnapshot {
-  let shift = team.rating - average(source.starters);
-  const scale = (player: ManagerPlayerSnapshot): ManagerPlayerSnapshot => ({ ...player, id: `ai:${team.key}:${player.id}`, overall: Math.max(45, Math.min(maxOverall, Math.round(player.overall + shift))) });
-  // Taket og gulvet kan kutte de beste og de svakeste, så forskyvningen justeres til snittet treffer.
-  for (let attempt = 0; attempt < 5; attempt += 1) {
-    const missing = team.rating - average(source.starters.map(scale));
-    if (Math.abs(missing) < 0.5) break;
-    shift += missing;
-  }
+  const center = average(source.starters);
+  const deviations = source.starters.map((player) => player.overall - center);
+  const ceiling = Math.max(team.rating, Math.min(maxOverall, team.rating + USER_OPPONENT_SPREAD));
+  const above = Math.max(0, ...deviations); const below = Math.max(0, ...deviations.map((deviation) => -deviation));
+  const squeeze = Math.min(1, above > 0 ? (ceiling - team.rating) / above : 1, below > 0 ? Math.max(0, team.rating - 45) / below : 1);
+  const scale = (player: ManagerPlayerSnapshot): ManagerPlayerSnapshot => ({ ...player, id: `ai:${team.key}:${player.id}`, overall: Math.max(45, Math.min(ceiling, Math.round(team.rating + (player.overall - center) * squeeze))) });
   return { userId: `ai:${team.key}`, formation: source.formation, starters: source.starters.map(scale), bench: source.bench.map(scale), ...(team.bonus ? { bonus: team.bonus } : {}) };
 }
