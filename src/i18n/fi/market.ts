@@ -105,6 +105,7 @@ export const market = {
     sold: "Myyty",
     nextCard: "Seuraava kortti",
     openingCard: "Paljastava kortti",
+    skipWalkout: "Ohita",
     openingBanner: "AVAAMINEN",
     cardBanner: "KORTTI",
     bigCard: "Iso veto!",

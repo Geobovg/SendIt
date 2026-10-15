@@ -105,6 +105,7 @@ export const market = {
     sold: "مُباع",
     nextCard: "البطاقة التالية",
     openingCard: "بطاقة كاشفة",
+    skipWalkout: "تخطي",
     openingBanner: "الافتتاح",
     cardBanner: "بطاقة",
     bigCard: "سحب كبير!",

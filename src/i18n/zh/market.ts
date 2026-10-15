@@ -105,6 +105,7 @@ export const market = {
     sold: "已出售",
     nextCard: "下一张卡",
     openingCard: "揭秘卡",
+    skipWalkout: "跳过",
     openingBanner: "开幕",
     cardBanner: "卡",
     bigCard: "大拉力！",
