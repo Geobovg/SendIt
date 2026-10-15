@@ -46,8 +46,8 @@ export function walkTiming(pull: PackPull) {
   const clip = clipFor(pull.slug);
   if (clip) return { intro: 0, approach: clip.ms * 0.8, celebrate: clip.ms * 0.2, total: clip.ms + 300 };
   const epic = isEpicWalkout(pull);
-  const intro = 2100;
-  const approach = epic ? 3600 : 2700;
+  const intro = 3000;
+  const approach = epic ? 4400 : 3300;
   const celebrate = epic ? 2200 : 1800;
   return { intro, approach, celebrate, total: intro + approach + celebrate };
 }
@@ -55,10 +55,9 @@ export function walkTiming(pull: PackPull) {
 // Tidene som CSS-animasjonene til walkouten regnes ut fra.
 function walkVars(pull: PackPull, glow: string) {
   const { intro, approach, celebrate, total } = walkTiming(pull);
-  // Overkroppen vugger bare hele sykluser (0,9 sekunder), så den står rolig i det han stopper.
   return {
     "--pack-glow": glow, "--walk-ms": `${total}ms`, "--intro-ms": `${intro}ms`, "--approach-ms": `${approach}ms`,
-    "--end-ms": `${intro + approach}ms`, "--celebrate-ms": `${celebrate}ms`, "--bob-count": 2 * Math.floor(approach / 900),
+    "--end-ms": `${intro + approach}ms`, "--celebrate-ms": `${celebrate}ms`,
   } as CSSProperties;
 }
 
@@ -166,13 +165,13 @@ function WalkoutIntro({ pull }: { pull: PackPull }) {
   const flag = playerFlag(pull.slug);
   const crest = clubCrest(pull.club);
   return <div aria-hidden className="walkout-intro">
-    <div className="walkout-intro-item" style={{ "--at": "0.2s" } as CSSProperties}>
+    <div className="walkout-intro-item" style={{ "--at": "0.3s" } as CSSProperties}>
       {flag ? <Image src={flag} alt="" width={176} height={117} unoptimized className="h-[7.5rem] w-44 rounded-xl object-cover shadow-2xl ring-2 ring-white/70" /> : null}
     </div>
-    <div className="walkout-intro-item" style={{ "--at": "0.8s" } as CSSProperties}>
+    <div className="walkout-intro-item" style={{ "--at": "1.1s" } as CSSProperties}>
       <span className="walkout-intro-position">{pull.position}</span>
     </div>
-    <div className="walkout-intro-item" style={{ "--at": "1.4s" } as CSSProperties}>
+    <div className="walkout-intro-item" style={{ "--at": "1.9s" } as CSSProperties}>
       {crest
         ? <span className="grid h-36 w-36 place-items-center rounded-full bg-white/95 shadow-2xl ring-4 ring-white/40"><Image src={crest} alt="" width={96} height={96} className="h-24 w-24 object-contain" /></span>
         : <span className="max-w-[16rem] text-center text-3xl font-black uppercase text-white">{t.career.clubName(pull.club)}</span>}
