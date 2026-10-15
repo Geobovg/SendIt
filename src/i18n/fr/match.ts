@@ -55,6 +55,8 @@ export const match = {
     yours: "LE VÔTRE",
     keeper: "GARDIEN",
     shot: "TIR",
+    percentGoal: "Le pourcentage est la chance de but",
+    percentSave: "Le pourcentage est ta chance d'arrêt",
   },
   shot: {
     penaltyTitle: "PÉNALITÉ",

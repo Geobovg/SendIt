@@ -135,7 +135,7 @@ export const femmer = {
     youSave: (keeper: string, taker: string) => `${keeper} faces ${taker} – where do you dive?`,
     watching: (taker: string) => `${taker} steps up…`,
     pickCorner: "The percentage is your chance of scoring",
-    pickDive: "Guess the right spot to save it",
+    pickDive: "The percentage is your chance of stopping it",
     shotOutcome: { goal: "GOAL!", saved: "Saved!", missed: "Missed!" },
     bench: "Bench",
     win: "Win!",

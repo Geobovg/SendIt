@@ -137,7 +137,7 @@ export const femmer: Dictionary["femmer"] = {
     youSave: (keeper: string, taker: string) => `${keeper} في مواجهة ${taker} – إلى أين ستقفز؟`,
     watching: (taker: string) => `${taker} يستعد للتسديد…`,
     pickCorner: "النسبة المئوية هي فرصتك في التسجيل",
-    pickDive: "خمّن الزاوية الصحيحة لتتصدى لها",
+    pickDive: "النسبة المئوية هي فرصتك في إيقافها",
     shotOutcome: { goal: "هدف!", saved: "تصدٍّ!", missed: "ضائعة!" },
     bench: "الدكة",
     win: "فوز!",

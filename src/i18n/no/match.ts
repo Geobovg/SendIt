@@ -59,6 +59,8 @@ export const match: MatchDict = {
     yours: "DITT",
     keeper: "KEEPER",
     shot: "SKUDD",
+    percentGoal: "Prosenten er sjansen for mål",
+    percentSave: "Prosenten er sjansen for redning",
   },
   shot: {
     penaltyTitle: "STRAFFESPARK",
