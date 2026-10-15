@@ -39,59 +39,30 @@ export function isEpicWalkout(pull: PackPull) {
 }
 
 // Walkouten har en intro (nasjon, posisjon og klubb mens lysene slås på), så går spilleren mot kameraet,
-// og så feirer han. Kortet vises når feiringen er over. Et klipp har ingen intro og bestemmer selv
+// og så står han i lyset mens ratingen teller opp. Kortet vises når det er over. Et klipp har ingen intro og bestemmer selv
 // hvor lenge det varer: gåingen er de første 80 prosentene.
 export function walkTiming(pull: PackPull) {
   const clip = clipFor(pull.slug);
-  if (clip) return { intro: 0, approach: clip.ms * 0.8, celebrate: clip.ms * 0.2, total: clip.ms + 300 };
+  if (clip) return { intro: 0, approach: clip.ms * 0.8, hold: clip.ms * 0.2, total: clip.ms + 300 };
   const epic = isEpicWalkout(pull);
   const intro = 4000;
   const approach = epic ? 4800 : 3800;
-  // Feiringen starter 0,4 sekunder etter at kortbildet har tatt over fra skyggen.
-  const celebrate = epic ? 3000 : 2400;
-  return { intro, approach, celebrate, total: intro + approach + celebrate };
+  // Tiden han står i lyset mens ratingen teller opp, etter at kortbildet har tatt over fra skyggen.
+  const hold = epic ? 3000 : 2400;
+  return { intro, approach, hold, total: intro + approach + hold };
 }
 
 // Tidene som CSS-animasjonene til walkouten regnes ut fra.
 function walkVars(pull: PackPull, glow: string) {
-  const { intro, approach, celebrate, total } = walkTiming(pull);
+  const { intro, approach, hold, total } = walkTiming(pull);
   return {
     "--pack-glow": glow, "--walk-ms": `${total}ms`, "--intro-ms": `${intro}ms`, "--approach-ms": `${approach}ms`,
-    "--end-ms": `${intro + approach}ms`, "--celebrate-ms": `${celebrate}ms`,
+    "--end-ms": `${intro + approach}ms`, "--hold-ms": `${hold}ms`,
   } as CSSProperties;
 }
 
 export function walkMs(pull: PackPull) {
   return walkTiming(pull).total;
-}
-
-// Vi har bare ett stillbilde per spiller, så feiringen er en bevegelse av hele kroppen, ofte med en
-// effekt rundt. Ingen av dem krymper spilleren. Signaturfeiringene ligger her; alle andre får en knyttneve.
-//   siu: hopp med snurr (Ronaldo)       zen: senker seg i meditasjon, med ringer (Haaland)
-//   sky: ser opp i en lysstråle (Messi)  wide: strekker seg ut med armene ut
-//   bounce: danser                       pose: stirrer rett fram og vokser
-export type Celebration = "siu" | "zen" | "sky" | "wide" | "bounce" | "pose" | "pump";
-
-const celebrations: Record<string, Celebration> = {
-  "cristiano-ronaldo": "siu",
-  haaland: "zen",
-  messi: "sky",
-  salah: "wide",
-  bellingham: "wide",
-  "jobe-bellingham": "wide",
-  "antoine-griezmann": "bounce",
-  neymar: "bounce",
-  "lamine-yamal": "bounce",
-  vinicius: "bounce",
-  mbappe: "pose",
-  kane: "pose",
-};
-
-// Tekst som slår inn under feiringen.
-const callouts: Record<string, string> = { "cristiano-ronaldo": "SIUUU!", haaland: "ZEN" };
-
-export function celebrationFor(slug: string): Celebration {
-  return celebrations[slug] ?? "pump";
 }
 
 // Flagget til spillerens nasjon, stort på hver sin side av skjermen mens kortet åpnes.
@@ -124,8 +95,6 @@ export function WalkoutFigure({ pull, glow }: { pull: PackPull; glow: string }) 
   const clip = failed ? null : clipFor(pull.slug);
   const photo = playerPhoto(pull.slug);
   const epic = isEpicWalkout(pull);
-  const celebration = celebrationFor(pull.slug);
-  const callout = callouts[pull.slug];
   return <div className={`walkout-scene ${epic ? "walkout-epic" : ""}`} style={walkVars(pull, glow)}>
     {clip ? null : <WalkoutIntro pull={pull} />}
     <div className="walkout-door" />
@@ -142,16 +111,11 @@ export function WalkoutFigure({ pull, glow }: { pull: PackPull; glow: string }) 
             </div>
             : <div className="walkout-sprite" />}
           <div className="walkout-burst" />
-          {celebration === "zen" ? <><div className="walkout-halo" /><div className="walkout-aura" /><div className="walkout-aura walkout-aura-2" /></> : null}
-          {celebration === "sky" ? <div className="walkout-beam" /> : null}
-          {celebration === "siu" ? <div className="walkout-landing" /> : null}
-          {celebration === "wide" ? <><div className="walkout-arm walkout-arm-l" /><div className="walkout-arm walkout-arm-r" /></> : null}
-          <div className={`walkout-celebrate walkout-c-${celebration}`}>
+          <div className="walkout-final">
             {photo
               ? <Image src={photo} alt="" width={256} height={256} priority className="walkout-figure" />
               : <div className="walkout-figure grid place-items-center text-8xl font-black text-white">{pull.position}</div>}
           </div>
-          {callout ? <p className="walkout-callout">{callout}</p> : null}
         </>}
     </div>
     <WalkoutLabel pull={pull} />
@@ -160,12 +124,12 @@ export function WalkoutFigure({ pull, glow }: { pull: PackPull; glow: string }) 
 
 // Navnet med klubbmerket og ratingen under. Ratingen teller jevnt opp mens han feirer.
 function WalkoutLabel({ pull, final = false }: { pull: PackPull; final?: boolean }) {
-  const { intro, approach, celebrate } = walkTiming(pull);
+  const { intro, approach, hold } = walkTiming(pull);
   return <div className="walkout-label grid justify-items-center gap-2 text-center text-white">
     <p className="text-2xl font-black uppercase tracking-wide">{pull.name}</p>
     <ClubBadge club={pull.club} className="h-11 w-11 text-sm" imgClass="h-8 w-8" />
     <p className="walkout-rating">
-      {final ? pull.overall : <CountUp to={pull.overall} delay={intro + approach + 600} duration={Math.max(1200, celebrate - 400)} />}
+      {final ? pull.overall : <CountUp to={pull.overall} delay={intro + approach + 600} duration={Math.max(1200, hold - 400)} />}
       <small>{pull.position}</small>
     </p>
   </div>;
@@ -229,7 +193,7 @@ export function WalkoutBackdrop({ pull, glow, leaving }: { pull: PackPull; glow:
       } as CSSProperties} />)}
     </div>
     {(["left", "right"] as const).map((side, k) => <div key={side} className={`walkout-pyro walkout-pyro-${side}`}>
-      <div className="walkout-flame" style={{ animationDelay: `calc(var(--end-ms) + ${k * 60}ms), calc(var(--end-ms) + ${k * 60}ms), calc(var(--end-ms) + var(--celebrate-ms) - 0.7s)` }} />
+      <div className="walkout-flame" style={{ animationDelay: `calc(var(--end-ms) + ${k * 60}ms), calc(var(--end-ms) + ${k * 60}ms), calc(var(--end-ms) + var(--hold-ms) - 0.7s)` }} />
       {range(14).map((j) => <span key={j} className="walkout-spark" style={{
         "--x": `${((j * 23 + k * 11) % 80) - 40}px`, "--y": `${160 + (j * 57 + k * 31) % 360}px`,
         "--delay": `${(j * 0.12).toFixed(2)}s`, "--dur": `${(0.9 + (j % 5) * 0.25).toFixed(2)}s`,
@@ -248,14 +212,14 @@ export function WalkoutEmbers({ glow }: { glow: string }) {
   </div>;
 }
 
-// Kortbildet står igjen i feiringens siste stilling og toner langsomt ut mens kortet toner inn,
+// Kortbildet står igjen og toner langsomt ut mens kortet toner inn,
 // så overgangen blir en myk kryssoning i stedet for et brått bytte.
-export function WalkoutHandoff({ pull, glow, celebration }: { pull: PackPull; glow: string; celebration: Celebration }) {
+export function WalkoutHandoff({ pull, glow }: { pull: PackPull; glow: string }) {
   const photo = playerPhoto(pull.slug);
   if (!photo || clipFor(pull.slug)) return null;
   return <div aria-hidden className="walkout-handoff" style={walkVars(pull, glow)}>
     <div className="walkout-stage">
-      <div className={`walkout-celebrate walkout-c-${celebration}`} style={{ animationDuration: "1ms", animationDelay: "0s" }}>
+      <div className="walkout-final">
         <Image src={photo} alt="" width={256} height={256} className="walkout-handoff-photo" />
       </div>
     </div>

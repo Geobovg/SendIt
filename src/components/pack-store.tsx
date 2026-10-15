@@ -11,7 +11,7 @@ import { useLocale, useT } from "@/i18n/client";
 import { INTL_LOCALES, type Locale } from "@/i18n/locales";
 import { PlayerCardFace } from "./player-card-face";
 import { ConfirmDialog } from "./confirm-dialog";
-import { qualifiesForWalkout, walkMs, walkoutFrom, WalkoutBackdrop, WalkoutEmbers, WalkoutFigure, WalkoutFlags, WalkoutHandoff, WalkoutPreload, celebrationFor } from "./pack-walkout";
+import { qualifiesForWalkout, walkMs, walkoutFrom, WalkoutBackdrop, WalkoutEmbers, WalkoutFigure, WalkoutFlags, WalkoutHandoff, WalkoutPreload } from "./pack-walkout";
 import { SpecialPick } from "./special-pick";
 import { buttonClass, cardClass, secondaryButtonClass } from "./ui";
 import { useScrollLock } from "./use-scroll-lock";
@@ -229,7 +229,7 @@ function PackReveal({ pulls, packName, jackpot, onClose }: { pulls: PackPull[]; 
         {card ? <div className="pack-rays" style={{ "--pack-glow": glow } as CSSProperties} /> : null}
         {card && kind === "wait" && walkout ? <div className="pack-door" style={{ "--pack-glow": glow } as CSSProperties} /> : null}
         {card && kind === "card" && walkout && !skipped && !step?.walkout ? <div className="pack-flash" /> : null}
-        {card && kind === "card" && step?.walkout && !skipped ? <div className="pointer-events-none absolute inset-0 grid place-items-center"><WalkoutHandoff key={card.card_id} pull={card} glow={glow} celebration={celebrationFor(card.slug)} /></div> : null}
+        {card && kind === "card" && step?.walkout && !skipped ? <div className="pointer-events-none absolute inset-0 grid place-items-center"><WalkoutHandoff key={card.card_id} pull={card} glow={glow} /></div> : null}
 
         {index === -1 ? <div className="pack-tear grid h-72 w-56 place-items-center rounded-2xl border border-white/25 bg-[linear-gradient(145deg,#12261a,#061009)] text-center text-white shadow-2xl">
           <div><p className="text-xs font-bold tracking-[.3em] text-white/60">{tp.openingBanner}</p><p className="mt-2 px-3 text-xl font-black">{packName}</p>{jackpot ? <p className="mt-3 px-3 text-lg font-black" style={{ color: specialStyles.personal.badge }}>{tp.jackpot(jackpot)}</p> : null}</div>

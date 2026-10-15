@@ -1020,339 +1020,10 @@ body:has(.manager-bottom-nav) .audio-fab {
   }
 }
 
-/* Feiringen starter når han har stoppet. Navnet står igjen under. */
-.walkout-celebrate {
+/* Spillerbildet etter gåingen ligger i en egen boks over skyggen. */
+.walkout-final {
   position: absolute;
   inset: 0;
-  transform-origin: 50% 100%;
-  animation-duration: var(--celebrate-ms);
-  animation-delay: calc(var(--end-ms) + 0.4s);
-  animation-fill-mode: both;
-  animation-timing-function: ease-in-out;
-}
-
-.walkout-c-siu {
-  animation-name: walkout-siu;
-}
-
-.walkout-c-zen {
-  animation-name: walkout-zen;
-}
-
-.walkout-c-sky {
-  animation-name: walkout-sky;
-}
-
-.walkout-c-wide {
-  animation-name: walkout-wide;
-}
-
-.walkout-c-bounce {
-  animation-name: walkout-bounce;
-}
-
-.walkout-c-pose {
-  animation-name: walkout-pose;
-}
-
-.walkout-c-pump {
-  animation-name: walkout-pump;
-}
-
-/* Ingen av feiringene krymper spilleren: de løfter, snurrer, vipper og vokser. */
-
-/* Ronaldo: tar sats, hopper høyt, snurrer rundt i lufta, lander med et lite sprett og armene ut. */
-@keyframes walkout-siu {
-  0% {
-    transform: translateY(0) scale(1);
-  }
-  14% {
-    transform: translateY(0.8rem) scale(1);
-  }
-  42% {
-    transform: perspective(900px) translateY(-9rem) rotateY(180deg) scale(1.08);
-  }
-  62% {
-    transform: perspective(900px) translateY(0) rotateY(360deg) scale(1.12);
-  }
-  72% {
-    transform: perspective(900px) translateY(-1.2rem) rotateY(360deg) scale(1.12);
-  }
-  82% {
-    transform: perspective(900px) translateY(0) rotateY(360deg) scale(1.14);
-  }
-  100% {
-    transform: perspective(900px) translateY(0) rotateY(360deg) scale(1.22, 1.08);
-  }
-}
-
-/* Haaland: ro og meditasjon. Kroppen svever sakte opp og puster, med glød og ringer rundt seg. */
-@keyframes walkout-zen {
-  0% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-2.6rem);
-  }
-  60% {
-    transform: translateY(-2.2rem) scale(1.03);
-  }
-  80% {
-    transform: translateY(-2.6rem);
-  }
-  100% {
-    transform: translateY(-2.4rem) scale(1.03);
-  }
-}
-
-/* Messi: ser opp og peker mot himmelen. */
-@keyframes walkout-sky {
-  0% {
-    transform: translateY(0) rotate(0deg);
-  }
-  35%,
-  100% {
-    transform: translateY(-1.6rem) rotate(-5deg) scale(1.1);
-  }
-}
-
-/* Armene ut: strekker seg ut til siden. */
-@keyframes walkout-wide {
-  0% {
-    transform: scale(1);
-  }
-  35%,
-  100% {
-    transform: scale(1.24, 1.08);
-  }
-}
-
-@keyframes walkout-bounce {
-  0%,
-  16%,
-  32%,
-  48%,
-  64%,
-  100% {
-    transform: translateY(0);
-  }
-  8%,
-  24%,
-  40%,
-  56% {
-    transform: translateY(-3.6rem);
-  }
-  82% {
-    transform: translateY(-4.4rem) scale(1.08);
-  }
-}
-
-/* Mbappé og Kane: stirrer rett fram og vokser sakte. */
-@keyframes walkout-pose {
-  0% {
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(1.18);
-  }
-}
-
-/* De andre: en knyttneve opp, to hopp. */
-@keyframes walkout-pump {
-  0%,
-  40%,
-  80% {
-    transform: translateY(0) scale(1.06);
-  }
-  20%,
-  60% {
-    transform: translateY(-3.4rem) scale(1.12);
-  }
-  100% {
-    transform: translateY(0) scale(1.1);
-  }
-}
-
-/* Signaturfeiringer med effekt: ringer og glød rundt Haaland, lysstråle på Messi, lysarmer for armene ut
-   og en ring i bakken der Ronaldo lander. */
-.walkout-landing {
-  position: absolute;
-  left: 50%;
-  bottom: 0.2rem;
-  width: 14rem;
-  height: 3.2rem;
-  translate: -50% 0;
-  border-radius: 50%;
-  border: 3px solid #fff;
-  box-shadow: 0 0 1.5rem var(--pack-glow);
-  opacity: 0;
-  animation: walkout-landing 1s ease-out calc(var(--end-ms) + 0.4s + var(--celebrate-ms) * 0.62) forwards;
-}
-
-@keyframes walkout-landing {
-  0% {
-    opacity: 0.9;
-    transform: scale(0.3);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(2.4);
-  }
-}
-
-.walkout-halo {
-  position: absolute;
-  left: 50%;
-  top: 45%;
-  width: 150%;
-  aspect-ratio: 1;
-  translate: -50% -50%;
-  border-radius: 50%;
-  pointer-events: none;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.55) 0, rgba(180, 220, 255, 0.25) 30%, transparent 62%);
-  opacity: 0;
-  animation: walkout-halo var(--celebrate-ms) ease-in-out calc(var(--end-ms) + 0.4s) forwards;
-}
-
-@keyframes walkout-halo {
-  0% {
-    opacity: 0;
-  }
-  40%,
-  80% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.6;
-  }
-}
-
-.walkout-arm {
-  position: absolute;
-  top: 38%;
-  height: 5px;
-  width: 0;
-  box-shadow: 0 0 1rem var(--pack-glow);
-  opacity: 0;
-  animation: walkout-arm calc(var(--celebrate-ms) * 0.7) ease-out calc(var(--end-ms) + 0.4s + var(--celebrate-ms) * 0.2) forwards;
-}
-
-.walkout-arm-l {
-  right: 50%;
-  background: linear-gradient(270deg, #fff, var(--pack-glow) 45%, transparent);
-}
-
-.walkout-arm-r {
-  left: 50%;
-  background: linear-gradient(90deg, #fff, var(--pack-glow) 45%, transparent);
-}
-
-@keyframes walkout-arm {
-  0% {
-    opacity: 0;
-    width: 0;
-  }
-  25% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    width: 60vw;
-  }
-}
-
-.walkout-aura {
-  position: absolute;
-  left: 50%;
-  top: 48%;
-  width: 60%;
-  aspect-ratio: 1;
-  translate: -50% -50%;
-  border-radius: 50%;
-  pointer-events: none;
-  border: 3px solid var(--pack-glow);
-  box-shadow: 0 0 1.4rem var(--pack-glow);
-  opacity: 0;
-  animation: walkout-aura 1.8s ease-out calc(var(--end-ms) + 0.4s) forwards;
-}
-
-.walkout-aura-2 {
-  animation-delay: calc(var(--end-ms) + 1.2s);
-}
-
-@keyframes walkout-aura {
-  0% {
-    opacity: 0.9;
-    transform: scale(0.6);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(2.1);
-  }
-}
-
-.walkout-beam {
-  position: absolute;
-  left: 50%;
-  top: -60vh;
-  bottom: 30%;
-  width: 55%;
-  translate: -50% 0;
-  pointer-events: none;
-  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.55) 70%, transparent);
-  clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
-  opacity: 0;
-  animation: walkout-beam var(--celebrate-ms) ease-out calc(var(--end-ms) + 0.4s) both;
-}
-
-@keyframes walkout-beam {
-  0% {
-    opacity: 0;
-  }
-  25%,
-  70% {
-    opacity: 0.85;
-  }
-  100% {
-    opacity: 0.3;
-  }
-}
-
-.walkout-callout {
-  position: absolute;
-  left: 50%;
-  top: -0.5rem;
-  translate: -50% 0;
-  white-space: nowrap;
-  font-size: 3.2rem;
-  font-style: italic;
-  font-weight: 900;
-  letter-spacing: 0.06em;
-  color: #fff;
-  text-shadow: 0 0 1rem var(--pack-glow), 0 0 2.4rem var(--pack-glow), 0 0.2rem 0 rgba(0, 0, 0, 0.5);
-  pointer-events: none;
-  opacity: 0;
-  animation: walkout-callout calc(var(--celebrate-ms) * 0.6) ease-out calc(var(--end-ms) + 0.4s + var(--celebrate-ms) * 0.3) both;
-}
-
-@keyframes walkout-callout {
-  0% {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-  25% {
-    opacity: 1;
-    transform: scale(1.25);
-  }
-  45%,
-  85% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 0.9;
-    transform: scale(1);
-  }
 }
 
 .walkout-rating {
@@ -1617,7 +1288,7 @@ body:has(.manager-bottom-nav) .audio-fab {
   animation:
     walkout-flame-grow 0.45s cubic-bezier(0.2, 0.9, 0.3, 1) var(--end-ms) forwards,
     walkout-flame-flicker 0.16s ease-in-out var(--end-ms) infinite alternate,
-    walkout-flame-out 0.7s ease-in calc(var(--end-ms) + var(--celebrate-ms) - 0.7s) forwards;
+    walkout-flame-out 0.7s ease-in calc(var(--end-ms) + var(--hold-ms) - 0.7s) forwards;
 }
 
 @keyframes walkout-flame-grow {
@@ -1816,7 +1487,6 @@ body:has(.manager-bottom-nav) .audio-fab {
 
 /* Lag som animeres får egen komposisjon, så overgangen ikke hakker. */
 .walkout-shade,
-.walkout-celebrate,
 .walkout-handoff,
 .walkout-backdrop-out,
 .pack-card-after-walkout {
@@ -1956,25 +1626,15 @@ body:has(.manager-bottom-nav) .audio-fab {
   .walkout-intro,
   .walkout-embers,
   .walkout-handoff,
-  .walkout-landing,
-  .walkout-halo,
-  .walkout-arm,
   .pack-card-shine,
   .walkout-sprite,
   .walkout-shade,
   .walkout-fog,
-  .walkout-aura,
-  .walkout-beam,
-  .walkout-callout,
   .walkout-burst,
   .walkout-clip,
   .walkout-shadow,
   .walkout-label {
     display: none;
-  }
-
-  .walkout-celebrate {
-    animation: none;
   }
 
   .walkout-flag,
