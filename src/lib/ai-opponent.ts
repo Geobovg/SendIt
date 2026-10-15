@@ -3,7 +3,7 @@ import { AI_CHEMISTRY_RATING } from "./chemistry";
 import type { ManagerPlayerSnapshot, ManagerTeamSnapshot } from "./manager-match";
 
 /**
- * `bonus` er den skjulte styrken AI-klubbene får fra arena 2 (se arenas.ts). Eldre sesonger har den ikke.
+ * `bonus` er den skjulte styrken AI-klubbene får fra arena 3 (se arenas.ts). Eldre sesonger har den ikke.
  * Er motstanderen en annen brukers lag, har den `user_id` og `manager` (brukernavnet), og `name` er klubbnavnet.
  */
 /**

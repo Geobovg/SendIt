@@ -21,7 +21,7 @@ export type ManagerPlayerSnapshot = {
   chem?: number;
 };
 /**
- * `bonus` er en skjult styrke som bare AI-klubber i arena 2–5 har. Den legges på angrep, forsvar,
+ * `bonus` er en skjult styrke som bare AI-klubber i arena 3–5 har. Den legges på angrep, forsvar,
  * avslutninger og keeper i kampmodellen, men vises aldri som rating på spillerne.
  */
 export type ManagerTeamSnapshot = {
