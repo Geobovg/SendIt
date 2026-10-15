@@ -751,7 +751,7 @@ body:has(.manager-bottom-nav) .audio-fab {
   pointer-events: none;
   background: linear-gradient(180deg, transparent, var(--pack-glow, #f2c94c), transparent);
   box-shadow: 0 0 6rem 2rem var(--pack-glow, #f2c94c);
-  animation: pack-door-open calc(var(--walk-ms) * 0.45) ease-out both;
+  animation: pack-door-open calc(var(--approach-ms) * 0.6) ease-out var(--intro-ms) both;
 }
 
 .walkout-pulse {
@@ -765,7 +765,7 @@ body:has(.manager-bottom-nav) .audio-fab {
   border-radius: 50%;
   pointer-events: none;
   background: radial-gradient(circle, var(--pack-glow, #f2c94c) 0, transparent 65%);
-  animation: walkout-pulse calc(var(--walk-ms) * 0.5) ease-in-out 2 both;
+  animation: walkout-pulse calc(var(--approach-ms) * 0.5) ease-in-out var(--intro-ms) 2 both;
 }
 
 @keyframes walkout-pulse {
@@ -809,7 +809,7 @@ body:has(.manager-bottom-nav) .audio-fab {
   translate: -50% 0;
   border-radius: 50%;
   background: radial-gradient(closest-side, rgba(0, 0, 0, 0.75), transparent);
-  animation: walkout-shadow var(--approach-ms) cubic-bezier(0.3, 0.55, 0.3, 1) both;
+  animation: walkout-shadow var(--approach-ms) cubic-bezier(0.3, 0.55, 0.3, 1) var(--intro-ms) both;
 }
 
 @keyframes walkout-shadow {
@@ -837,7 +837,7 @@ body:has(.manager-bottom-nav) .audio-fab {
   filter: brightness(0.14) drop-shadow(0 0 1rem var(--pack-glow));
   animation:
     walkout-walk 0.9s steps(8, jump-none) infinite,
-    walkout-sprite-approach var(--approach-ms) cubic-bezier(0.3, 0.55, 0.3, 1) both;
+    walkout-sprite-approach var(--approach-ms) cubic-bezier(0.3, 0.55, 0.3, 1) var(--intro-ms) both;
 }
 
 @keyframes walkout-walk {
@@ -882,8 +882,8 @@ body:has(.manager-bottom-nav) .audio-fab {
   pointer-events: none;
   transform-origin: 50% 60%;
   animation:
-    walkout-shade-approach var(--approach-ms) cubic-bezier(0.3, 0.55, 0.3, 1) both,
-    walkout-shade-out 0.05s linear var(--approach-ms) forwards;
+    walkout-shade-approach var(--approach-ms) cubic-bezier(0.3, 0.55, 0.3, 1) var(--intro-ms) both,
+    walkout-shade-out 0.05s linear var(--end-ms) forwards;
 }
 
 .walkout-bust {
@@ -897,9 +897,9 @@ body:has(.manager-bottom-nav) .audio-fab {
   mask-image: linear-gradient(#000 calc(var(--walkout-fade) - 42%), transparent var(--walkout-fade));
   transform-origin: 50% 100%;
   animation:
-    walkout-bust-step 0.45s ease-in-out var(--bob-count) both,
-    walkout-bust-sway 0.9s ease-in-out calc(var(--bob-count) / 2) both,
-    walkout-bust-lift calc(var(--approach-ms) * 0.45) ease-in var(--approach-ms) both;
+    walkout-bust-step 0.45s ease-in-out var(--intro-ms) var(--bob-count) both,
+    walkout-bust-sway 0.9s ease-in-out var(--intro-ms) calc(var(--bob-count) / 2) both,
+    walkout-bust-lift calc(var(--approach-ms) * 0.45) ease-in var(--end-ms) both;
 }
 
 /* Hvert skritt: kroppen løftes litt og kommer en tanke nærmere. */
@@ -984,7 +984,7 @@ body:has(.manager-bottom-nav) .audio-fab {
   filter: blur(0.6rem);
   animation:
     walkout-fog-drift 5s ease-in-out infinite alternate,
-    walkout-fog-out 0.8s ease-in var(--approach-ms) both;
+    walkout-fog-out 0.8s ease-in var(--end-ms) both;
 }
 
 @keyframes walkout-fog-drift {
@@ -1014,7 +1014,7 @@ body:has(.manager-bottom-nav) .audio-fab {
   border-radius: 50%;
   pointer-events: none;
   background: radial-gradient(circle, #fff 0, var(--pack-glow) 28%, transparent 62%);
-  animation: walkout-burst 0.7s ease-out calc(var(--approach-ms) * 0.93) both;
+  animation: walkout-burst 0.7s ease-out calc(var(--intro-ms) + var(--approach-ms) * 0.93) both;
 }
 
 @keyframes walkout-burst {
@@ -1038,7 +1038,7 @@ body:has(.manager-bottom-nav) .audio-fab {
   object-fit: contain;
   object-position: bottom;
   opacity: 0;
-  animation: walkout-figure-in 0.6s ease-out var(--approach-ms) forwards;
+  animation: walkout-figure-in 0.6s ease-out var(--end-ms) forwards;
 }
 
 @keyframes walkout-figure-in {
@@ -1058,7 +1058,7 @@ body:has(.manager-bottom-nav) .audio-fab {
   inset: 0;
   transform-origin: 50% 100%;
   animation-duration: var(--celebrate-ms);
-  animation-delay: var(--approach-ms);
+  animation-delay: var(--end-ms);
   animation-fill-mode: both;
   animation-timing-function: ease-in-out;
 }
@@ -1214,11 +1214,11 @@ body:has(.manager-bottom-nav) .audio-fab {
   pointer-events: none;
   border: 2px solid var(--pack-glow);
   opacity: 0;
-  animation: walkout-aura 1.6s ease-out var(--approach-ms) forwards;
+  animation: walkout-aura 1.6s ease-out var(--end-ms) forwards;
 }
 
 .walkout-aura-2 {
-  animation-delay: calc(var(--approach-ms) + 0.5s);
+  animation-delay: calc(var(--end-ms) + 0.5s);
 }
 
 @keyframes walkout-aura {
@@ -1243,7 +1243,7 @@ body:has(.manager-bottom-nav) .audio-fab {
   background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.55) 70%, transparent);
   clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
   opacity: 0;
-  animation: walkout-beam var(--celebrate-ms) ease-out var(--approach-ms) both;
+  animation: walkout-beam var(--celebrate-ms) ease-out var(--end-ms) both;
 }
 
 @keyframes walkout-beam {
@@ -1273,7 +1273,7 @@ body:has(.manager-bottom-nav) .audio-fab {
   text-shadow: 0 0 1rem var(--pack-glow), 0 0 2.4rem var(--pack-glow), 0 0.2rem 0 rgba(0, 0, 0, 0.5);
   pointer-events: none;
   opacity: 0;
-  animation: walkout-callout calc(var(--celebrate-ms) * 0.6) ease-out calc(var(--approach-ms) + var(--celebrate-ms) * 0.35) both;
+  animation: walkout-callout calc(var(--celebrate-ms) * 0.6) ease-out calc(var(--end-ms) + var(--celebrate-ms) * 0.35) both;
 }
 
 @keyframes walkout-callout {
@@ -1297,7 +1297,7 @@ body:has(.manager-bottom-nav) .audio-fab {
 }
 
 .walkout-label {
-  animation: pack-label-rise 0.6s ease-out calc(var(--approach-ms) * 0.9) both;
+  animation: pack-label-rise 0.6s ease-out calc(var(--intro-ms) + var(--approach-ms) * 0.9) both;
 }
 
 .walkout-flags {
@@ -1372,6 +1372,392 @@ body:has(.manager-bottom-nav) .audio-fab {
   }
   to {
     opacity: 0;
+  }
+}
+
+/* FC-walkouten: stadionlys som slås på, nasjon, posisjon og klubb som slår inn, kamerablitser fra
+   publikum, flammesøyler når han lyses opp, og konfetti og trykkbølge når kortet vises. Alt er CSS. */
+.walkout-backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.walkout-lamp {
+  position: absolute;
+  top: -0.4rem;
+  left: calc(8% + var(--i) * 21%);
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-left: -0.75rem;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 1.2rem 0.5rem rgba(255, 255, 255, 0.9), 0 0 3rem 1.2rem var(--pack-glow);
+  opacity: 0;
+  animation: walkout-lamp-on 0.6s linear calc(var(--i) * 0.2s + 0.15s) forwards;
+}
+
+.walkout-lamp::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16rem;
+  height: 78vh;
+  translate: -50% 0;
+  rotate: calc((var(--i) - 2) * 9deg);
+  transform-origin: 50% 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.32), transparent 85%);
+  clip-path: polygon(46% 0, 54% 0, 100% 100%, 0 100%);
+}
+
+/* Lysene flimrer på før de blir stående. */
+@keyframes walkout-lamp-on {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.95;
+  }
+  35% {
+    opacity: 0.15;
+  }
+  55% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.walkout-sweep {
+  position: absolute;
+  bottom: -10vh;
+  width: 14rem;
+  height: 120vh;
+  transform-origin: 50% 100%;
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0.2), transparent 80%);
+  clip-path: polygon(44% 100%, 56% 100%, 100% 0, 0 0);
+  opacity: 0;
+  animation:
+    walkout-sweep 3.4s ease-in-out 0.6s infinite alternate,
+    walkout-sweep-in 0.8s ease-out 0.6s forwards;
+}
+
+.walkout-sweep-1 {
+  left: 6%;
+  --from: -28deg;
+  --to: 24deg;
+}
+
+.walkout-sweep-2 {
+  right: 6%;
+  --from: 28deg;
+  --to: -24deg;
+}
+
+@keyframes walkout-sweep {
+  from {
+    rotate: var(--from);
+  }
+  to {
+    rotate: var(--to);
+  }
+}
+
+@keyframes walkout-sweep-in {
+  to {
+    opacity: 1;
+  }
+}
+
+.walkout-crowd {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  animation: walkout-sweep-in 0.8s ease-out calc(var(--intro-ms) * 0.6) forwards;
+}
+
+.walkout-camera {
+  position: absolute;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0.6rem 0.25rem rgba(255, 255, 255, 0.9);
+  opacity: 0;
+  animation: walkout-camera var(--p) linear var(--d) infinite;
+}
+
+@keyframes walkout-camera {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  2% {
+    opacity: 1;
+    transform: scale(1.8);
+  }
+  6%,
+  100% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+
+.walkout-pyro {
+  position: absolute;
+  bottom: 0;
+  width: 5rem;
+  height: 60vh;
+}
+
+.walkout-pyro-left {
+  left: 3%;
+}
+
+.walkout-pyro-right {
+  right: 3%;
+}
+
+.walkout-flame {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 100%;
+  background: radial-gradient(ellipse 50% 70% at 50% 100%, rgba(255, 255, 255, 0.95) 0, #ffd34a 20%, #ff7a1a 48%, rgba(255, 60, 0, 0) 76%);
+  filter: blur(3px);
+  opacity: 0;
+  animation:
+    walkout-flame-grow 0.45s cubic-bezier(0.2, 0.9, 0.3, 1) var(--end-ms) forwards,
+    walkout-flame-flicker 0.16s ease-in-out var(--end-ms) infinite alternate,
+    walkout-flame-out 0.7s ease-in calc(var(--end-ms) + var(--celebrate-ms) - 0.7s) forwards;
+}
+
+@keyframes walkout-flame-grow {
+  from {
+    opacity: 1;
+    transform: scaleY(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes walkout-flame-flicker {
+  from {
+    scale: 1 1;
+  }
+  to {
+    scale: 0.94 1.08;
+  }
+}
+
+@keyframes walkout-flame-out {
+  to {
+    opacity: 0;
+  }
+}
+
+.walkout-spark {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 0.3rem;
+  height: 0.3rem;
+  border-radius: 50%;
+  background: #ffd34a;
+  box-shadow: 0 0 0.5rem 0.1rem #ff9a2e;
+  opacity: 0;
+  animation: walkout-spark var(--dur) ease-out calc(var(--end-ms) + var(--delay)) infinite;
+}
+
+@keyframes walkout-spark {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--x), calc(var(--y) * -1));
+  }
+}
+
+/* Introen: flagg, posisjon og klubbmerke slår inn ett om gangen. */
+.walkout-intro {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.walkout-intro-item {
+  grid-area: 1 / 1;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  animation: walkout-intro-pop 0.7s cubic-bezier(0.2, 0.9, 0.3, 1) var(--at) forwards;
+}
+
+.walkout-intro-item::after {
+  content: "";
+  position: absolute;
+  width: 12rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 3px solid var(--pack-glow);
+  opacity: 0;
+  animation: walkout-intro-ring 0.7s ease-out var(--at) both;
+}
+
+@keyframes walkout-intro-pop {
+  0% {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+  18% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  78% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes walkout-intro-ring {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  18% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2);
+  }
+}
+
+.walkout-intro-position {
+  font-size: 6.5rem;
+  line-height: 1;
+  font-style: italic;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 0 1rem var(--pack-glow), 0 0 3rem var(--pack-glow), 0 0.3rem 0 rgba(0, 0, 0, 0.5);
+}
+
+/* Konfetti, trykkbølge og lysstripe i det kortet vises. */
+.walkout-confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.walkout-piece {
+  position: absolute;
+  top: -1rem;
+  width: 0.5rem;
+  height: 0.9rem;
+  background: var(--c);
+  opacity: 0;
+  animation: walkout-piece var(--dur) linear var(--delay) forwards;
+}
+
+@keyframes walkout-piece {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(var(--dx), 112vh) rotate(var(--spin));
+  }
+}
+
+.walkout-shock {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  width: 12rem;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  box-shadow: 0 0 2rem var(--pack-glow);
+  animation: walkout-shock 0.9s ease-out both;
+}
+
+@keyframes walkout-shock {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(5);
+  }
+}
+
+.walkout-streak {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 44%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #fff, transparent);
+  box-shadow: 0 0 1.2rem 0.4rem var(--pack-glow);
+  animation: walkout-streak 0.8s ease-out both;
+}
+
+@keyframes walkout-streak {
+  0% {
+    opacity: 1;
+    transform: scaleX(0);
+  }
+  60% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(1.2);
+  }
+}
+
+.pack-card-shine {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 1rem;
+  pointer-events: none;
+}
+
+.pack-card-shine::after {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background: linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, 0.65) 50%, transparent 62%);
+  animation: pack-card-shine 1.2s ease-out 0.7s both;
+}
+
+@keyframes pack-card-shine {
+  from {
+    transform: translateX(-70%);
+  }
+  to {
+    transform: translateX(70%);
   }
 }
 
@@ -1485,6 +1871,12 @@ body:has(.manager-bottom-nav) .audio-fab {
   .walkout-door,
   .walkout-pulse,
   .walkout-figure,
+  .walkout-backdrop,
+  .walkout-intro,
+  .walkout-confetti,
+  .walkout-shock,
+  .walkout-streak,
+  .pack-card-shine,
   .walkout-sprite,
   .walkout-shade,
   .walkout-fog,

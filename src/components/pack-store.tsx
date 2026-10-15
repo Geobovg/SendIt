@@ -11,7 +11,7 @@ import { useLocale, useT } from "@/i18n/client";
 import { INTL_LOCALES, type Locale } from "@/i18n/locales";
 import { PlayerCardFace } from "./player-card-face";
 import { ConfirmDialog } from "./confirm-dialog";
-import { qualifiesForWalkout, walkMs, walkoutFrom, WalkoutFigure, WalkoutFlags, WalkoutPreload } from "./pack-walkout";
+import { qualifiesForWalkout, walkMs, walkoutFrom, WalkoutBackdrop, WalkoutConfetti, WalkoutFigure, WalkoutFlags, WalkoutPreload } from "./pack-walkout";
 import { SpecialPick } from "./special-pick";
 import { buttonClass, cardClass, secondaryButtonClass } from "./ui";
 import { useScrollLock } from "./use-scroll-lock";
@@ -222,6 +222,8 @@ function PackReveal({ pulls, packName, jackpot, onClose }: { pulls: PackPull[]; 
     </div> : <>
     {/* Flaggene ligger bak kortet og tones ut når kortet er åpnet. */}
     {step?.walkout && card && !skipped && (kind === "walk" || kind === "card") ? <WalkoutFlags slug={card.slug} glow={glow} leaving={kind === "card"} /> : null}
+    {step?.walkout && card && !skipped && kind === "walk" ? <WalkoutBackdrop pull={card} glow={glow} /> : null}
+    {step?.walkout && card && !skipped && kind === "card" ? <WalkoutConfetti key={card.card_id} glow={glow} /> : null}
     <button type="button" onClick={next} className="absolute inset-0 grid place-items-center focus:outline-none" aria-label={kind === "card" ? tp.nextCard : tp.openingCard}>
       <div className={kind === "card" && walkout && !skipped ? "pack-shake grid place-items-center" : "grid place-items-center"}>
         {card ? <div className="pack-rays" style={{ "--pack-glow": glow } as CSSProperties} /> : null}
@@ -239,7 +241,10 @@ function PackReveal({ pulls, packName, jackpot, onClose }: { pulls: PackPull[]; 
         </div> : null}
 
         {card && revealed ? <div className="relative grid gap-2">
-          <div className={kind === "turn" ? "pack-card-turn-out w-72" : step?.walkout && !skipped ? "pack-card-after-walkout w-72" : walkout && !skipped ? "pack-card-walkout w-72" : "pack-card-enter w-72"}><PlayerCardFace player={card} eager /></div>
+          <div className={`relative ${kind === "turn" ? "pack-card-turn-out w-72" : step?.walkout && !skipped ? "pack-card-after-walkout w-72" : walkout && !skipped ? "pack-card-walkout w-72" : "pack-card-enter w-72"}`}>
+            <PlayerCardFace player={card} eager />
+            {step?.walkout && !skipped && kind === "card" ? <div aria-hidden className="pack-card-shine" /> : null}
+          </div>
           <p className="pack-label-rise text-center text-sm text-white/75">
             {card.special === "inform" ? tp.informPulled : card.special ? `${t.career.special.badge[card.special]}!` : walkout ? tp.bigCard : ""} {card.location === "storage" ? tp.placedInStorage : tp.placedInSquad}{card.duplicate ? tp.alreadyOwned : ""}
           </p>
