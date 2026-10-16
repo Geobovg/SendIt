@@ -37,9 +37,15 @@ const positionGroups = [
 export const anyPosition = "ALL";
 
 // `altPositions` er de andre posisjonene spilleren også spiller i virkeligheten (migrering 0110). De teller som
-// hovedposisjonen, så Kimmich (CDM, alt CM/RB) kan stå som høyreback uten straff.
+// hovedposisjonen, så Kimmich (CDM, alt CM/RB) kan stå som høyreback uten straff. Unntaket er midtbanen: en alternativ
+// CDM, CM eller CAM gjelder bare akkurat den posisjonen (Raphinha med CAM kan ikke stå som CM). Hovedposisjonen
+// dekker fortsatt hele midtbanegruppen.
+const midfieldPositions = ["CDM", "CM", "CAM"];
+
 export function canPlayPosition(naturalPosition: string, targetPosition: string, altPositions: readonly string[] = []) {
-  return naturalPosition === anyPosition || [naturalPosition, ...altPositions].some((position) => positionGroups.some((group) => group.includes(position) && group.includes(targetPosition)));
+  if (naturalPosition === anyPosition) return true;
+  const sameGroup = (position: string) => positionGroups.some((group) => group.includes(position) && group.includes(targetPosition));
+  return sameGroup(naturalPosition) || altPositions.some((position) => (midfieldPositions.includes(position) ? position === targetPosition : sameGroup(position)));
 }
 
 /** Alle posisjonene kortet er oppført med: hovedposisjonen først, så de alternative. */
