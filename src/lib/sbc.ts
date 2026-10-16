@@ -1,4 +1,4 @@
-import { canPlayPosition, formations } from "./lineup";
+import { cardCanPlay, formations } from "./lineup";
 import type { SpecialKind } from "./special-cards";
 
 // Felles for server og nettleser. Databasen (complete_sbc i migrering 0045) er fasit: sjekkene her
@@ -22,7 +22,7 @@ export type SbcRequirement =
   | { type: "league"; league: string; count: number }
   | { type: "same_nation"; count: number };
 
-export type SbcCard = { id: string; name: string; position: string; overall: number; slug: string | null; accent: string; club: string; league: string; nation: string | null; value: number; onBench: boolean; special: SpecialKind | null };
+export type SbcCard = { id: string; name: string; position: string; altPositions?: string[]; overall: number; slug: string | null; accent: string; club: string; league: string; nation: string | null; value: number; onBench: boolean; special: SpecialKind | null };
 
 export type SbcChallenge = {
   key: string;
@@ -160,7 +160,7 @@ export function placeCards(slots: { position: string | null }[], current: (SbcCa
   const placed = new Set(next.filter((card): card is SbcCard => Boolean(card)).map((card) => card.id));
   const waiting = cards.filter((card) => !placed.has(card.id));
   for (const card of [...waiting]) {
-    const index = next.findIndex((slot, i) => !slot && slots[i].position && canPlayPosition(card.position, slots[i].position!));
+    const index = next.findIndex((slot, i) => !slot && slots[i].position && cardCanPlay(card, slots[i].position!));
     if (index >= 0) { next[index] = card; waiting.splice(waiting.indexOf(card), 1); }
   }
   for (const card of waiting) { const index = next.findIndex((slot) => !slot); if (index >= 0) next[index] = card; }
@@ -213,7 +213,7 @@ export function autoFillPartial(pool: SbcCard[], requirements: SbcRequirement[],
  * andre plassene.
  */
 export function suggestCards(pool: SbcCard[], requirements: SbcRequirement[], cardCount: number, others: SbcCard[], position: string | null, limit = 5): SbcCard[] {
-  const fits = pool.filter((card) => !position || canPlayPosition(card.position, position));
+  const fits = pool.filter((card) => !position || cardCanPlay(card, position));
   const minCard = Math.max(0, ...requirements.map((req) => (req.type === "min_card_rating" ? req.value : 0)));
   const allowed = fits.filter((card) => card.overall >= minCard);
   const helps = (card: SbcCard) => requirements.filter((req) => {

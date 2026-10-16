@@ -4,7 +4,7 @@ import { getT } from "@/i18n/server";
 import type { AiTeam } from "./ai-opponent";
 import { replaceAcademyLineups } from "./auto-pick";
 import { formationNames, pickBestLineup, type Formation } from "./lineup";
-import { catalogPageSize, type CatalogFilters } from "./catalog-filters";
+import { catalogPageSize, catalogPositions, type CatalogFilters } from "./catalog-filters";
 import { catalogBuyMaxOverall } from "./manager-limits";
 import { specialStyles, type SpecialKind } from "./special-cards";
 import { supabaseAdmin } from "./supabase/server";
@@ -89,8 +89,8 @@ export async function getCareerMatch(matchId: string, userId: string) {
   };
 }
 
-export type ManagerCard = { id: string; catalog_id: string | null; special_card_id: string | null; special: SpecialKind | null; name: string; position: string; overall: number; tradable: boolean; is_starter: boolean; acquired_price: number; location: "squad" | "storage"; slug: string | null; accent: string; club: string; league: string | null; nation: string | null; attributes: Record<string, number>; value: number };
-export type CatalogCard = { id: string; slug: string; name: string; position: string; overall: number; price: number; accent: string; club: string; attributes: Record<string, number> };
+export type ManagerCard = { id: string; catalog_id: string | null; special_card_id: string | null; special: SpecialKind | null; name: string; position: string; altPositions: string[]; overall: number; tradable: boolean; is_starter: boolean; acquired_price: number; location: "squad" | "storage"; slug: string | null; accent: string; club: string; league: string | null; nation: string | null; attributes: Record<string, number>; value: number };
+export type CatalogCard = { id: string; slug: string; name: string; position: string; altPositions: string[]; overall: number; price: number; accent: string; club: string; attributes: Record<string, number> };
 export type ManagerLineup = { formation: string; starters: string[]; bench: string[]; updated_at: string };
 export type ManagerPack = { key: string; name: string; description: string; price: number; card_count: number; guarantee_min: number; guarantee_count: number; guarantees: { min: number; count: number }[]; odds: { min: number; max: number; weight: number }[]; accent: string; inform_chance: number; tots_chance: number; icon_chance: number; honorable_chance: number; special_guarantee: number; special_scope: "current" | "all" | "tots"; purchasable: boolean; weekly_limit: number | null; daily_purchase_limit: number | null; daily_limit: number | null; available_from: string | null; available_until: string | null };
 // Eventpakker (som Ungdomstoooor) har et tidsvindu. Utenfor vinduet vises de ikke i det hele tatt.
@@ -105,17 +105,17 @@ const packColumns = "key, name, description, price, card_count, guarantee_min, g
  * Brukes på alle managersider, siden den fulle spillerkatalogen (1300+ kort) bare trengs på
  * sidene som faktisk viser kort, ellers gjør den navigasjon mellom seksjoner unødig treg.
  */
-type RatingSquadCard = { id: string; position: string; overall: number };
+type RatingSquadCard = { id: string; position: string; altPositions: string[]; overall: number };
 export async function getManagerRating(userId: string): Promise<{ formation: string | null; starters: string[]; squad: RatingSquadCard[] }> {
   const db = supabaseAdmin();
   // Brukes på alle managersider, så et lag som fortsatt er Academy-troppen byttes ut første gang man kommer inn.
   await replaceAcademyLineups(db, [userId]);
   const [{ data: lineup, error: lineupError }, { data: squad, error: squadError }] = await Promise.all([
     db.from("manager_lineups").select("formation, starters").eq("user_id", userId).maybeSingle(),
-    db.from("manager_cards").select("id, position, overall").eq("owner_id", userId).eq("location", "squad"),
+    db.from("manager_cards").select("id, position, alt_positions, overall").eq("owner_id", userId).eq("location", "squad"),
   ]);
   if (lineupError || squadError) throw new Error(lineupError?.message ?? squadError?.message);
-  return { formation: lineup?.formation ?? null, starters: lineup?.starters ?? [], squad: squad ?? [] };
+  return { formation: lineup?.formation ?? null, starters: lineup?.starters ?? [], squad: (squad ?? []).map(({ alt_positions, ...card }) => ({ ...card, altPositions: alt_positions ?? [] })) };
 }
 
 export function ratingFromSquad({ formation, starters, squad }: Awaited<ReturnType<typeof getManagerRating>>): { formation: string; rating: number | null; squadCount: number } {
@@ -143,7 +143,7 @@ export async function getManagerCareer(userId: string): Promise<{ cards: Manager
   const db = supabaseAdmin();
   await replaceAcademyLineups(db, [userId]);
   const [{ data: cards, error: cardsError }, { data: lineup, error: lineupError }, { data: packs, error: packsError }, { data: listings, error: listingsError }, { data: inventory, error: inventoryError }, { data: profile, error: profileError }] = await Promise.all([
-    db.from("manager_cards").select("id, catalog_id, special_card_id, name, position, overall, tradable, is_starter, acquired_price, attributes, location, player_catalog(slug, accent, club, price, league, nation), special_cards(kind, price), personal_cards(slug)").eq("owner_id", userId).order("overall", { ascending: false }),
+    db.from("manager_cards").select("id, catalog_id, special_card_id, name, position, alt_positions, overall, tradable, is_starter, acquired_price, attributes, location, player_catalog(slug, accent, club, price, league, nation), special_cards(kind, price), personal_cards(slug)").eq("owner_id", userId).order("overall", { ascending: false }),
     db.from("manager_lineups").select("formation, starters, bench, updated_at").eq("user_id", userId).maybeSingle(),
     db.from("manager_packs").select(packColumns).eq("active", true).order("sort_order", { ascending: true }),
     db.from("market_listings").select("card_id").eq("seller_id", userId).eq("status", "active"),
@@ -153,14 +153,14 @@ export async function getManagerCareer(userId: string): Promise<{ cards: Manager
   if (cardsError || lineupError || packsError || listingsError || inventoryError || profileError) throw new Error(cardsError?.message ?? lineupError?.message ?? packsError?.message ?? listingsError?.message ?? inventoryError?.message ?? profileError?.message);
   // Academy-kort er laget for hånd og mangler katalograd, så kortbildet faller tilbake på nøytrale verdier.
   // «Academy» er en fast verdi her; den oversettes ved visning med t.career.clubName.
-  const owned = (cards ?? []).map((row) => {
+  const owned = (cards ?? []).map(({ alt_positions, ...row }) => {
     const source = Array.isArray(row.player_catalog) ? row.player_catalog[0] : row.player_catalog;
     // Et spesialkort har sin egen verdi og type. Spiller, klubb og bilde kommer fortsatt fra katalogen.
     const special = Array.isArray(row.special_cards) ? row.special_cards[0] : row.special_cards;
     // Et personlig kort har bildet sitt i personal_cards og spiller for eierens egen klubb.
     const personal = Array.isArray(row.personal_cards) ? row.personal_cards[0] : row.personal_cards;
-    if (personal) return { ...row, player_catalog: undefined, special_cards: undefined, personal_cards: undefined, special: "personal", slug: personal.slug, accent: specialStyles.personal.badge, club: profile?.club_name ?? "My team", league: null, nation: null, value: 0 };
-    return { ...row, player_catalog: undefined, special_cards: undefined, personal_cards: undefined, special: special?.kind ?? null, slug: source?.slug ?? null, accent: source?.accent ?? "#35d06a", club: source?.club ?? "Academy", league: source?.league ?? null, nation: source?.nation ?? null, value: special?.price ?? source?.price ?? 0 };
+    if (personal) return { ...row, altPositions: [], player_catalog: undefined, special_cards: undefined, personal_cards: undefined, special: "personal", slug: personal.slug, accent: specialStyles.personal.badge, club: profile?.club_name ?? "My team", league: null, nation: null, value: 0 };
+    return { ...row, altPositions: alt_positions ?? [], player_catalog: undefined, special_cards: undefined, personal_cards: undefined, special: special?.kind ?? null, slug: source?.slug ?? null, accent: source?.accent ?? "#35d06a", club: source?.club ?? "Academy", league: source?.league ?? null, nation: source?.nation ?? null, value: special?.price ?? source?.price ?? 0 };
   });
   return { cards: owned as unknown as ManagerCard[], lineup: lineup as ManagerLineup | null, packs: ((packs ?? []) as ManagerPack[]).filter(packAvailableNow), listedCardIds: (listings ?? []).map((row) => row.card_id), freePacks: Object.fromEntries((inventory ?? []).map((row) => [row.pack_key, row.quantity])) };
 }
@@ -302,11 +302,12 @@ export async function getSpecialCardsOfKind(kind: "icon" | "honorable"): Promise
 // Katalogen har 1300+ kort, og databasen gir maks 1000 rader per spørring. Derfor søkes,
 // filtreres og sorteres det her, og bare én side med kort hentes om gangen.
 export async function getCatalogPage(filters: CatalogFilters, offset = 0): Promise<{ cards: CatalogCard[]; total: number }> {
-  let query = supabaseAdmin().from("player_catalog").select("id, slug, name, position, overall, price, accent, club, attributes", { count: "exact" }).eq("active", true).lte("overall", catalogBuyMaxOverall);
+  let query = supabaseAdmin().from("player_catalog").select("id, slug, name, position, alt_positions, overall, price, accent, club, attributes", { count: "exact" }).eq("active", true).lte("overall", catalogBuyMaxOverall);
   // % _ * og \ er jokertegn i søket, så de fjernes fra det brukeren skriver.
   const search = filters.search.replace(/[%_*\\]/g, "").trim();
   if (search) query = query.ilike("name", `%${search}%`);
-  if (filters.position !== "all") query = query.eq("position", filters.position);
+  // Spilleren vises under hovedposisjonen og under alle de alternative (migrering 0110).
+  if (filters.position !== "all" && catalogPositions.includes(filters.position)) query = query.or(`position.eq.${filters.position},alt_positions.cs.{${filters.position}}`);
   if (filters.minimum > 0) query = query.gte("overall", filters.minimum);
   if (filters.maximumPrice !== null) query = query.lte("price", filters.maximumPrice);
   if (filters.clubs.length) query = query.in("club", filters.clubs);
@@ -315,7 +316,7 @@ export async function getCatalogPage(filters: CatalogFilters, offset = 0): Promi
   else query = query.order("overall", { ascending: false }).order("price", { ascending: true });
   const { data, error, count } = await query.order("id").range(offset, offset + catalogPageSize - 1);
   if (error) throw new Error(error.message);
-  return { cards: (data ?? []) as CatalogCard[], total: count ?? 0 };
+  return { cards: (data ?? []).map(({ alt_positions, ...card }) => ({ ...card, altPositions: alt_positions ?? [] })) as CatalogCard[], total: count ?? 0 };
 }
 
 // Klubblista til filteret hentes først når filteret åpnes, i biter på 1000 rader.

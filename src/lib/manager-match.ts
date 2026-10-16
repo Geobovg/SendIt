@@ -1,10 +1,12 @@
 import { chemistryOf, RATING_PER_CHEMISTRY } from "./chemistry";
-import { anyPosition } from "./lineup";
+import { anyPosition, cardPositions, positionInSlot } from "./lineup";
 
 export type ManagerPlayerSnapshot = {
   id: string;
   name: string;
   position: string;
+  /** De andre posisjonene spilleren også spiller (migrering 0110). Bare brukt til bytter fra benken. */
+  altPositions?: string[];
   overall: number;
   /** Katalogdata for spillerkortet i kampbildet. Academy-kort har ingen. */
   slug?: string | null;
@@ -372,9 +374,8 @@ function lineupAtMinute(team: ManagerTeamSnapshot, substitutions: ManagerSubstit
     const starterIndex = starters.findIndex((player) => player.id === substitution.outId);
     const benchIndex = bench.findIndex((player) => player.id === substitution.inId);
     if (starterIndex < 0 || benchIndex < 0) continue;
-    // Et personlig kort kan spille alt, og tar over plassen til den som går av.
-    const incoming = bench[benchIndex];
-    starters[starterIndex] = incoming.position === anyPosition ? { ...incoming, position: starters[starterIndex].position } : incoming;
+    // Et personlig kort kan spille alt, og en spiller med alternative posisjoner kan spille dem; de tar over plassen til den som går av.
+    starters[starterIndex] = positionInSlot(bench[benchIndex], starters[starterIndex].position);
     bench.splice(benchIndex, 1);
   }
   return { ...team, starters, bench };
@@ -911,7 +912,7 @@ const positionGroup: Record<string, string> = {
 export function canReplace(outgoing: ManagerPlayerSnapshot, incoming: ManagerPlayerSnapshot): boolean {
   if (incoming.position === anyPosition || incoming.position === outgoing.position) return true;
   const group = positionGroup[outgoing.position];
-  return group !== undefined && group !== "GK" && group === positionGroup[incoming.position];
+  return group !== undefined && group !== "GK" && cardPositions(incoming).some((position) => positionGroup[position] === group);
 }
 
 /** Snittet av slitenheten fra 71′ til 90′ – det et bytte på 70′ faktisk sparer laget for. */
@@ -951,7 +952,7 @@ export function squadAtSubWindow(events: unknown, side: MatchSide): SquadAtWindo
 
 /** Hvor mye laget vinner på å bytte `outgoing` med `incoming` på 70′. */
 export function substitutionGain(member: SquadMember, incoming: ManagerPlayerSnapshot): number {
-  const exact = incoming.position === member.player.position || incoming.position === anyPosition;
+  const exact = cardPositions(incoming).includes(member.player.position) || incoming.position === anyPosition;
   // Et gult kort veier tungt – en spiller på kanten av utvisning er dyrere enn noen ratingpoeng.
   return incoming.overall - (member.player.overall - member.fatigueRest) + (member.booked ? 4 : 0) + (exact ? 1 : 0);
 }

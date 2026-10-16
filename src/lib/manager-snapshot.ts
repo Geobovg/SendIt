@@ -2,15 +2,15 @@ import "server-only";
 
 import { dbErrorMessage } from "@/i18n/server";
 import { replaceAcademyLineups } from "./auto-pick";
-import { anyPosition, formationNames, formations, pickBestLineupWithChemistry, type Formation } from "./lineup";
+import { formationNames, formations, pickBestLineupWithChemistry, positionInSlot, type Formation } from "./lineup";
 import type { ManagerPlayerSnapshot, ManagerTeamSnapshot } from "./manager-match";
 import type { supabaseAdmin } from "./supabase/server";
 
 type Db = ReturnType<typeof supabaseAdmin>;
 type Relation<T> = T | T[] | null;
-type CardRow = { id: string; owner_id: string; name: string; position: string; overall: number; catalog_id: string | null; special_card_id: string | null; player_catalog: Relation<{ slug: string; club: string; accent: string; league: string | null; nation: string | null }>; personal_cards: Relation<{ slug: string }> };
+type CardRow = { id: string; owner_id: string; name: string; position: string; alt_positions: string[] | null; overall: number; catalog_id: string | null; special_card_id: string | null; player_catalog: Relation<{ slug: string; club: string; accent: string; league: string | null; nation: string | null }>; personal_cards: Relation<{ slug: string }> };
 
-const cardColumns = "id, owner_id, name, position, overall, catalog_id, special_card_id, player_catalog(slug, club, accent, league, nation), personal_cards(slug)";
+const cardColumns = "id, owner_id, name, position, alt_positions, overall, catalog_id, special_card_id, player_catalog(slug, club, accent, league, nation), personal_cards(slug)";
 const first = <T,>(value: Relation<T>) => (Array.isArray(value) ? value[0] ?? null : value);
 
 function uniqueIds(value: unknown) { return Array.isArray(value) ? [...new Set(value.filter((id): id is string => typeof id === "string"))] : []; }
@@ -18,7 +18,7 @@ function uniqueIds(value: unknown) { return Array.isArray(value) ? [...new Set(v
 // Katalogdataene blir med i laguttaket slik at kampbildet kan tegne spillerkortene uten flere oppslag.
 function toPlayer(card: CardRow): ManagerPlayerSnapshot {
   const catalog = first(card.player_catalog); const personal = first(card.personal_cards);
-  return { id: card.id, name: card.name, position: card.position, overall: card.overall, slug: catalog?.slug ?? personal?.slug ?? null, club: catalog?.club ?? null, accent: catalog?.accent ?? null, league: catalog?.league ?? null, nation: catalog?.nation ?? null, ...(personal ? { personal: true } : {}) };
+  return { id: card.id, name: card.name, position: card.position, ...(card.alt_positions?.length ? { altPositions: card.alt_positions } : {}), overall: card.overall, slug: catalog?.slug ?? personal?.slug ?? null, club: catalog?.club ?? null, accent: catalog?.accent ?? null, league: catalog?.league ?? null, nation: catalog?.nation ?? null, ...(personal ? { personal: true } : {}) };
 }
 
 /** Startkortene alle fikk ved nullstillingen («Academy CB» osv.). De har ingen katalograd, og er ikke spesial- eller personlige kort. */
@@ -58,11 +58,12 @@ export async function managerTeamSnapshots(db: Db, userIds: string[], { realPlay
       if (best.starters.length === 11) { starters = best.starters; bench = best.bench; owned = new Map(club.map((card) => [card.id, card])); }
     }
     if (starters.length !== 11 || bench.length > 7 || starters.some((id) => bench.includes(id))) continue;
-    // Et kort som kan spille alt, spiller på plassen det står på i formasjonen. På benken beholder det «ALL»,
-    // og tar posisjonen til den det bytter med (se lineupAtMinute i manager-match.ts).
+    // Et kort som kan spille alt, spiller på plassen det står på i formasjonen, og en spiller med alternative posisjoner
+    // spiller den posisjonen han står på (Kimmich som høyreback er back i kampen). På benken beholder de posisjonene sine,
+    // og tar posisjonen til den de bytter med (se lineupAtMinute i manager-match.ts).
     const slots = formations[formation];
     const selectedStarters = starters.map((id) => owned.get(id)).filter((card): card is CardRow => Boolean(card)).map(toPlayer)
-      .map((card, index) => (card.position === anyPosition ? { ...card, position: slots[index].position } : card));
+      .map((card, index) => positionInSlot(card, slots[index].position));
     const selectedBench = bench.map((id) => owned.get(id)).filter((card): card is CardRow => Boolean(card)).map(toPlayer);
     if (selectedStarters.length === 11 && selectedBench.length === bench.length) snapshots.set(lineup.user_id, { userId: lineup.user_id, formation, starters: selectedStarters, bench: selectedBench });
   }

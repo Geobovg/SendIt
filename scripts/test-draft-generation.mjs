@@ -40,7 +40,7 @@ try {
       assert.equal(captainOptions.length, 5);
       assert.ok(captainOptions.every((card) => card.overall >= 85));
       const captain = captainOptions[0];
-      const captainSlot = core.captainSlot(formation, players, captain.position);
+      const captainSlot = core.captainSlot(formation, players, captain);
       assert.ok(captainSlot);
       players[captainSlot] = captain;
       taken.add(captain.catalogId);
@@ -48,7 +48,7 @@ try {
         const options = drawOptions(pool, key, formation, taken);
         assert.equal(options.length, 5, `${formation} ${key}`);
         assert.equal(new Set(options.map((card) => card.catalogId)).size, 5);
-        assert.ok(options.every((card) => !taken.has(card.catalogId) && core.slotAccepts(key, formation, card.position)));
+        assert.ok(options.every((card) => !taken.has(card.catalogId) && core.slotAccepts(key, formation, card)));
         players[key] = options[0];
         taken.add(options[0].catalogId);
       }
