@@ -2,18 +2,16 @@ import "server-only";
 
 import { cookies } from "next/headers";
 import { cache } from "react";
-import { sessionUserId } from "@/lib/auth";
+import { profileRow, sessionUserId } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { translateDbError } from "./db-errors";
 import { dictionaries, type Dictionary } from "./dictionaries";
 import { DEFAULT_LOCALE, isLocale, LOCALE_COOKIE, LOCALE_COOKIE_MAX_AGE, type Locale } from "./locales";
 
-// Språket lagret på profilen. Eget oppslag (ikke en del av currentUser) slik at innloggingen
-// virker selv om kolonnen mangler, f.eks. før migreringen er kjørt.
+// Språket lagret på profilen. Deler oppslaget med currentUser (profileRow), så layouten bare gjør ett kall mot profiles.
 export const profileLocale = cache(async (userId: string): Promise<Locale | null> => {
-  const { data, error } = await supabaseAdmin().from("profiles").select("locale").eq("id", userId).maybeSingle();
-  if (error || !data) return null;
-  return isLocale(data.locale) ? data.locale : null;
+  const row = await profileRow(userId);
+  return isLocale(row?.locale) ? row.locale : null;
 });
 
 // Rekkefølge: valget på profilen, så cookien fra språkknappen, ellers hovedspråket (engelsk).

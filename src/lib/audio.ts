@@ -18,7 +18,11 @@ function titleFrom(file: string): string {
     .join(" ");
 }
 
-export async function listTracks(): Promise<Track[]> {
+// Lydmappen ligger i bygget og endres ikke mens serveren kjører, så den leses én gang. I utvikling leses den på
+// nytt hver gang, så nye filer dukker opp uten omstart.
+let cachedTracks: Promise<Track[]> | null = null;
+
+async function readTracks(): Promise<Track[]> {
   try {
     const files = await readdir(AUDIO_DIR);
     return files
@@ -31,4 +35,9 @@ export async function listTracks(): Promise<Track[]> {
   } catch {
     return [];
   }
+}
+
+export function listTracks(): Promise<Track[]> {
+  if (process.env.NODE_ENV !== "production") return readTracks();
+  return (cachedTracks ??= readTracks());
 }
