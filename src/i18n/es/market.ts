@@ -21,6 +21,7 @@ const packNames: Record<string, string> = {
 };
 
 const packDescriptions: Record<string, string> = {
+  brodrestevnet_brooor: "Una carta especial (inform u honorable mention) y una elección de jugador: cinco jugadores de 83+, eliges uno.",
   draft_bronze: "Dos cartas comunes de 40–74. Solo premio de draft.",
   draft_silver: "Tres cartas de 50–79, una de 70+ garantizada. Solo premio de draft.",
   draft_elite: "Seis cartas 80+, dos 84+ garantizadas. Solo premio de draft.",
@@ -176,6 +177,15 @@ export const market = {
       notAmongFive: "Esa carta no es una de las cinco",
       cardNotFound: "No se encontró la carta",
     },
+  },
+  playerPick: {
+    eyebrow: "EVENTO",
+    title: "Brødrestevnet brooor",
+    intro: "Cinco jugadores de 83+. Elige uno y pasará a tu club.",
+    open: "Abrir elección de jugador",
+    confirm: (name: string) => `¿Elegir a ${name}? Los otros cuatro jugadores desaparecerán.`,
+    taskTitle: "Brødrestevnet brooor: elige un jugador",
+    taskDetail: "Elige uno de cinco jugadores de 83+",
   },
   errors: {
     invalidPrices: "Introduce precios válidos",

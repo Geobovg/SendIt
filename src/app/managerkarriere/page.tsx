@@ -28,15 +28,15 @@ export default async function ManagerCareerPage() {
     <MatchQuotaBadge quota={quota} label={t.career.quota} />
     <AiSeasonHero season={season} />
     <FriendSeasonTeaser seasons={friendSeasons} />
-    {manager.pendingPick ? <Link href="/managerkarriere/pakker" className="relative flex items-center gap-4 overflow-hidden rounded-2xl border border-fuchsia-400/40 bg-[#10081b] p-4 transition hover:border-fuchsia-300/80">
+    {[{ pending: manager.pendingPick, text: t.market.pick }, { pending: manager.pendingPlayerPick, text: { ...t.market.pick, ...t.market.playerPick } }].map(({ pending, text }, index) => pending ? <Link key={index} href="/managerkarriere/pakker" className="relative flex items-center gap-4 overflow-hidden rounded-2xl border border-fuchsia-400/40 bg-[#10081b] p-4 transition hover:border-fuchsia-300/80">
       <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-fuchsia-400 text-lg font-black text-slate-950">★</span>
       <div className="min-w-0 flex-1">
-        <p className="text-xs font-black tracking-widest text-fuchsia-300">{t.market.pick.eyebrow}</p>
-        <p className="truncate font-black">{t.market.pick.taskTitle}</p>
-        <p className="line-clamp-2 text-xs text-white/55">{t.market.pick.taskDetail}</p>
+        <p className="text-xs font-black tracking-widest text-fuchsia-300">{text.eyebrow}</p>
+        <p className="truncate font-black">{text.taskTitle}</p>
+        <p className="line-clamp-2 text-xs text-white/55">{text.taskDetail}</p>
       </div>
-      <span className="shrink-0 text-sm font-black text-fuchsia-300">{t.market.pick.open}</span>
-    </Link> : null}
+      <span className="shrink-0 text-sm font-black text-fuchsia-300">{text.open}</span>
+    </Link> : null)}
     <Link href="/managerkarriere/draft" className="relative flex items-center gap-4 overflow-hidden rounded-2xl border border-lime-300/30 bg-[#08101b] p-4 transition hover:border-lime-300/70" style={{ backgroundImage: "radial-gradient(circle at 95% 0%, rgba(152,255,44,.18), transparent 40%)" }}>
       <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-lime-300 text-lg font-black text-slate-950">★</span>
       <div className="min-w-0 flex-1">

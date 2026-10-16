@@ -21,6 +21,7 @@ const packNames: Record<string, string> = {
 };
 
 const packDescriptions: Record<string, string> = {
+  brodrestevnet_brooor: "一张特殊卡（状态卡或荣誉提名）和一次球员选择：五名83+球员，选择其中一名。",
   draft_bronze: "两张40–74评分普通卡。仅作为选秀奖励。",
   draft_silver: "三张50–79评分卡，保底一张70+。仅作为选秀奖励。",
   draft_elite: "六张80+卡，保底两张84+。仅作为选秀奖励。",
@@ -176,6 +177,15 @@ export const market = {
       notAmongFive: "这张卡不在这五张之中",
       cardNotFound: "找不到这张卡",
     },
+  },
+  playerPick: {
+    eyebrow: "活动",
+    title: "Brødrestevnet brooor",
+    intro: "五名评分83+的球员。选择一名，他就会加入你的俱乐部。",
+    open: "打开球员选择",
+    confirm: (name: string) => `选择${name}吗？其他四名球员将消失。`,
+    taskTitle: "Brødrestevnet brooor：选择一名球员",
+    taskDetail: "从五名83+球员中选择一名",
   },
   errors: {
     invalidPrices: "输入有效价格",

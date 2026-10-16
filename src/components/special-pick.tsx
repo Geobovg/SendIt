@@ -3,8 +3,8 @@
 import { useState, useTransition } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
-import type { InformCard, SpecialPickView } from "@/lib/career";
-import { claimSpecialPickAction } from "@/lib/manager-actions";
+import type { PickCard, SpecialPickView } from "@/lib/career";
+import { claimPlayerPickAction, claimSpecialPickAction } from "@/lib/manager-actions";
 import { specialStyles } from "@/lib/special-cards";
 import { useT } from "@/i18n/client";
 import { ConfirmDialog } from "./confirm-dialog";
@@ -12,22 +12,26 @@ import { PlayerCardFace } from "./player-card-face";
 import { buttonClass } from "./ui";
 import { useScrollLock } from "./use-scroll-lock";
 
-const faceOf = (card: InformCard) => ({ slug: card.slug ?? "", name: card.name, position: card.position, overall: card.overall, accent: card.accent ?? "#35d06a", club: card.club ?? "", attributes: card.attributes, special: card.special });
+/** «special» er et spillervalg med spesialkort (0102), «player» et med vanlige spillere (0114). */
+type PickKind = "special" | "player";
 
-function PickDialog({ pick, onClose }: { pick: SpecialPickView; onClose: () => void }) {
-  const tp = useT().market.pick;
+const faceOf = (card: PickCard) => ({ slug: card.slug ?? "", name: card.name, position: card.position, overall: card.overall, accent: card.accent ?? "#35d06a", club: card.club ?? "", attributes: card.attributes, special: card.special });
+
+function PickDialog({ pick, kind, onClose }: { pick: SpecialPickView; kind: PickKind; onClose: () => void }) {
+  const t = useT().market;
+  const tp = kind === "player" ? { ...t.pick, ...t.playerPick } : t.pick;
   const router = useRouter();
-  const [selected, setSelected] = useState<InformCard | null>(null);
+  const [selected, setSelected] = useState<PickCard | null>(null);
   const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [received, setReceived] = useState<{ name: string; location: "squad" | "storage"; card: InformCard } | null>(null);
+  const [received, setReceived] = useState<{ name: string; location: "squad" | "storage"; card: PickCard } | null>(null);
   const [pending, startTransition] = useTransition();
   useScrollLock();
 
-  const choose = (card: InformCard) => {
+  const choose = (card: PickCard) => {
     setConfirming(false); setError(null);
     startTransition(async () => {
-      const result = await claimSpecialPickAction(pick.id, card.id);
+      const result = await (kind === "player" ? claimPlayerPickAction : claimSpecialPickAction)(pick.id, card.id);
       if (result.error || !result.pull) { setError(result.error ?? tp.errors.notFound); return; }
       setReceived({ name: card.name, location: result.pull.location, card });
     });
@@ -48,7 +52,7 @@ function PickDialog({ pick, onClose }: { pick: SpecialPickView; onClose: () => v
       </div> : <>
         <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:px-0 lg:grid-cols-5">
           {pick.options.map((card) => <div key={card.id} className="grid w-56 shrink-0 snap-center content-start gap-2 sm:w-auto">
-            <button type="button" aria-pressed={selected?.id === card.id} disabled={pending} onClick={() => setSelected(card)} className="rounded-2xl text-left" style={selected?.id === card.id ? { outline: `3px solid ${specialStyles[card.special].glow}`, outlineOffset: 3 } : undefined}><PlayerCardFace player={faceOf(card)} eager /></button>
+            <button type="button" aria-pressed={selected?.id === card.id} disabled={pending} onClick={() => setSelected(card)} className="rounded-2xl text-left" style={selected?.id === card.id ? { outline: `3px solid ${card.special ? specialStyles[card.special].glow : "#35d06a"}`, outlineOffset: 3 } : undefined}><PlayerCardFace player={faceOf(card)} eager /></button>
             {selected?.id === card.id ? <button type="button" className={`${buttonClass} justify-self-center`} disabled={pending} onClick={() => setConfirming(true)}>{pending ? tp.choosing : tp.choose}</button> : null}
           </div>)}
         </div>
@@ -59,8 +63,9 @@ function PickDialog({ pick, onClose }: { pick: SpecialPickView; onClose: () => v
 }
 
 /** Gratis spillervalg: fem spesialkort, velg ett. Vises øverst i pakkebutikken til det er brukt. */
-export function SpecialPick({ pick }: { pick: SpecialPickView }) {
-  const tp = useT().market.pick;
+export function SpecialPick({ pick, kind }: { pick: SpecialPickView; kind: PickKind }) {
+  const t = useT().market;
+  const tp = kind === "player" ? { ...t.pick, ...t.playerPick } : t.pick;
   const [open, setOpen] = useState(false);
   return <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border-2 p-4" style={{ borderColor: specialStyles.inform.border, background: specialStyles.inform.background, color: "white" }}>
     <div className="min-w-0">
@@ -69,6 +74,6 @@ export function SpecialPick({ pick }: { pick: SpecialPickView }) {
       <p className="text-sm text-white/70">{tp.intro}</p>
     </div>
     <button type="button" className={buttonClass} onClick={() => setOpen(true)}>{tp.open}</button>
-    {open ? <PickDialog pick={pick} onClose={() => setOpen(false)} /> : null}
+    {open ? <PickDialog pick={pick} kind={kind} onClose={() => setOpen(false)} /> : null}
   </div>;
 }

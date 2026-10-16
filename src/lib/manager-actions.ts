@@ -71,6 +71,15 @@ export async function claimSpecialPickAction(pickId: string, cardId: string): Pr
   return { ok: true, pull: data as PackPull };
 }
 
+/** Velger én av de fem spillerne i et spillervalg med vanlige spillere (Brødrestevnet brooor, migrering 0114). */
+export async function claimPlayerPickAction(pickId: string, catalogId: string): Promise<ClaimPickState> {
+  const user = await requireUser();
+  const { data, error } = await supabaseAdmin().rpc("claim_player_pick", { target_user: user.id, target_pick: pickId, target_catalog: catalogId });
+  if (error) return { error: await dbErrorMessage(error, { stripPrefix: true }) };
+  revalidatePath("/managerkarriere");
+  return { ok: true, pull: data as PackPull };
+}
+
 export async function moveManagerCardAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const user = await requireUser();
   const cardId = String(formData.get("card_id") ?? "");

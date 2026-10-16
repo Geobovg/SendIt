@@ -21,6 +21,7 @@ const packNames: Record<string, string> = {
 };
 
 const packDescriptions: Record<string, string> = {
+  brodrestevnet_brooor: "بطاقة خاصة واحدة (فورمة أو إشادة) واختيار لاعب: خمسة لاعبين بتقييم 83+ وتختار واحدًا.",
   draft_bronze: "بطاقتان عاديتان بتقييم 40–74. جائزة درافت فقط.",
   draft_silver: "ثلاث بطاقات بتقييم 50–79، واحدة مضمونة 70+. جائزة درافت فقط.",
   draft_elite: "ست بطاقات 80+، اثنتان مضمونتان 84+. جائزة درافت فقط.",
@@ -176,6 +177,15 @@ export const market = {
       notAmongFive: "هذه البطاقة ليست من الخمس",
       cardNotFound: "لم يتم العثور على البطاقة",
     },
+  },
+  playerPick: {
+    eyebrow: "حدث",
+    title: "Brødrestevnet brooor",
+    intro: "خمسة لاعبين بتقييم 83+. اختر واحدًا وسينضم إلى ناديك.",
+    open: "افتح اختيار اللاعب",
+    confirm: (name: string) => `هل تريد اختيار ${name}؟ سيختفي اللاعبون الأربعة الآخرون.`,
+    taskTitle: "Brødrestevnet brooor: اختر لاعبًا",
+    taskDetail: "اختر واحدًا من خمسة لاعبين بتقييم 83+",
   },
   errors: {
     invalidPrices: "أدخل أسعار صالحة",
