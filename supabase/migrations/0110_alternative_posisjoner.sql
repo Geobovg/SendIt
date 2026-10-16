@@ -1,7 +1,7 @@
 -- Alternative posisjoner: spillere kan stå på posisjonene de også spiller i virkeligheten.
 -- Hovedposisjonen (position) er uendret. alt_positions er de andre posisjonene, f.eks. Kimmich CDM + {CM, RB}
 -- og Mbappé ST + {LW, RW}. En spiller kan stå på alle posisjonene sine uten straff.
--- Dekker spillerne med rating 80+ (inkl. icons); resten har tom liste og spiller bare hovedposisjonen.
+-- Dekker spillerne med rating 80+ (inkl. icons, også de ni fra 0109); resten har tom liste og spiller bare hovedposisjonen.
 -- Kortene i klubbene kopierer listen fra katalogen når de opprettes (trigger), og eksisterende kort fylles ut her.
 
 alter table player_catalog
@@ -284,7 +284,16 @@ from (values
     ('nicolas-jackson', array['LW']),
     ('randal-kolo-muani', array['LW']),
     ('donyell-malen', array['RW', 'LW']),
-    ('deniz-undav', array['CAM'])
+    ('deniz-undav', array['CAM']),
+    ('icon-iniesta', array['CAM', 'CDM']),
+    ('icon-hazard', array['CAM']),
+    ('icon-totti', array['CAM', 'LW']),
+    ('icon-ozil', array['LW', 'RW']),
+    ('icon-busquets', array['CM']),
+    ('icon-marcelo', array['LW']),
+    ('icon-david-villa', array['LW']),
+    ('icon-chiellini', array['LB']),
+    ('icon-nani', array['LW', 'CAM'])
 ) as alt (slug, positions)
 where catalog.slug = alt.slug;
 

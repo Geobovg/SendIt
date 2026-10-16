@@ -306,7 +306,7 @@ export async function getCatalogPage(filters: CatalogFilters, offset = 0): Promi
   // % _ * og \ er jokertegn i søket, så de fjernes fra det brukeren skriver.
   const search = filters.search.replace(/[%_*\\]/g, "").trim();
   if (search) query = query.ilike("name", `%${search}%`);
-  // Spilleren vises under hovedposisjonen og under alle de alternative (migrering 0109).
+  // Spilleren vises under hovedposisjonen og under alle de alternative (migrering 0110).
   if (filters.position !== "all" && catalogPositions.includes(filters.position)) query = query.or(`position.eq.${filters.position},alt_positions.cs.{${filters.position}}`);
   if (filters.minimum > 0) query = query.gte("overall", filters.minimum);
   if (filters.maximumPrice !== null) query = query.lte("price", filters.maximumPrice);

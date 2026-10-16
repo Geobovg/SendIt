@@ -48,7 +48,7 @@ export function slotLabel(key: string, formation: Formation): string | null {
   return null;
 }
 
-/** Det plasseringen ser på: hovedposisjonen og de alternative (migrering 0109). */
+/** Det plasseringen ser på: hovedposisjonen og de alternative (migrering 0110). */
 export type PositionedCard = { position: string; altPositions?: readonly string[] };
 const asCard = (card: string | PositionedCard): PositionedCard => (typeof card === "string" ? { position: card } : card);
 

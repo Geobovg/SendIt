@@ -5,7 +5,7 @@ export type ManagerPlayerSnapshot = {
   id: string;
   name: string;
   position: string;
-  /** De andre posisjonene spilleren også spiller (migrering 0109). Bare brukt til bytter fra benken. */
+  /** De andre posisjonene spilleren også spiller (migrering 0110). Bare brukt til bytter fra benken. */
   altPositions?: string[];
   overall: number;
   /** Katalogdata for spillerkortet i kampbildet. Academy-kort har ingen. */

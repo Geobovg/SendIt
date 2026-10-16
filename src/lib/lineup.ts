@@ -36,7 +36,7 @@ const positionGroups = [
 // Personlige kort (migrering 0063) har denne posisjonen og kan spille hvor som helst.
 export const anyPosition = "ALL";
 
-// `altPositions` er de andre posisjonene spilleren også spiller i virkeligheten (migrering 0109). De teller som
+// `altPositions` er de andre posisjonene spilleren også spiller i virkeligheten (migrering 0110). De teller som
 // hovedposisjonen, så Kimmich (CDM, alt CM/RB) kan stå som høyreback uten straff.
 export function canPlayPosition(naturalPosition: string, targetPosition: string, altPositions: readonly string[] = []) {
   return naturalPosition === anyPosition || [naturalPosition, ...altPositions].some((position) => positionGroups.some((group) => group.includes(position) && group.includes(targetPosition)));
