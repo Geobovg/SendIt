@@ -87,24 +87,18 @@ export const sessionUserId = cache(async (): Promise<string | null> => {
   return id;
 });
 
-// Profilraden med alt layouten trenger (bruker og språk) i ett oppslag. cache() gjør at layout, side og actions
-// deler det ene oppslaget per forespørsel i stedet for hvert sitt.
-export const profileRow = cache(async (id: string) => {
-  const { data, error } = await supabaseAdmin()
-    .from("profiles")
-    .select("id, username, email, avatar_url, locale")
-    .eq("id", id)
-    .maybeSingle();
-  if (error || !data) return null;
-  return data as AppUser & { locale: string | null };
-});
-
+// cache() gjør at layout, side og actions deler ett oppslag per forespørsel i stedet for hvert sitt.
 export const currentUser = cache(async (): Promise<AppUser | null> => {
   const id = await sessionUserId();
   if (!id) return null;
-  const row = await profileRow(id);
-  if (!row) return null;
-  return { id: row.id, username: row.username, email: row.email, avatar_url: row.avatar_url };
+
+  const { data, error } = await supabaseAdmin()
+    .from("profiles")
+    .select("id, username, email, avatar_url")
+    .eq("id", id)
+    .maybeSingle();
+  if (error || !data) return null;
+  return data as AppUser;
 });
 
 export async function requireUser(): Promise<AppUser> {

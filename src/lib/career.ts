@@ -6,7 +6,6 @@ import { replaceAcademyLineups } from "./auto-pick";
 import { formationNames, pickBestLineup, type Formation } from "./lineup";
 import { catalogPageSize, catalogPositions, type CatalogFilters } from "./catalog-filters";
 import { catalogBuyMaxOverall } from "./manager-limits";
-import { matchShotColumns, matchVersion } from "./manager-match-version";
 import { specialStyles, type SpecialKind } from "./special-cards";
 import { supabaseAdmin } from "./supabase/server";
 
@@ -61,7 +60,7 @@ export async function getCareerMatch(matchId: string, userId: string) {
   const [{ data: profiles }, { data: careers }, { data: shots }, { data: fixture }] = await Promise.all([
     db.from("profiles").select("id, username").in("id", userIds),
     db.from("player_profiles").select("user_id, club_name").in("user_id", userIds),
-    db.from("career_match_shots").select(matchShotColumns).eq("match_id", matchId).order("minute", { ascending: true }),
+    db.from("career_match_shots").select("minute, kind, side, shooter_cell, keeper_cell, outcome").eq("match_id", matchId).order("minute", { ascending: true }),
     // Kamper i AI-sesongen spilles i en arena, og kampskjermen får arenaens stadion og farger.
     db.from("career_season_matches").select("friend_season_id, home_ai_key, away_ai_key, career_ai_seasons(arena, teams)").eq("match_id", matchId).maybeSingle(),
   ]);
@@ -83,8 +82,6 @@ export async function getCareerMatch(matchId: string, userId: string) {
     away: data.away_user_id ? sideFor(data.away_user_id) : aiSide,
     // Klokka forankres i serverens tid, så en nettleser som går feil ikke flytter kampminuttet.
     serverNow: Date.now(),
-    // Fingeravtrykket av kampen slik den står nå. Klienten sjekker det mot /versjon og henter siden på nytt når det er endret.
-    version: matchVersion(data, shots ?? []),
     arena: (aiSeason?.arena as number | undefined) ?? null,
     // Etter en vennesesongkamp går du tilbake til vennesesongene, etter en draftkamp til draften, ellers til startsiden i managerkarrieren.
     returnPath: fixture?.friend_season_id ? "/managerkarriere/sesong?tab=venner" : draftFixture ? "/managerkarriere/draft" : "/managerkarriere",
