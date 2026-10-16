@@ -21,6 +21,7 @@ const packNames: Record<string, string> = {
 };
 
 const packDescriptions: Record<string, string> = {
+  brodrestevnet_brooor: "One special card (inform or honorable mention) and a player pick: five players rated 83+, you choose one.",
   draft_bronze: "Two common cards rated 40–74. Draft reward only.",
   draft_silver: "Three cards rated 50–79, one guaranteed 70+. Draft reward only.",
   draft_elite: "Six 80+ cards, two guaranteed 84+. Draft reward only.",
@@ -176,6 +177,15 @@ export const market = {
       notAmongFive: "That card is not one of the five",
       cardNotFound: "Card not found",
     },
+  },
+  playerPick: {
+    eyebrow: "EVENT",
+    title: "Brødrestevnet brooor",
+    intro: "Five players rated 83+. Pick one and he goes to your club.",
+    open: "Open player pick",
+    confirm: (name: string) => `Pick ${name}? The other four players will disappear.`,
+    taskTitle: "Brødrestevnet brooor: choose a player",
+    taskDetail: "Choose one of five players rated 83+",
   },
   errors: {
     invalidPrices: "Enter valid prices",

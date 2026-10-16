@@ -78,7 +78,7 @@ function PackOdds({ pack, informFactor }: { pack: ManagerPack; informFactor: num
     </div>)}
     {/* Spesialkortet er et eget, garantert kort ved siden av kortene som trekkes etter sjansene over. */}
     {pack.special_guarantee ? <div className="flex items-center justify-between gap-3 border-t border-border pt-1">
-      <dt className="font-semibold" style={{ color: pack.special_scope === "tots" ? specialStyles.tots.glow : specialStyles.inform.border }}>{tp.specialGuarantee(pack.special_guarantee, pack.special_scope)}</dt>
+      <dt className="font-semibold" style={{ color: pack.special_scope === "tots" ? specialStyles.tots.glow : specialStyles.inform.border }}>{tp.specialGuarantee(pack.special_guarantee, pack.special_scope === "mix" ? "all" : pack.special_scope)}</dt>
       <dd className="font-semibold">{tp.guaranteed}</dd>
     </div> : null}
     {inform > 0 ? <div className="flex items-center justify-between gap-3 border-t border-border pt-1">
@@ -297,7 +297,8 @@ export function PackStore({ packs, freePacks, budget, shop }: { packs: ManagerPa
       <b className="rounded-xl bg-accent-soft px-4 py-3 text-xl text-accent">{budget} MB</b>
     </div>
 
-    {shop.pick ? <SpecialPick pick={shop.pick} /> : null}
+    {shop.pick ? <SpecialPick pick={shop.pick} kind="special" /> : null}
+    {shop.playerPick ? <SpecialPick pick={shop.playerPick} kind="player" /> : null}
 
     {Object.values(freePacks).some(Boolean) ? <p className="rounded-lg border border-accent/40 bg-accent-soft p-3 text-sm font-semibold text-accent">{tp.freePacks(packs.filter((pack) => freePacks[pack.key]).map((pack) => `${freePacks[pack.key]}× ${nameOf(pack)}`).join(", "))}</p> : null}
 
@@ -322,7 +323,7 @@ export function PackStore({ packs, freePacks, budget, shop }: { packs: ManagerPa
           <div>
             <h3 className="text-lg font-bold">{special ? <span style={{ color: style.badge }}>★ </span> : null}{nameOf(pack)}</h3>
             <p className={`text-sm ${special ? "text-white/70" : "text-muted"}`}>{tp.description(pack.key, pack.description)}</p>
-            <p className="mt-2 text-sm">{tp.cardCount(pack.card_count)} · {pack.guarantees.length || special ? tp.guarantee([...(special ? [tp.specialGuarantee(pack.special_guarantee, pack.special_scope)] : []), ...pack.guarantees.map((guarantee) => `${guarantee.count}× ${guarantee.min}+`)].join(", ")) : tp.noGuarantee}</p>
+            <p className="mt-2 text-sm">{tp.cardCount(pack.card_count)} · {pack.guarantees.length || special ? tp.guarantee([...(special ? [tp.specialGuarantee(pack.special_guarantee, pack.special_scope === "mix" ? "all" : pack.special_scope)] : []), ...pack.guarantees.map((guarantee) => `${guarantee.count}× ${guarantee.min}+`)].join(", ")) : tp.noGuarantee}</p>
             {left !== null ? <p className={`mt-1 text-xs font-bold ${left ? "" : "text-danger"}`}>{tp.weeklyLeft(left, pack.weekly_limit ?? 0)}</p> : null}
             {dailyLeft !== null ? <p className="mt-1 text-xs font-bold">{tp.dailyLeft(dailyLeft, pack.daily_limit ?? 0)}</p> : null}
             {leftToday !== null ? <p className={`mt-1 text-xs font-bold ${leftToday ? "" : "text-danger"}`}>{tp.purchasesLeftToday(leftToday, pack.daily_purchase_limit ?? 0)}</p> : null}

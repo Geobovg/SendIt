@@ -21,6 +21,7 @@ const packNames: Record<string, string> = {
 };
 
 const packDescriptions: Record<string, string> = {
+  brodrestevnet_brooor: "Yksi erikoiskortti (inform tai honorable mention) ja pelaajavalinta: viisi 83+ pelaajaa, valitset yhden.",
   draft_bronze: "Kaksi tavallista 40–74-korttia. Vain draft-palkinto.",
   draft_silver: "Kolme 50–79-korttia, yksi taattu 70+. Vain draft-palkinto.",
   draft_elite: "Kuusi 80+-korttia, kaksi taattua 84+. Vain draft-palkinto.",
@@ -176,6 +177,15 @@ export const market = {
       notAmongFive: "Kortti ei ole yksi viidestä",
       cardNotFound: "Korttia ei löytynyt",
     },
+  },
+  playerPick: {
+    eyebrow: "TAPAHTUMA",
+    title: "Brødrestevnet brooor",
+    intro: "Viisi pelaajaa, joiden arvosana on 83+. Valitse yksi, niin hän siirtyy seuraasi.",
+    open: "Avaa pelaajavalinta",
+    confirm: (name: string) => `Valitaanko ${name}? Neljä muuta pelaajaa katoaa.`,
+    taskTitle: "Brødrestevnet brooor: valitse pelaaja",
+    taskDetail: "Valitse yksi viidestä pelaajasta (83+)",
   },
   errors: {
     invalidPrices: "Anna voimassa olevat hinnat",

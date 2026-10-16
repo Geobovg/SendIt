@@ -92,11 +92,19 @@ export async function getCareerMatch(matchId: string, userId: string) {
 export type ManagerCard = { id: string; catalog_id: string | null; special_card_id: string | null; special: SpecialKind | null; name: string; position: string; altPositions: string[]; overall: number; tradable: boolean; is_starter: boolean; acquired_price: number; location: "squad" | "storage"; slug: string | null; accent: string; club: string; league: string | null; nation: string | null; attributes: Record<string, number>; value: number; sausage?: boolean };
 export type CatalogCard = { id: string; slug: string; name: string; position: string; altPositions: string[]; overall: number; price: number; accent: string; club: string; attributes: Record<string, number> };
 export type ManagerLineup = { formation: string; starters: string[]; bench: string[]; updated_at: string };
-export type ManagerPack = { key: string; name: string; description: string; price: number; card_count: number; guarantee_min: number; guarantee_count: number; guarantees: { min: number; count: number }[]; odds: { min: number; max: number; weight: number }[]; accent: string; inform_chance: number; tots_chance: number; icon_chance: number; honorable_chance: number; special_guarantee: number; special_scope: "current" | "all" | "tots"; purchasable: boolean; weekly_limit: number | null; daily_purchase_limit: number | null; daily_limit: number | null; available_from: string | null; available_until: string | null };
+export type ManagerPack = { key: string; name: string; description: string; price: number; card_count: number; guarantee_min: number; guarantee_count: number; guarantees: { min: number; count: number }[]; odds: { min: number; max: number; weight: number }[]; accent: string; inform_chance: number; tots_chance: number; icon_chance: number; honorable_chance: number; special_guarantee: number; special_scope: "current" | "all" | "tots" | "mix"; purchasable: boolean; weekly_limit: number | null; daily_purchase_limit: number | null; daily_limit: number | null; available_from: string | null; available_until: string | null };
 // Eventpakker (som Ungdomstoooor) har et tidsvindu. Utenfor vinduet vises de ikke i det hele tatt.
 function packAvailableNow(pack: ManagerPack) {
   const now = Date.now();
   return (!pack.available_from || Date.parse(pack.available_from) <= now) && (!pack.available_until || now < Date.parse(pack.available_until));
+}
+/**
+ * Deler ut eventgaver (som Brødrestevnet brooor, migrering 0114) til alle som logger inn før fristen.
+ * Det er trygt å kalle på hver gang: databasen gir hver gave bare én gang per manager.
+ */
+async function claimEventGifts(db: ReturnType<typeof supabaseAdmin>, userId: string) {
+  const { error } = await db.rpc("claim_event_gifts", { target_user: userId });
+  if (error) throw new Error(error.message);
 }
 const packColumns = "key, name, description, price, card_count, guarantee_min, guarantee_count, guarantees, odds, accent, inform_chance, tots_chance, icon_chance, honorable_chance, special_guarantee, special_scope, purchasable, weekly_limit, daily_purchase_limit, daily_limit, available_from, available_until";
 
@@ -126,21 +134,24 @@ export function ratingFromSquad({ formation, starters, squad }: Awaited<ReturnTy
 }
 
 /** Forsiden trenger elleveren, pakkene og gratispakkene, men ikke den fulle spillerkatalogen. */
-export async function getManagerHome(userId: string): Promise<{ formation: string; rating: number | null; squadCount: number; packs: ManagerPack[]; freePacks: Record<string, number>; pendingPick: boolean }> {
+export async function getManagerHome(userId: string): Promise<{ formation: string; rating: number | null; squadCount: number; packs: ManagerPack[]; freePacks: Record<string, number>; pendingPick: boolean; pendingPlayerPick: boolean }> {
   const db = supabaseAdmin();
-  const [ratingInfo, { data: packs, error: packsError }, { data: inventory, error: inventoryError }, { count: pendingPicks, error: pickError }] = await Promise.all([
+  await claimEventGifts(db, userId);
+  const [ratingInfo, { data: packs, error: packsError }, { data: inventory, error: inventoryError }, { count: pendingPicks, error: pickError }, { count: pendingPlayerPicks, error: playerPickError }] = await Promise.all([
     getManagerRating(userId),
     db.from("manager_packs").select(packColumns).eq("active", true).order("sort_order", { ascending: true }),
     db.from("manager_pack_inventory").select("pack_key, quantity").eq("user_id", userId).gt("quantity", 0),
     db.from("special_picks").select("id", { count: "exact", head: true }).eq("user_id", userId).is("chosen_at", null),
+    db.from("player_picks").select("id", { count: "exact", head: true }).eq("user_id", userId).is("chosen_at", null),
   ]);
-  if (packsError || inventoryError || pickError) throw new Error(packsError?.message ?? inventoryError?.message ?? pickError?.message);
-  return { ...ratingFromSquad(ratingInfo), packs: ((packs ?? []) as ManagerPack[]).filter(packAvailableNow), freePacks: Object.fromEntries((inventory ?? []).map((row) => [row.pack_key, row.quantity])), pendingPick: (pendingPicks ?? 0) > 0 };
+  if (packsError || inventoryError || pickError || playerPickError) throw new Error(packsError?.message ?? inventoryError?.message ?? pickError?.message ?? playerPickError?.message);
+  return { ...ratingFromSquad(ratingInfo), packs: ((packs ?? []) as ManagerPack[]).filter(packAvailableNow), freePacks: Object.fromEntries((inventory ?? []).map((row) => [row.pack_key, row.quantity])), pendingPick: (pendingPicks ?? 0) > 0, pendingPlayerPick: (pendingPlayerPicks ?? 0) > 0 };
 }
 
 // Kortverdien (katalogprisen) følger med egne kort, så sidene slipper å hente hele katalogen.
 export async function getManagerCareer(userId: string): Promise<{ cards: ManagerCard[]; lineup: ManagerLineup | null; packs: ManagerPack[]; listedCardIds: string[]; freePacks: Record<string, number> }> {
   const db = supabaseAdmin();
+  await claimEventGifts(db, userId);
   await replaceAcademyLineups(db, [userId]);
   const [{ data: cards, error: cardsError }, { data: lineup, error: lineupError }, { data: packs, error: packsError }, { data: listings, error: listingsError }, { data: inventory, error: inventoryError }, { data: profile, error: profileError }] = await Promise.all([
     db.from("manager_cards").select("id, catalog_id, special_card_id, name, position, alt_positions, overall, tradable, is_starter, acquired_price, attributes, location, player_catalog(slug, accent, club, price, league, nation), special_cards(kind, price), personal_cards(slug), manager_card_prank(card_id)").eq("owner_id", userId).order("overall", { ascending: false }),
@@ -168,8 +179,10 @@ export async function getManagerCareer(userId: string): Promise<{ cards: Manager
 
 export type InformCard = { id: string; slug: string; name: string; position: string; overall: number; boost: number; accent: string; club: string; attributes: Record<string, number>; special: SpecialKind };
 /** Et ventende spillervalg: fem spesialkort av ulike spillere, hvorav man kan velge ett (migrering 0102). */
-export type SpecialPickView = { id: string; options: InformCard[] };
-export type PackShop = { purchasedThisWeek: Record<string, number>; purchasedToday: Record<string, number>; openedToday: Record<string, number>; informFactor: number; informs: InformCard[]; nextReset: string; pick: SpecialPickView | null };
+export type SpecialPickView = { id: string; options: PickCard[] };
+/** Et kort i et spillervalg. Vanlige spillere (migrering 0114) har ingen spesialtype. */
+export type PickCard = Omit<InformCard, "special"> & { special: SpecialKind | null };
+export type PackShop = { purchasedThisWeek: Record<string, number>; purchasedToday: Record<string, number>; openedToday: Record<string, number>; informFactor: number; informs: InformCard[]; nextReset: string; pick: SpecialPickView | null; playerPick: SpecialPickView | null };
 
 /** Det eldste spillervalget brukeren ikke har brukt ennå, med de fem kortene i den rekkefølgen de ble lagret. */
 export async function getSpecialPick(userId: string): Promise<SpecialPickView | null> {
@@ -184,6 +197,22 @@ export async function getSpecialPick(userId: string): Promise<SpecialPickView | 
     const row = byId.get(id);
     const catalog = row ? (Array.isArray(row.player_catalog) ? row.player_catalog[0] : row.player_catalog) : null;
     return row && catalog ? [{ id: row.id, slug: catalog.slug, name: catalog.name, position: catalog.position, overall: row.overall, boost: row.boost, accent: catalog.accent, club: catalog.club, attributes: row.attributes as Record<string, number>, special: row.kind as SpecialKind }] : [];
+  });
+  return options.length ? { id: pick.id as string, options } : null;
+}
+
+/** Det eldste spillervalget med vanlige spillere (83+) som brukeren ikke har brukt ennå (migrering 0114). */
+export async function getPlayerPick(userId: string): Promise<SpecialPickView | null> {
+  const db = supabaseAdmin();
+  const { data: pick, error } = await db.from("player_picks").select("id, options").eq("user_id", userId).is("chosen_at", null).order("created_at", { ascending: true }).limit(1).maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!pick) return null;
+  const { data: players, error: playersError } = await db.from("player_catalog").select("id, slug, name, position, overall, accent, club, attributes").in("id", pick.options as string[]);
+  if (playersError) throw new Error(playersError.message);
+  const byId = new Map((players ?? []).map((row) => [row.id, row]));
+  const options = (pick.options as string[]).flatMap((id) => {
+    const row = byId.get(id);
+    return row ? [{ id: row.id, slug: row.slug, name: row.name, position: row.position, overall: row.overall, boost: 0, accent: row.accent, club: row.club, attributes: row.attributes as Record<string, number>, special: null }] : [];
   });
   return options.length ? { id: pick.id as string, options } : null;
 }
@@ -203,8 +232,9 @@ export async function getPackShop(userId: string): Promise<PackShop> {
     db.rpc("daily_packs_bought", { target_user: userId }),
   ]);
   if (roundError || boundsError || factorError || openedError || boughtError) throw new Error(roundError?.message ?? boundsError?.message ?? factorError?.message ?? openedError?.message ?? boughtError?.message);
-  const [pick, { data: informs, error: informsError }, { data: openings, error: openingsError }] = await Promise.all([
+  const [pick, playerPick, { data: informs, error: informsError }, { data: openings, error: openingsError }] = await Promise.all([
     getSpecialPick(userId),
+    getPlayerPick(userId),
     db.from("special_cards").select("id, kind, overall, boost, attributes, player_catalog(slug, name, position, accent, club)").eq("round_id", roundId).order("overall", { ascending: false }),
     db.from("pack_openings").select("pack_key").eq("user_id", userId).gt("price", 0).gte("created_at", bounds.week_start),
   ]);
@@ -212,7 +242,7 @@ export async function getPackShop(userId: string): Promise<PackShop> {
   const purchasedThisWeek: Record<string, number> = {};
   for (const row of openings ?? []) purchasedThisWeek[row.pack_key] = (purchasedThisWeek[row.pack_key] ?? 0) + 1;
   return {
-    purchasedThisWeek, purchasedToday: (boughtToday ?? {}) as Record<string, number>, openedToday: (openedToday ?? {}) as Record<string, number>, informFactor: Number(factor ?? 1), nextReset: bounds.next_reset, pick,
+    purchasedThisWeek, purchasedToday: (boughtToday ?? {}) as Record<string, number>, openedToday: (openedToday ?? {}) as Record<string, number>, informFactor: Number(factor ?? 1), nextReset: bounds.next_reset, pick, playerPick,
     informs: (informs ?? []).flatMap((row) => {
       const catalog = Array.isArray(row.player_catalog) ? row.player_catalog[0] : row.player_catalog;
       return catalog ? [{ id: row.id, slug: catalog.slug, name: catalog.name, position: catalog.position, overall: row.overall, boost: row.boost, accent: catalog.accent, club: catalog.club, attributes: row.attributes as Record<string, number>, special: row.kind as SpecialKind }] : [];
