@@ -101,10 +101,17 @@ function packAvailableNow(pack: ManagerPack) {
 /**
  * Deler ut eventgaver (som Brødrestevnet brooor, migrering 0114) til alle som logger inn før fristen.
  * Det er trygt å kalle på hver gang: databasen gir hver gave bare én gang per manager.
+ * Kalles samtidig med resten av sidens spørringer. Returnerer antall nye gaver, og bare da må gratispakkene leses på nytt.
  */
-async function claimEventGifts(db: ReturnType<typeof supabaseAdmin>, userId: string) {
-  const { error } = await db.rpc("claim_event_gifts", { target_user: userId });
+async function claimEventGifts(db: ReturnType<typeof supabaseAdmin>, userId: string): Promise<number> {
+  const { data, error } = await db.rpc("claim_event_gifts", { target_user: userId });
   if (error) throw new Error(error.message);
+  return Number(data ?? 0);
+}
+async function readFreePacks(db: ReturnType<typeof supabaseAdmin>, userId: string) {
+  const { data, error } = await db.from("manager_pack_inventory").select("pack_key, quantity").eq("user_id", userId).gt("quantity", 0);
+  if (error) throw new Error(error.message);
+  return data ?? [];
 }
 const packColumns = "key, name, description, price, card_count, guarantee_min, guarantee_count, guarantees, odds, accent, inform_chance, tots_chance, icon_chance, honorable_chance, special_guarantee, special_scope, purchasable, weekly_limit, daily_purchase_limit, daily_limit, available_from, available_until";
 
@@ -136,8 +143,8 @@ export function ratingFromSquad({ formation, starters, squad }: Awaited<ReturnTy
 /** Forsiden trenger elleveren, pakkene og gratispakkene, men ikke den fulle spillerkatalogen. */
 export async function getManagerHome(userId: string): Promise<{ formation: string; rating: number | null; squadCount: number; packs: ManagerPack[]; freePacks: Record<string, number>; pendingPick: boolean; pendingPlayerPick: boolean }> {
   const db = supabaseAdmin();
-  await claimEventGifts(db, userId);
-  const [ratingInfo, { data: packs, error: packsError }, { data: inventory, error: inventoryError }, { count: pendingPicks, error: pickError }, { count: pendingPlayerPicks, error: playerPickError }] = await Promise.all([
+  const [granted, ratingInfo, { data: packs, error: packsError }, { data: inventory, error: inventoryError }, { count: pendingPicks, error: pickError }, { count: pendingPlayerPicks, error: playerPickError }] = await Promise.all([
+    claimEventGifts(db, userId),
     getManagerRating(userId),
     db.from("manager_packs").select(packColumns).eq("active", true).order("sort_order", { ascending: true }),
     db.from("manager_pack_inventory").select("pack_key, quantity").eq("user_id", userId).gt("quantity", 0),
@@ -145,14 +152,14 @@ export async function getManagerHome(userId: string): Promise<{ formation: strin
     db.from("player_picks").select("id", { count: "exact", head: true }).eq("user_id", userId).is("chosen_at", null),
   ]);
   if (packsError || inventoryError || pickError || playerPickError) throw new Error(packsError?.message ?? inventoryError?.message ?? pickError?.message ?? playerPickError?.message);
-  return { ...ratingFromSquad(ratingInfo), packs: ((packs ?? []) as ManagerPack[]).filter(packAvailableNow), freePacks: Object.fromEntries((inventory ?? []).map((row) => [row.pack_key, row.quantity])), pendingPick: (pendingPicks ?? 0) > 0, pendingPlayerPick: (pendingPlayerPicks ?? 0) > 0 };
+  const freePacks = granted > 0 ? await readFreePacks(db, userId) : inventory ?? [];
+  return { ...ratingFromSquad(ratingInfo), packs: ((packs ?? []) as ManagerPack[]).filter(packAvailableNow), freePacks: Object.fromEntries(freePacks.map((row) => [row.pack_key, row.quantity])), pendingPick: (pendingPicks ?? 0) > 0, pendingPlayerPick: (pendingPlayerPicks ?? 0) > 0 };
 }
 
 // Kortverdien (katalogprisen) følger med egne kort, så sidene slipper å hente hele katalogen.
 export async function getManagerCareer(userId: string): Promise<{ cards: ManagerCard[]; lineup: ManagerLineup | null; packs: ManagerPack[]; listedCardIds: string[]; freePacks: Record<string, number> }> {
   const db = supabaseAdmin();
-  await claimEventGifts(db, userId);
-  await replaceAcademyLineups(db, [userId]);
+  const [granted] = await Promise.all([claimEventGifts(db, userId), replaceAcademyLineups(db, [userId])]);
   const [{ data: cards, error: cardsError }, { data: lineup, error: lineupError }, { data: packs, error: packsError }, { data: listings, error: listingsError }, { data: inventory, error: inventoryError }, { data: profile, error: profileError }] = await Promise.all([
     db.from("manager_cards").select("id, catalog_id, special_card_id, name, position, alt_positions, overall, tradable, is_starter, acquired_price, attributes, location, player_catalog(slug, accent, club, price, league, nation), special_cards(kind, price), personal_cards(slug), manager_card_prank(card_id)").eq("owner_id", userId).order("overall", { ascending: false }),
     db.from("manager_lineups").select("formation, starters, bench, updated_at").eq("user_id", userId).maybeSingle(),
@@ -162,6 +169,7 @@ export async function getManagerCareer(userId: string): Promise<{ cards: Manager
     db.from("player_profiles").select("club_name").eq("user_id", userId).maybeSingle(),
   ]);
   if (cardsError || lineupError || packsError || listingsError || inventoryError || profileError) throw new Error(cardsError?.message ?? lineupError?.message ?? packsError?.message ?? listingsError?.message ?? inventoryError?.message ?? profileError?.message);
+  const freePacks = granted > 0 ? await readFreePacks(db, userId) : inventory ?? [];
   // Academy-kort er laget for hånd og mangler katalograd, så kortbildet faller tilbake på nøytrale verdier.
   // «Academy» er en fast verdi her; den oversettes ved visning med t.career.clubName.
   const owned = (cards ?? []).map(({ alt_positions, manager_card_prank, ...row }) => {
@@ -174,7 +182,7 @@ export async function getManagerCareer(userId: string): Promise<{ cards: Manager
     if (personal) return { ...row, altPositions: [], player_catalog: undefined, special_cards: undefined, personal_cards: undefined, special: "personal", slug: personal.slug, accent: specialStyles.personal.badge, club: profile?.club_name ?? "My team", league: null, nation: null, value: 0, sausage };
     return { ...row, altPositions: alt_positions ?? [], player_catalog: undefined, special_cards: undefined, personal_cards: undefined, special: special?.kind ?? null, slug: source?.slug ?? null, accent: source?.accent ?? "#35d06a", club: source?.club ?? "Academy", league: source?.league ?? null, nation: source?.nation ?? null, value: special?.price ?? source?.price ?? 0, sausage };
   });
-  return { cards: owned as unknown as ManagerCard[], lineup: lineup as ManagerLineup | null, packs: ((packs ?? []) as ManagerPack[]).filter(packAvailableNow), listedCardIds: (listings ?? []).map((row) => row.card_id), freePacks: Object.fromEntries((inventory ?? []).map((row) => [row.pack_key, row.quantity])) };
+  return { cards: owned as unknown as ManagerCard[], lineup: lineup as ManagerLineup | null, packs: ((packs ?? []) as ManagerPack[]).filter(packAvailableNow), listedCardIds: (listings ?? []).map((row) => row.card_id), freePacks: Object.fromEntries(freePacks.map((row) => [row.pack_key, row.quantity])) };
 }
 
 export type InformCard = { id: string; slug: string; name: string; position: string; overall: number; boost: number; accent: string; club: string; attributes: Record<string, number>; special: SpecialKind };
