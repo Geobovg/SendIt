@@ -7,7 +7,6 @@ export const common = {
   manifestDescription: "App per tornei FIFA e NHL",
   logIn: "Accedi",
   logOut: "Esci",
-  enterGame: "Gioca",
   language: "Lingua",
   languageDescription: "Scegli la lingua in cui verrà visualizzata l'app. La tua scelta verrà salvata nel tuo account.",
   // Navnene på språkene, skrevet på språket appen vises på nå.
