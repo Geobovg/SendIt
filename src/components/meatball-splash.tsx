@@ -2,6 +2,7 @@ import Image from "next/image";
 import { SplashEnter } from "./splash-enter";
 import { Anton } from "next/font/google";
 import type { CSSProperties } from "react";
+import type { LatestChange } from "@/lib/latest-changes";
 
 const display = Anton({ weight: "400", subsets: ["latin"] });
 
@@ -46,8 +47,10 @@ const SKYLINE_FAR = skyline(34, 40, 150);
 const SKYLINE_NEAR = skyline(28, 18, 96);
 const WINDOWS = Array.from({ length: 120 }, () => ({ x: sky() * 1600, y: 190 + sky() * 100, o: 0.25 + sky() * 0.6 }));
 
+const changeDate = new Intl.DateTimeFormat("nb-NO", { day: "numeric", month: "short", timeZone: "Europe/Oslo" });
+
 /** Det regner kjøttboller over en by i tåke. Knappen nede til høyre går videre til spillet. */
-export function MeatballSplash({ enterHref, enterLabel, title }: { enterHref: string; enterLabel: string; title: string }) {
+export function MeatballSplash({ enterHref, enterLabel, title, changes }: { enterHref: string; enterLabel: string; title: string; changes: LatestChange[] }) {
   return (
     <div className="meatball-splash fixed inset-0 z-[100] overflow-hidden bg-[#1c2230]" style={{ backgroundImage: "url(/forside/himmel.jpg)", backgroundSize: "cover", backgroundPosition: "center" }}>
       {/* Solgløden bak skyene */}
@@ -158,15 +161,18 @@ export function MeatballSplash({ enterHref, enterLabel, title }: { enterHref: st
       {/* Nyhetsstripe og knapp */}
       <div className="absolute inset-x-0 bottom-0 flex flex-col-reverse items-end gap-3 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:flex-row sm:items-end sm:justify-between sm:gap-4">
         <div className="w-full overflow-hidden rounded-sm text-xs shadow-[0_6px_24px_rgba(40,20,60,.45)] sm:w-auto sm:max-w-[min(66vw,760px)] sm:text-sm">
-          <div className={`${display.className} bg-[#c4161c] px-3 py-1 text-sm uppercase tracking-widest text-white`}>Siste nytt</div>
+          <div className={`${display.className} bg-[#c4161c] px-3 py-1 text-sm uppercase tracking-widest text-white`}>Siste oppdateringer</div>
           <ul className="grid gap-0.5 bg-[#1d1838]/90 px-3 py-2 leading-snug text-white">
-            <li>Kjøttbollene har falt uavbrutt siden tirsdag.</li>
-            <li>Myndighetene anbefaler å holde seg innendørs.</li>
-            <li>Ordføreren: «Vi hadde ikke planlagt dette.»</li>
-            <li>Forsker: «Det er ikke min avdeling.»</li>
-            <li>Paraplyer utsolgt, parmesan på vei.</li>
-            <li>Lebrun Jamie og Mikkel Jorda koser seg med lapskaus i det store hav.</li>
-            <li>Mannen i gul frakk har ikke kommentert saken.</li>
+            {changes.length === 0 ? (
+              <li>Ingen nye oppdateringer akkurat nå.</li>
+            ) : (
+              changes.map((change) => (
+                <li key={change.url} className="flex gap-2">
+                  <span className="shrink-0 tabular-nums text-white/60">{changeDate.format(new Date(change.mergedAt))}</span>
+                  <span>{change.title}</span>
+                </li>
+              ))
+            )}
           </ul>
         </div>
         <SplashEnter href={enterHref} className={`${display.className} shrink-0 rounded-sm border border-white/70 bg-[#e8461f] px-6 py-3 text-xl uppercase tracking-[0.12em] text-white shadow-[0_8px_24px_rgba(60,20,10,.45)] transition hover:bg-[#ff5a30] active:scale-95 sm:text-2xl`}>

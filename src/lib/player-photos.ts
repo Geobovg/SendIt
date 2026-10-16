@@ -416,12 +416,21 @@ const withPhoto = new Set([
  * der og er hentet fra Wikimedia Commons:
  * - icon-cannavaro: «Fabio Cannavaro 2011.jpg» av Doha Stadium Plus Qatar, CC BY 2.0
  *   (https://creativecommons.org/licenses/by/2.0). Beskåret og frilagt.
+ *
+ * De ni Icons fra migrering 0109 er beskårne og frilagte bilder fra Wikimedia Commons (frie lisenser, se filsidene):
+ * Hazard «Eden Hazard at Baku before 2019 UEFA Europe League Final.jpg», Totti «Francesco Totti Vicario (crop).jpg»,
+ * Iniesta «Andrés Iniesta 2011.jpg», Marcelo «20180610 FIFA Friendly Match Austria vs. Brazil Marcelo 850 1622.jpg»,
+ * Chiellini «Giorgio Chiellini, 2015 (cropped).jpg»,
+ * Villa «Spain-Tahiti, Confederations Cup 2013 (02) (Villa crop).jpg», Busquets «Sergio Busquets 2018 (cropped).jpg»,
+ * Nani «Nani2012.JPG», Özil «Ozil in Real Madrid.jpg». Bildene er helst fra toppårene til spillerne.
  */
 const iconPhotos = new Set<string>([
   "icon-pele", "icon-maradona", "icon-ronaldo-nazario", "icon-zidane", "icon-cruyff",
   "icon-beckenbauer", "icon-maldini", "icon-ronaldinho", "icon-eusebio", "icon-yashin",
   "icon-henry", "icon-puskas", "icon-gullit", "icon-van-basten", "icon-kaka",
   "icon-pirlo", "icon-xavi", "icon-buffon", "icon-cannavaro", "icon-roberto-carlos",
+  "icon-iniesta", "icon-hazard", "icon-totti", "icon-ozil", "icon-busquets",
+  "icon-marcelo", "icon-david-villa", "icon-chiellini", "icon-nani",
 ]);
 
 /**
