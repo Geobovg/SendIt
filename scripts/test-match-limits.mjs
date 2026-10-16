@@ -9,7 +9,7 @@ const query=async(sql,args=[]) => (await db.query(sql,args)).rows;
 const one=async(sql,args=[]) => (await query(sql,args))[0];
 const user=async() => {
   const {id}=await one("insert into profiles(username) values('limit tester') returning id");
-  await query('insert into player_profiles(user_id,manager_budget) values($1,100)',[id]);
+  await query('insert into player_profiles(user_id,manager_budget) values($1,1000)',[id]);
   return id;
 };
 // age: 'period' = start of the current 6-hour block in Oslo time (earliest moment that counts), 'before' = one minute before it, otherwise an interval ago.
