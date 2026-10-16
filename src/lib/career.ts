@@ -89,7 +89,7 @@ export async function getCareerMatch(matchId: string, userId: string) {
   };
 }
 
-export type ManagerCard = { id: string; catalog_id: string | null; special_card_id: string | null; special: SpecialKind | null; name: string; position: string; altPositions: string[]; overall: number; tradable: boolean; is_starter: boolean; acquired_price: number; location: "squad" | "storage"; slug: string | null; accent: string; club: string; league: string | null; nation: string | null; attributes: Record<string, number>; value: number };
+export type ManagerCard = { id: string; catalog_id: string | null; special_card_id: string | null; special: SpecialKind | null; name: string; position: string; altPositions: string[]; overall: number; tradable: boolean; is_starter: boolean; acquired_price: number; location: "squad" | "storage"; slug: string | null; accent: string; club: string; league: string | null; nation: string | null; attributes: Record<string, number>; value: number; sausage?: boolean };
 export type CatalogCard = { id: string; slug: string; name: string; position: string; altPositions: string[]; overall: number; price: number; accent: string; club: string; attributes: Record<string, number> };
 export type ManagerLineup = { formation: string; starters: string[]; bench: string[]; updated_at: string };
 export type ManagerPack = { key: string; name: string; description: string; price: number; card_count: number; guarantee_min: number; guarantee_count: number; guarantees: { min: number; count: number }[]; odds: { min: number; max: number; weight: number }[]; accent: string; inform_chance: number; tots_chance: number; icon_chance: number; honorable_chance: number; special_guarantee: number; special_scope: "current" | "all" | "tots"; purchasable: boolean; weekly_limit: number | null; daily_purchase_limit: number | null; daily_limit: number | null; available_from: string | null; available_until: string | null };
@@ -143,7 +143,7 @@ export async function getManagerCareer(userId: string): Promise<{ cards: Manager
   const db = supabaseAdmin();
   await replaceAcademyLineups(db, [userId]);
   const [{ data: cards, error: cardsError }, { data: lineup, error: lineupError }, { data: packs, error: packsError }, { data: listings, error: listingsError }, { data: inventory, error: inventoryError }, { data: profile, error: profileError }] = await Promise.all([
-    db.from("manager_cards").select("id, catalog_id, special_card_id, name, position, alt_positions, overall, tradable, is_starter, acquired_price, attributes, location, player_catalog(slug, accent, club, price, league, nation), special_cards(kind, price), personal_cards(slug)").eq("owner_id", userId).order("overall", { ascending: false }),
+    db.from("manager_cards").select("id, catalog_id, special_card_id, name, position, alt_positions, overall, tradable, is_starter, acquired_price, attributes, location, player_catalog(slug, accent, club, price, league, nation), special_cards(kind, price), personal_cards(slug), manager_card_prank(card_id)").eq("owner_id", userId).order("overall", { ascending: false }),
     db.from("manager_lineups").select("formation, starters, bench, updated_at").eq("user_id", userId).maybeSingle(),
     db.from("manager_packs").select(packColumns).eq("active", true).order("sort_order", { ascending: true }),
     db.from("market_listings").select("card_id").eq("seller_id", userId).eq("status", "active"),
@@ -153,14 +153,15 @@ export async function getManagerCareer(userId: string): Promise<{ cards: Manager
   if (cardsError || lineupError || packsError || listingsError || inventoryError || profileError) throw new Error(cardsError?.message ?? lineupError?.message ?? packsError?.message ?? listingsError?.message ?? inventoryError?.message ?? profileError?.message);
   // Academy-kort er laget for hånd og mangler katalograd, så kortbildet faller tilbake på nøytrale verdier.
   // «Academy» er en fast verdi her; den oversettes ved visning med t.career.clubName.
-  const owned = (cards ?? []).map(({ alt_positions, ...row }) => {
+  const owned = (cards ?? []).map(({ alt_positions, manager_card_prank, ...row }) => {
+    const sausage = Array.isArray(manager_card_prank) ? manager_card_prank.length > 0 : Boolean(manager_card_prank);
     const source = Array.isArray(row.player_catalog) ? row.player_catalog[0] : row.player_catalog;
     // Et spesialkort har sin egen verdi og type. Spiller, klubb og bilde kommer fortsatt fra katalogen.
     const special = Array.isArray(row.special_cards) ? row.special_cards[0] : row.special_cards;
     // Et personlig kort har bildet sitt i personal_cards og spiller for eierens egen klubb.
     const personal = Array.isArray(row.personal_cards) ? row.personal_cards[0] : row.personal_cards;
-    if (personal) return { ...row, altPositions: [], player_catalog: undefined, special_cards: undefined, personal_cards: undefined, special: "personal", slug: personal.slug, accent: specialStyles.personal.badge, club: profile?.club_name ?? "My team", league: null, nation: null, value: 0 };
-    return { ...row, altPositions: alt_positions ?? [], player_catalog: undefined, special_cards: undefined, personal_cards: undefined, special: special?.kind ?? null, slug: source?.slug ?? null, accent: source?.accent ?? "#35d06a", club: source?.club ?? "Academy", league: source?.league ?? null, nation: source?.nation ?? null, value: special?.price ?? source?.price ?? 0 };
+    if (personal) return { ...row, altPositions: [], player_catalog: undefined, special_cards: undefined, personal_cards: undefined, special: "personal", slug: personal.slug, accent: specialStyles.personal.badge, club: profile?.club_name ?? "My team", league: null, nation: null, value: 0, sausage };
+    return { ...row, altPositions: alt_positions ?? [], player_catalog: undefined, special_cards: undefined, personal_cards: undefined, special: special?.kind ?? null, slug: source?.slug ?? null, accent: source?.accent ?? "#35d06a", club: source?.club ?? "Academy", league: source?.league ?? null, nation: source?.nation ?? null, value: special?.price ?? source?.price ?? 0, sausage };
   });
   return { cards: owned as unknown as ManagerCard[], lineup: lineup as ManagerLineup | null, packs: ((packs ?? []) as ManagerPack[]).filter(packAvailableNow), listedCardIds: (listings ?? []).map((row) => row.card_id), freePacks: Object.fromEntries((inventory ?? []).map((row) => [row.pack_key, row.quantity])) };
 }

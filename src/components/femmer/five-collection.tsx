@@ -23,7 +23,7 @@ export function FiveCollection({ cards, people }: { cards: FiveCard[]; people: F
       <p className="text-sm text-muted">{t.cards.tapHint}</p>
       <div className="flex flex-wrap gap-3">
         {cards.map((card) => <button key={card.id} type="button" onClick={() => setDetails(card.id)} className="grid gap-1 text-left">
-          <FiveCardTile name={card.name} slug={card.slug} sausage={card.sausage} overall={card.overall} position={card.position} footer={<div className="h-1.5 overflow-hidden rounded-full bg-black/40"><div className="h-full bg-lime-300" style={{ width: `${(card.xp / FIVE_XP_PER_LEVEL) * 100}%` }} /></div>} />
+          <FiveCardTile name={card.name} slug={card.slug} overall={card.overall} position={card.position} footer={<div className="h-1.5 overflow-hidden rounded-full bg-black/40"><div className="h-full bg-lime-300" style={{ width: `${(card.xp / FIVE_XP_PER_LEVEL) * 100}%` }} /></div>} />
           <p className="w-[118px] text-[11px] leading-tight text-muted sm:w-[140px]">{t.cards.stats(card.appearances, card.goals, card.assists)}</p>
         </button>)}
         {missing.map((person) => <div key={person.personId} className="grid gap-1">

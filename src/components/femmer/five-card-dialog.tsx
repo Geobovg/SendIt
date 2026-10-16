@@ -44,7 +44,7 @@ export function FiveCardDialog({ card, onClose }: { card: FiveCard; onClose: () 
   return createPortal(<div className="fixed inset-0 z-50 grid place-items-center bg-black/80 p-4 backdrop-blur" role="dialog" aria-modal onClick={onClose}>
     <div className={`${cardClass} grid w-full max-w-md gap-4`} onClick={(event) => event.stopPropagation()}>
       <div className="flex gap-4">
-        <FiveCardTile name={card.name} slug={card.slug} sausage={card.sausage} overall={card.overall} position={card.position} size="md" eager />
+        <FiveCardTile name={card.name} slug={card.slug} overall={card.overall} position={card.position} size="md" eager />
         <div className="grid content-start gap-1 text-sm">
           <h3 className="text-xl font-black">{card.name}</h3>
           <p className="text-muted">{t.cards.stats(card.appearances, card.goals, card.assists)}</p>

@@ -172,7 +172,7 @@ export function FiveSquad({ cards, starters: savedStarters, bench: savedBench, f
     const isTarget = dragging !== null && over === key && !isSource;
     // Hele flaten er både trykk- og dra-mål. select-none og touch-callout hindrer at mobilen markerer tekst når man holder.
     return <button type="button" data-place={key} onPointerDown={(event) => startPress(event, place)} onClick={() => { if (!suppressClick.current) tap(place); }} onContextMenu={(event) => event.preventDefault()} onDragStart={(event) => event.preventDefault()} className={`grid select-none justify-items-center rounded-xl [-webkit-touch-callout:none] ${isTarget ? "ring-4 ring-amber-300" : ""} ${isSource ? "opacity-40" : ""} ${dragging ? "cursor-grabbing" : card ? "cursor-grab" : ""}`} aria-pressed={isSelected(place)}>
-      {card ? <FiveCardTile name={card.name} slug={card.slug} sausage={card.sausage} overall={card.overall} position={card.position} size="sm" label={role ? (penalty ? `${t.squad.roles[role]} −${penalty}` : t.squad.roles[role]) : undefined} warn={penalty > 0} selected={isSelected(place)} /> : <span className={`grid h-28 w-[72px] place-items-center rounded-xl border-2 border-dashed text-xs font-bold sm:h-36 sm:w-[92px] ${isSelected(place) || isTarget ? "border-lime-300 text-lime-300" : "border-white/25 text-white/45"}`}>{role ? t.squad.roles[role] : t.squad.empty}</span>}
+      {card ? <FiveCardTile name={card.name} slug={card.slug} overall={card.overall} position={card.position} size="sm" label={role ? (penalty ? `${t.squad.roles[role]} −${penalty}` : t.squad.roles[role]) : undefined} warn={penalty > 0} selected={isSelected(place)} /> : <span className={`grid h-28 w-[72px] place-items-center rounded-xl border-2 border-dashed text-xs font-bold sm:h-36 sm:w-[92px] ${isSelected(place) || isTarget ? "border-lime-300 text-lime-300" : "border-white/25 text-white/45"}`}>{role ? t.squad.roles[role] : t.squad.empty}</span>}
     </button>;
   };
   const selectedId = selected ? idAt(selected) : null;
@@ -228,6 +228,6 @@ export function FiveSquad({ cards, starters: savedStarters, bench: savedBench, f
     </section>
     <p className="text-xs text-muted">{t.squad.positionRule} {t.cards.xpRule(FIVE_XP_PER_LEVEL)}</p>
     {detailCard ? <FiveCardDialog card={detailCard} onClose={() => setDetails(null)} /> : null}
-    {dragCard ? <div ref={ghost} aria-hidden className="pointer-events-none fixed left-0 top-0 z-50 opacity-0 drop-shadow-2xl will-change-transform"><FiveCardTile name={dragCard.name} slug={dragCard.slug} sausage={dragCard.sausage} overall={dragCard.overall} position={dragCard.position} size="sm" /></div> : null}
+    {dragCard ? <div ref={ghost} aria-hidden className="pointer-events-none fixed left-0 top-0 z-50 opacity-0 drop-shadow-2xl will-change-transform"><FiveCardTile name={dragCard.name} slug={dragCard.slug} overall={dragCard.overall} position={dragCard.position} size="sm" /></div> : null}
   </form>;
 }

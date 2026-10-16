@@ -16,13 +16,12 @@ const sizes = {
 /**
  * Et kort i Femmer. Kortene ser ut som de personlige kortene i managerkarrieren. Posisjonen står under ratingen; `warn` viser at kortet står utenfor posisjon.
  */
-export function FiveCardTile({ name, slug, overall, position, size = "md", label, footer, selected = false, dimmed = false, warn = false, eager = false, sausage = false }: { name: string; slug: string; overall: number; position?: FivePosition | null; size?: keyof typeof sizes; label?: ReactNode; footer?: ReactNode; selected?: boolean; dimmed?: boolean; warn?: boolean; eager?: boolean; sausage?: boolean }) {
+export function FiveCardTile({ name, slug, overall, position, size = "md", label, footer, selected = false, dimmed = false, warn = false, eager = false }: { name: string; slug: string; overall: number; position?: FivePosition | null; size?: keyof typeof sizes; label?: ReactNode; footer?: ReactNode; selected?: boolean; dimmed?: boolean; warn?: boolean; eager?: boolean }) {
   const t = useT().femmer;
   const style = specialStyles.personal;
   const photo = playerPhoto(slug);
   const s = sizes[size];
-  const shownName = sausage ? "PØLSE" : name;
-  return <div className={`relative flex flex-col overflow-hidden rounded-xl border-2 p-1.5 text-white shadow-lg transition-transform ${s.box} ${selected ? "scale-105 ring-4 ring-lime-300" : ""} ${dimmed ? "opacity-40 grayscale" : ""}`} style={sausage ? { background: "linear-gradient(160deg, #fbbf24, #b45309 55%, #7c2d12)", borderColor: "#fde68a", boxShadow: "0 0 16px #f59e0b55" } : { background: style.background, borderColor: style.border, boxShadow: `0 0 16px ${style.glow}55` }}>
+  return <div className={`relative flex flex-col overflow-hidden rounded-xl border-2 p-1.5 text-white shadow-lg transition-transform ${s.box} ${selected ? "scale-105 ring-4 ring-lime-300" : ""} ${dimmed ? "opacity-40 grayscale" : ""}`} style={{ background: style.background, borderColor: style.border, boxShadow: `0 0 16px ${style.glow}55` }}>
     <div className="flex items-start justify-between gap-1">
       <div className="grid leading-none">
         <b className={`font-black tracking-tighter drop-shadow ${s.rating}`}>{overall}</b>
@@ -31,9 +30,9 @@ export function FiveCardTile({ name, slug, overall, position, size = "md", label
       {label ? <span className={`rounded px-1 text-[9px] font-black tracking-wider sm:text-[10px] ${warn ? "bg-red-600/80" : "bg-black/35"}`}>{label}</span> : null}
     </div>
     <div className={`relative ${s.photo}`}>
-      {sausage ? <div className="absolute inset-0 grid place-items-center text-6xl drop-shadow-[0_6px_10px_rgba(0,0,0,.45)] sm:text-7xl" role="img" aria-label="Pølse">🌭</div> : photo ? <Image src={photo} alt="" draggable={false} width={256} height={256} loading={eager ? "eager" : "lazy"} className="absolute inset-x-0 bottom-0 mx-auto h-full w-auto object-contain object-bottom drop-shadow-[0_6px_10px_rgba(0,0,0,.45)]" /> : <div className="absolute inset-0 grid place-items-center text-3xl">⚽</div>}
+      {photo ? <Image src={photo} alt="" draggable={false} width={256} height={256} loading={eager ? "eager" : "lazy"} className="absolute inset-x-0 bottom-0 mx-auto h-full w-auto object-contain object-bottom drop-shadow-[0_6px_10px_rgba(0,0,0,.45)]" /> : <div className="absolute inset-0 grid place-items-center text-3xl">⚽</div>}
     </div>
-    <p className={`truncate rounded bg-black/35 px-1 text-center font-black uppercase tracking-wide ${s.name}`}>{shownName}</p>
+    <p className={`truncate rounded bg-black/35 px-1 text-center font-black uppercase tracking-wide ${s.name}`}>{name}</p>
     {footer ? <div className="mt-1">{footer}</div> : null}
   </div>;
 }

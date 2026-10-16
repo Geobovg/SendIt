@@ -9,7 +9,7 @@ import { isFiveFormation, isFivePosition, type FiveFormation, type FivePosition 
 /** En person som har et personlig kort, altså et kort som kan brukes i Femmer. Nye kort dukker opp her med en gang. */
 export type FivePerson = { personId: string; name: string; slug: string; username: string };
 /** Et kort brukeren eier i Femmer. */
-export type FiveCard = FivePerson & { id: string; overall: number; xp: number; goals: number; assists: number; appearances: number; position: FivePosition | null; sausage: boolean };
+export type FiveCard = FivePerson & { id: string; overall: number; xp: number; goals: number; assists: number; appearances: number; position: FivePosition | null };
 export type FiveProfile = { aiLevel: number; bestAiLevel: number; wins: number; draws: number; losses: number; formation: FiveFormation };
 export type FiveState = { profile: FiveProfile; cards: FiveCard[]; starters: string[]; bench: string[]; rating: number | null };
 
@@ -33,7 +33,7 @@ export async function getFiveState(userId: string): Promise<FiveState | null> {
   const db = supabaseAdmin();
   const [{ data: profile, error: profileError }, { data: cards, error: cardsError }, { data: lineup, error: lineupError }, everyone] = await Promise.all([
     db.from("five_profiles").select("*").eq("user_id", userId).maybeSingle(),
-    db.from("five_cards").select("id, person_id, position, overall, xp, goals, assists, appearances, five_card_prank(card_id)").eq("owner_id", userId),
+    db.from("five_cards").select("id, person_id, position, overall, xp, goals, assists, appearances").eq("owner_id", userId),
     db.from("five_lineups").select("starters, bench").eq("user_id", userId).maybeSingle(),
     listFivePeople(),
   ]);
@@ -42,7 +42,7 @@ export async function getFiveState(userId: string): Promise<FiveState | null> {
   const byPerson = new Map(everyone.map((person) => [person.personId, person]));
   const owned: FiveCard[] = (cards ?? []).flatMap((card) => {
     const person = byPerson.get(card.person_id);
-    return person ? [{ ...person, id: card.id, overall: card.overall, xp: card.xp, goals: card.goals, assists: card.assists, appearances: card.appearances, position: isFivePosition(card.position) ? card.position : null, sausage: Array.isArray(card.five_card_prank) ? card.five_card_prank.length > 0 : Boolean(card.five_card_prank) }] : [];
+    return person ? [{ ...person, id: card.id, overall: card.overall, xp: card.xp, goals: card.goals, assists: card.assists, appearances: card.appearances, position: isFivePosition(card.position) ? card.position : null }] : [];
   }).sort((first, second) => second.overall - first.overall || first.name.localeCompare(second.name, "nb-NO"));
   const ids = new Set(owned.map((card) => card.id));
   const starters = ((lineup?.starters ?? []) as string[]).filter((id) => ids.has(id));
