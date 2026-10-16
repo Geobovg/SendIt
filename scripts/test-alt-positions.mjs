@@ -35,6 +35,12 @@ assert.equal(cardCanPlay(mbappe, "CAM"), false);
 const balde = { id: "b", position: "LB", altPositions: ["RB"], overall: 82 };
 assert.equal(cardCanPlay(balde, "RB"), true);
 assert.equal(cardCanPlay(balde, "CB"), false);
+// Raphinha: RW med LW og CAM som alternativ. CAM gjør ham ikke til CM eller CDM
+const raphinha = { id: "r", position: "RW", altPositions: ["LW", "CAM"], overall: 90 };
+assert.equal(cardCanPlay(raphinha, "LW"), true);
+assert.equal(cardCanPlay(raphinha, "CAM"), true);
+assert.equal(cardCanPlay(raphinha, "CM"), false);
+assert.equal(cardCanPlay(raphinha, "CDM"), false);
 // Uten alternative posisjoner er alt som før
 assert.equal(canPlayPosition("CB", "RB"), false);
 assert.equal(canPlayPosition("CDM", "CAM"), true);
