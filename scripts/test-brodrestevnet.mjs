@@ -113,4 +113,18 @@ await db.query("select grant_pack($1, 'annen', 1)", [late]);
 await db.query("select open_free_manager_pack($1, 'annen')", [late]);
 assert.equal((await db.query("select count(*)::int as n from player_picks where user_id = $1 and chosen_at is null", [late])).rows[0].n, 1);
 
+// 0115: alle med managerprofil får pakken én gang. De som har fått den, får ingen ny.
+const claimed = (await db.query("insert into profiles default values returning id")).rows[0].id;
+const fresh = (await db.query("insert into profiles default values returning id")).rows[0].id;
+await db.query("insert into player_profiles values ($1), ($2)", [claimed, fresh]);
+await db.query("insert into event_gift_claims (user_id, gift_key) values ($1, 'brodrestevnet_brooor')", [claimed]);
+await db.query("select grant_pack($1, 'brodrestevnet_brooor', 1)", [claimed]);
+const bulk = readFileSync(new URL("../supabase/migrations/0115_brodrestevnet_til_alle.sql", import.meta.url), "utf8");
+await db.exec(bulk);
+assert.equal(await inventory(fresh), 1, "ny manager får pakken");
+assert.equal(await inventory(claimed), 1, "ingen ny pakke til den som hadde fått den");
+assert.equal(await inventory(noProfile), 0, "uten managerprofil: ingen pakke");
+await db.exec(bulk);
+assert.equal(await inventory(fresh), 1, "kjøres den to ganger, gir den ikke dobbelt");
+
 console.log("Brødrestevnet brooor: alt OK");
