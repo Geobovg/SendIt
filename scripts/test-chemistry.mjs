@@ -73,7 +73,7 @@ const team = (userId, rating, build, extra = {}) => ({
 const sameClub = () => ({ club: "Arsenal", league: "premier_league", nation: "gb-eng" });
 const noChem = (i) => ({ club: `Klubb ${i}`, league: `liga${i}`, nation: `nasjon${i}` });
 const kickoff = (home, away, version = match.MANAGER_KICKOFF_VERSION, extra = {}) => ({ type: "kickoff", version, home, away, ...extra });
-assert.equal(match.MANAGER_KICKOFF_VERSION, 7);
+assert.equal(match.MANAGER_KICKOFF_VERSION, 8);
 
 const goals = (events) => match.getManagerGoals(events);
 function record(makeHome, makeAway, version, weight, games = 1200) {
