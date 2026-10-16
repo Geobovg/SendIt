@@ -74,6 +74,15 @@ export const PHOTO_PLAYERS: { slug: string; name: string }[] = [
   { slug: "icon-buffon", name: "Gianluigi Buffon" },
   { slug: "icon-cannavaro", name: "Fabio Cannavaro" },
   { slug: "icon-roberto-carlos", name: "Roberto Carlos" },
+  { slug: "icon-iniesta", name: "Andrés Iniesta" },
+  { slug: "icon-hazard", name: "Eden Hazard" },
+  { slug: "icon-totti", name: "Francesco Totti" },
+  { slug: "icon-ozil", name: "Mesut Özil" },
+  { slug: "icon-busquets", name: "Sergio Busquets" },
+  { slug: "icon-marcelo", name: "Marcelo" },
+  { slug: "icon-david-villa", name: "David Villa" },
+  { slug: "icon-chiellini", name: "Giorgio Chiellini" },
+  { slug: "icon-nani", name: "Nani" },
 ];
 
 // «Karrierevei»: seniorklubbene i rekkefølge, uten de fleste lånene. Navnene følger

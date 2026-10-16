@@ -8,6 +8,7 @@ const nationalities: Record<string, string> = {
   // Icons (migrering 0074).
   'icon-pele': "br", 'icon-maradona': "ar", 'icon-ronaldo-nazario': "br", 'icon-zidane': "fr", 'icon-cruyff': "nl", 'icon-beckenbauer': "de", 'icon-maldini': "it", 'icon-ronaldinho': "br", 'icon-eusebio': "pt", 'icon-yashin': "ru",
   'icon-henry': "fr", 'icon-puskas': "hu", 'icon-gullit': "nl", 'icon-van-basten': "nl", 'icon-kaka': "br", 'icon-pirlo': "it", 'icon-xavi': "es", 'icon-buffon': "it", 'icon-cannavaro': "it", 'icon-roberto-carlos': "br",
+  'icon-iniesta': "es", 'icon-hazard': "be", 'icon-totti': "it", 'icon-ozil': "de", 'icon-busquets': "es", 'icon-marcelo': "br", 'icon-david-villa': "es", 'icon-chiellini': "it", 'icon-nani': "pt",
   // Honorable mention (migrering 0088). De andre HM-spillerne har vanlige kort og står lenger ned.
   'cavan-sullivan': "us", 'max-dowman': "gb-eng", 'rio-ngumoha': "gb-eng",
   'haaland': "no", 'odegaard': "no", 'isak': "se", 'gyokeres': "se", 'strand-larsen': "no", 'nusa': "no", 'aursnes': "no", 'patrick-berg': "no", 'thorsby': "no", 'nypan': "no",
