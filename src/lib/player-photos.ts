@@ -420,9 +420,9 @@ const withPhoto = new Set([
  * De ni Icons fra migrering 0109 er beskårne og frilagte bilder fra Wikimedia Commons (frie lisenser, se filsidene):
  * Hazard «Eden Hazard at Baku before 2019 UEFA Europe League Final.jpg», Totti «Francesco Totti Vicario (crop).jpg»,
  * Iniesta «Andrés Iniesta 2011.jpg», Marcelo «20180610 FIFA Friendly Match Austria vs. Brazil Marcelo 850 1622.jpg»,
- * Chiellini «Sergio Mattarella meets Italy national football team ... Chiellini (cropped).jpg»,
+ * Chiellini «Giorgio Chiellini, 2015 (cropped).jpg»,
  * Villa «Spain-Tahiti, Confederations Cup 2013 (02) (Villa crop).jpg», Busquets «Sergio Busquets 2018 (cropped).jpg»,
- * Nani «Nani (Fenerbahçe, 2015).jpg», Özil «Mesut Özil at Baku before 2019 UEFA Europe League Final.jpg».
+ * Nani «Nani2012.JPG», Özil «Ozil in Real Madrid.jpg». Bildene er helst fra toppårene til spillerne.
  */
 const iconPhotos = new Set<string>([
   "icon-pele", "icon-maradona", "icon-ronaldo-nazario", "icon-zidane", "icon-cruyff",
