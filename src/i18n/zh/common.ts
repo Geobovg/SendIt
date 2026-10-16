@@ -7,7 +7,6 @@ export const common = {
   manifestDescription: "FIFA 和 NHL 锦标赛应用程序",
   logIn: "登录",
   logOut: "退出",
-  enterGame: "进入游戏",
   language: "语言",
   languageDescription: "选择应用程序显示的语言。您的选择将保存到您的帐户中。",
   // Navnene på språkene, skrevet på språket appen vises på nå.
