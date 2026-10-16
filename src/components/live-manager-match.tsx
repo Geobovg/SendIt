@@ -62,6 +62,8 @@ type ManagerMatch = {
   home: ManagerSideInfo;
   away: ManagerSideInfo;
   serverNow: number;
+  /** Fingeravtrykket av kampen da siden ble tegnet. Endres det på serveren, hentes siden på nytt. */
+  version: string;
   shots: ShotResult[];
   /** Hvor du sendes når kampen er ferdig. */
   returnPath: string;
@@ -373,6 +375,11 @@ export function LiveManagerMatch({ match, userId, returnAfterComplete = true, he
   const [shotState, shotAction, picking] = useActionState(chooseShotCellAction, initial);
   const [, resolveAction] = useActionState(resolveShotAction, initial);
 
+  const matchId = match.id;
+  // Versjonen siden er tegnet med, som sjekken over sammenligner mot uten å starte intervallet på nytt for hver oppdatering.
+  const currentVersion = useRef(match.version);
+  useEffect(() => { currentVersion.current = match.version; }, [match.version]);
+
   const complete = match.status === "completed";
   const events = match.events;
   const kickoff = getManagerKickoff(events);
@@ -418,10 +425,30 @@ export function LiveManagerMatch({ match, userId, returnAfterComplete = true, he
     if (match.status !== "live") return;
     // I byttevinduet følges motstanderen tettere, så kampen går videre straks begge er ferdige.
     const ms = vsAi ? 10_000 : activeShot ? 800 : subWindowOpen ? 1500 : 10_000;
-    // En skjult fane trenger ingen oppdateringer; den hentes på nytt når den vises igjen.
-    const refresh = setInterval(() => { if (document.visibilityState === "visible") router.refresh(); }, ms);
-    return () => clearInterval(refresh);
-  }, [match.status, router, activeShot, subWindowOpen, vsAi]);
+    // En skjult fane trenger ingen oppdateringer; den sjekkes på nytt når den vises igjen.
+    // Sjekken er et lite kall som bare spør om kampen er endret. Hele siden (layout, navn, klubber og
+    // resten) hentes på nytt først når den er det, ellers ville hver spiller belastet serveren med en full
+    // siderendring hvert sekund under en sjanse.
+    let cancelled = false; let checking = false; let requested: { version: string; at: number } | null = null;
+    const check = async () => {
+      if (document.visibilityState !== "visible" || checking) return;
+      checking = true;
+      try {
+        const response = await fetch(`/managerkarriere/kamp/${matchId}/versjon`, { cache: "no-store" });
+        if (!response.ok || cancelled) return;
+        const { version } = await response.json() as { version?: string };
+        if (!version || version === currentVersion.current) return;
+        // Er siden alt bedt om denne versjonen, venter vi litt før vi spør igjen i tilfelle henten feilet.
+        if (requested?.version === version && Date.now() - requested.at < 3_000) return;
+        requested = { version, at: Date.now() };
+        router.refresh();
+      } catch {
+        // Offline eller en kort feil: neste sjekk prøver igjen.
+      } finally { checking = false; }
+    };
+    const refresh = setInterval(check, ms);
+    return () => { cancelled = true; clearInterval(refresh); };
+  }, [match.status, router, matchId, activeShot, subWindowOpen, vsAi]);
 
   const visible = timeline.filter((event) => {
     if (event.minute > shownMinute) return false;
