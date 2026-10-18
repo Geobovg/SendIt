@@ -103,3 +103,93 @@ gir en grunn til å spille jevnt. Må planlegges sammen med pakkeprisene, ellers
 - Skal premier alltid være MB og pakker, eller skal noe være bare ære (titler, merker)?
 - Hvor mye ekstra MB inn i økonomien tåler markedet før kortene mister verdi?
 - Skal nye moduser telle mot dagsgrensen for kamper (`match-limit.ts`), eller ha egne grenser?
+
+---
+
+# Runde 2: flere forslag
+
+Samme skala som over (S/M/L). Disse er mer rettet mot selve kampopplevelsen, kortutvikling og det sosiale mellom
+venner, siden første runde mest handlet om nye moduser.
+
+## Topp 5 i runde 2
+
+| # | Idé | Hentet fra | Innsats |
+| --- | --- | --- | --- |
+| 1 | VAR-utfordring: én overprøving per kamp | Tennis (Hawk-Eye), cricket (DRS), NFL (challenge) | M |
+| 2 | Evolusjoner: oppgrader et kort ved å løse oppgaver med det | FC Evolutions, Pokémon | M |
+| 3 | Ukens brawl: regelsett som skifter hver uke | Hearthstone Tavern Brawl, Mario Kart-cuper | S/M |
+| 4 | Tipp ekte kamper mot venner | Premier League Predictor, tippeligaer | M |
+| 5 | Sesong-Wrapped: delbart oppsummeringskort | Spotify Wrapped | S/M |
+
+## I selve kampen
+
+**VAR-utfordring** (tennis, cricket DRS, NFL challenge) – M
+Hvert lag har én utfordring per kamp som kan brukes på et mål mot deg, en straffe eller et rødt kort. Utfallet
+trekkes med samme sannsynlighetsmotor som skuddene (rundt 30 % at dommeren snur), og en mislykket utfordring
+koster den. Gir en ny avgjørelse midt i live-kampen og spenning rundt hver tvilsom hendelse.
+
+**Mega-skudd** (Mario Strikers, Sensible Soccer) – M
+Én ladet sjanse per kamp: spilleren holder inne for å lade, og skuddet blir vanskeligere å redde, men har lavere
+sjanse for å treffe rammen hvis man lader for lenge. Bygger på valgvinduet i `TimelineShot` (`SHOT_CHOICE_MS`).
+
+**Spillerroller** (Football Manager, NHL-linjer) – L
+Hver spiller får en instruks (f.eks. «blir bak», «går fremover», «bærer ballen»). Roller fordeler hvem som får
+sjanser og hvem som scorer, og gir en grunn til å bruke alternative posisjoner, som allerede finnes.
+
+**Handikap i vennekamper** (golf, Mario Kart gummibånd) – S
+Når et lag er mye sterkere enn det andre, gis det svakeste en liten ratingjustering automatisk (valgfritt, slått av
+i sesonger). Gjør at venner med ulikt nivå fortsatt har en jevn kamp. `ratingWeight` i kickoff-eventet viser at motoren
+allerede har et sted for dette.
+
+## Kortene og samlingen
+
+**Evolusjoner** (FC Evolutions) – M
+Et kort kan «evolveres» ved å fullføre krav mens det står i troppen: spille 5 kamper, score 3 mål, holde nullen
+to ganger. Belønningen er +1 til +3 rating eller en ny alternativ posisjon. Gir duplikater og lavt vurderte kort
+en bruk, og setter en naturlig grense (maks tre evolusjoner per kort).
+
+**Spillerform med piler** (FIFA, Football Manager) – S/M
+Kortet viser en pil opp eller ned etter hvor bra spilleren er i form i ekte fotball. Dataene hentes allerede fra
+FotMob (`fotmob_form`, migrering 0118). Pilen kan også gi ±1 i kamp, så det lønner seg å følge med på formen.
+
+**Live-oppgradering fra ekte kamper** (FIFA Live, Fantasy) – M
+Gjør en spiller hat-trick i en ekte kamp, får kortet hans +1 til neste fredag. Samme FotMob-kilde som over, og gir
+en grunn til å følge ekte fotball på helgene.
+
+**Speidere** (Clash Royale-kister, Football Manager, idle-spill) – M
+Send en speider til en liga eller nasjon i 8 timer, og han kommer tilbake med ett kort fra den. Én plass i
+begynnelsen, flere med nivået. Gir en grunn til å åpne appen to ganger om dagen.
+
+## Det sosiale
+
+**Draft mot venner** (NFL/ESPN snake draft) – L
+Vennene drafter samtidig i en felles pool, og hver spiller kan bare tas av én. Så møtes lagene i en vennesesong.
+`draft-core.ts` finnes, men i dag er motstanderne AI.
+
+**Ukens brawl** (Hearthstone Tavern Brawl, Mario Kart-cuper) – S/M
+Et regelsett som skifter hver uke og gir en egen liten tabell: bare spillere under 80, bare nordmenn, bare én
+liga, maks total rating 900. Billig å lage fordi det bare er et filter på troppen, og gir variasjon uten ny motor.
+
+**Tipp ekte kamper** (Premier League Predictor) – M
+Tipp resultatene i helgens ekte kamper mot vennene dine og få MB for riktig utfall. FotMob-oppsettet i
+`scripts/fotmob` henter allerede ligadata, så terminlisten er ikke noe nytt.
+
+**Trofeskap og merker** (Xbox/PlayStation-trofeer) – S/M
+Små merker for ting du har gjort: første 90+ i pakke, 10 seire på rad, mestertittel, 100 kamper. Vises på profilen og
+kan deles. Billig, og gir en grunn til å fullføre ting som ikke har premie fra før.
+
+**Dagens spiller** (Wordle, Immaculate Grid) – S/M
+Et daglig puslespill i quizen: gjett spilleren ut fra klubbene, nasjonen og alderen, med seks forsøk. Quizen
+virker uten innlogging og uten nett, så dette kan bli innfallsporten for nye brukere, og resultatet kan deles som
+emoji-ruter.
+
+**Sesong-Wrapped** (Spotify Wrapped) – S/M
+Når en sesong er ferdig, lages et delbart kort: flest mål, beste spiller, lengste rekke, mest brukte formasjon.
+Alt ligger allerede i kamplogg og tabell.
+
+## Anbefalt rekkefølge for runde 2
+
+1. **Handikap i vennekamper** og **Ukens brawl**: små, og begge gjør vennekampene jevnere og mer varierte.
+2. **VAR-utfordring**: den enkelteste endringen som merkes i selve live-kampen.
+3. **Evolusjoner**: gir kortsamlingen en retning, men må balanseres mot pakkeprisene.
+4. **Dagens spiller**: lite arbeid, og kan trekke inn nye brukere.
