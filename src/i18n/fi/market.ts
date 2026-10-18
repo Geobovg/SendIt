@@ -45,7 +45,7 @@ const packDescriptions: Record<string, string> = {
   skadoosh_dude: "Viisitoista korttia, kaikki 80+, yksi 88+, kaksi 86+ ja neljä 84+ taattu. Enintään 1 päivässä.",
   stjerneutvalg: "Kahdeksan korttia, kaikki 82+, yksi 87+ ja kaksi 85+ taattu. Enintään 3 päivässä.",
   formpakka: "Yksi erikoiskortti (inform tai honorable mention) ja viisi 83+ korttia, yksi 86+ ja kaksi 84+ taattu. Enintään 3 päivässä.",
-  kachow_pal: "Yhdeksän korttia: yksi TOTS-kortti (88+) ja kahdeksan 86+ korttia, yksi 90+ ja kaksi 88+ taattu, ja noin 9 % mahdollisuus Iconiin. Enintään 1 päivässä.",
+  kachow_pal: "Yhdeksän korttia: yksi erikoiskortti 88+ (inform tai honorable mention) ja kahdeksan 86+ korttia, yksi 90+ ja kaksi 88+ taattu, ja noin 9 % mahdollisuus Iconiin. Enintään 1 päivässä.",
 };
 
 export const market = {
