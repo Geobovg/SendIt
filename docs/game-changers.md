@@ -193,3 +193,93 @@ Alt ligger allerede i kamplogg og tabell.
 2. **VAR-utfordring**: den enkelteste endringen som merkes i selve live-kampen.
 3. **Evolusjoner**: gir kortsamlingen en retning, men må balanseres mot pakkeprisene.
 4. **Dagens spiller**: lite arbeid, og kan trekke inn nye brukere.
+
+---
+
+# Runde 3: mer arkade
+
+Samme skala (S/M/L). Denne runden er hentet fra arkadehallen: kjappe økter, synlige poeng, sjefer, bonusbaner og
+mye «juice». Tanken er at hver økt skal kunne være to minutter, og at det alltid er en grunn til «bare én til».
+
+## Topp 5 i runde 3
+
+| # | Idé | Hentet fra | Innsats |
+| --- | --- | --- | --- |
+| 1 | Ukens sjef: alle slår samme superlag sammen | Pokémon GO-raids, Destiny, arkadesjefer | M/L |
+| 2 | Scenariobaner med 1–3 stjerner | Angry Birds, Super Mario, PES-utfordringer | M |
+| 3 | Arkadefølelse i kampen («juice») | Mortal Kombat, NBA Jam, Street Fighter | S |
+| 4 | Kaosregler i kampen (mutatorer) | Rocket League Rumble, Mario Party | M |
+| 5 | Straffe-rush: 60 sekunder på tid | Arkade-tidsrekorder | S/M |
+
+## Sjefer og baner
+
+**Ukens sjef** (arkadesjefer, Pokémon GO-raids) – M/L
+Hver mandag dukker et superlag opp (f.eks. «Galaktisk XI» av 99-spillere) med en felles livslinje som alle
+brukere deler. Målene du scorer i kampene mot sjefen, trekker fra livslinjen, og alle kampene teller. Når sjefen
+er slått, får alle som har bidratt en pakke, størrelsen etter hvor mange mål de la inn. Gir hele appen et felles
+mål og en grunn til å komme innom daglig. Må ha egen tabell for felles skade og et tak per bruker.
+
+**Scenariobaner** (Angry Birds, Super Mario, PES-utfordringer) – M
+Håndlagde utfordringer med fast utgangspunkt: «du ligger under 0–2 etter 60 minutter, score tre mål på 30»,
+«hold nullen med ti mann», «vinn uten å bruke byttene». Hver bane gir 1–3 stjerner, og stjernene låser opp neste
+bane og små premier. Krever at kampmotoren kan starte midt i en kamp (minutt og stilling), men resten av
+timeline-eventene er de samme (`MatchClock`).
+
+**Bonusbane etter hver sesong** (Sonic, Pac-Man mellomspill) – S/M
+Når sesongen er ferdig, kan du spille én 30 sekunders bonusbane for en liten ekstra premie. Samme minispill som
+i straffe-rush under, så koden deles.
+
+## I kampen
+
+**Arkadefølelse («juice»)** (Mortal Kombat, NBA Jam) – S
+Skjermristing på mål, «GOAL!» i stor tekst, treghet i et sekund før et straffeskudd, kommentatorlyder og en «PERFECT!»
+når du leser keeperen riktig. Ingenting av dette endrer motoren, bare hvordan den kjennes. `audio-player.tsx` og
+`scene/`-komponentene finnes allerede.
+
+**Kaosregler / mutatorer** (Rocket League Rumble, Mario Party) – M
+Før en kamp, eller i en vennesesong, trekkes en regel: «gullmål» (mål i siste kvarter teller dobbelt), «ti mot ti»,
+«ingen keeper de siste fem», «regn» (færre sjanser, flere skudd fra distanse). Ulikt ukens brawl (som filtrerer
+troppen) endrer disse selve kampen. Kan legges inn som valgfri regel i vennekamper først.
+
+**Straffe-rush** (arkade-tidsrekorder) – S/M
+60 sekunder på å skyte så mange straffer som mulig mot en keeper som blir raskere. Poeng for hvert mål, bonus for
+serier, og en global highscore-liste. Samme valgvindu som `TimelineShot`, men uten sesongen rundt.
+
+## Pakker og premier
+
+**Plinko-pakke** (Plinko i The Price Is Right, pachinko) – M
+Slipp en ball ned et brett, og hvor den lander, avgjør hvilken pakke du får. Sannsynlighetene ligger i brettets
+fysikk, men de må være de samme som vi viser for pakkene (`prosent-sjanse-skal-stemme` er en tidligere sak her).
+Kan brukes som daglig gratisforsøk og bygger på animasjonen i `pack-walkout.tsx`.
+
+**Gripekran** (UFO-catcher) – M
+En kran med åtte synlige kort. Du styrer den og slipper ned for å gripe ett, og treffer du, er kortet ditt. I
+motsetning til en vanlig pakke ser du hva du går etter, så det er en ferdighetsbasert pakke. Kranen fylles på
+daglig, og dyrere kort er lettere å miste.
+
+**Spill videre?-stige** (arkadens bonusrunde) – S/M
+Etter en seier kan du ta premien eller spille videre for større premie, opp til tre trinn. Et tap tar bort det
+som stod på spill. Bruk bare virtuelle MB, ha et lavt tak og la det være valgfritt, siden dette ligner
+pengespill og appen har unge brukere.
+
+**Hjerter i stedet for kampkvote** (Candy Crush, Duolingo) – S
+Dagens kampgrense (`match-limit.ts`) vises som fem hjerter som fylles med tiden, med nedtelling til neste. Samme regler
+som i dag, bare tydeligere, og den som er tom, ser når den får et nytt hjerte.
+
+## Små, billige arkadeting
+
+**Juksekoder** (Konami-koden, spillkoder) – S
+Skriv en kode som deles på Discord eller i chatten, og få en liten premie én gang. Koder med navn som `UPUPDOWN` eller
+`PIXEL`. Bygger på kodefeltene vi har til invitasjoner og må ha en tabell som begrenser hver kode til én bruker.
+
+**Pixelkort og 8-bit-tema** (retrospill) – S/M
+Et valgfritt retro-utseende på kort og banen med pikselert skrift og chiptune. `tournament-theme.tsx` og `theme.ts` har
+allerede temasystemet. Kan låses opp ved å fullføre noe, og er rene kosmetiske endringer.
+
+## Anbefalt rekkefølge for runde 3
+
+1. **Juice** og **hjerter**: nesten ingen risiko, og de endrer følelsen av appen med en gang.
+2. **Straffe-rush**: gir highscore-lista noe å vise, og kan gjenbrukes som bonusbane.
+3. **Scenariobaner**: den beste måten å lære nye spillere kampene på, i tillegg til at de er kjekke for gamle.
+4. **Ukens sjef**: den store, og bør få en ADR før den bygges. Spesielt er det verdt å bestemme hvor mye skade
+   hver bruker kan legge inn, så ikke de som spiller mest, avgjør alt.
