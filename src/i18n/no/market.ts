@@ -21,11 +21,9 @@ const packNames: Record<string, string> = {
   sjeldne_spillere: "Sjeldne spillere",
   jumbo_premium_gull: "Jumbo premium gull",
   skadoosh_dude: "Skadoosh dude",
-  gullrush: "Gullrush",
   stjerneutvalg: "Stjerneutvalg",
   formpakka: "Formpakka",
   ikonjakt: "Ikonjakt",
-  legendepakka: "Legendepakka",
 };
 
 const packDescriptions: Record<string, string> = {
@@ -48,11 +46,9 @@ const packDescriptions: Record<string, string> = {
   sjeldne_spillere: "Fem kort, alle på 80 eller bedre, og minst ett på 83+. Maks 3 per dag.",
   jumbo_premium_gull: "Åtte kort, alle 79+, garantert tre på 80+ og ett på 83+. Maks 3 per dag.",
   skadoosh_dude: "Femten kort, alle 80+, garantert ett på 88+, to på 86+ og fire på 84+. Maks 1 per dag.",
-  gullrush: "Fem kort, alle 78+, garantert to på 80+ og ett på 83+.",
   stjerneutvalg: "Åtte kort, alle 82+, garantert ett på 87+ og to på 85+. Maks 3 per dag.",
   formpakka: "Ett spesialkort (inform eller honorable mention) og fem kort på 83+, garantert ett på 86+ og to på 84+. Maks 3 per dag.",
-  ikonjakt: "Seks kort, alle 86+, garantert to på 88+, og ca. 17 % sjanse for en Icon. Maks 2 per dag.",
-  legendepakka: "Tolv kort: ett TOTS-kort og elleve på 86+, garantert ett på 90+ og tre på 88+. Ca. 33 % sjanse for en Icon. Maks 1 per dag.",
+  ikonjakt: "Åtte kort, alle 86+, garantert ett på 90+ og to på 88+, og ca. 25 % sjanse for en Icon. Maks 1 per dag.",
 };
 
 export const market: MarketDict = {

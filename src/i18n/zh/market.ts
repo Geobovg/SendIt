@@ -18,11 +18,9 @@ const packNames: Record<string, string> = {
   sjeldne_spillere: "稀有球员包",
   jumbo_premium_gull: "巨型高级黄金包",
   skadoosh_dude: "Skadoosh dude",
-  gullrush: "黄金热潮",
   stjerneutvalg: "明星精选",
   formpakka: "状态包",
   ikonjakt: "Icon 追猎",
-  legendepakka: "传奇包",
 };
 
 const packDescriptions: Record<string, string> = {
@@ -45,11 +43,9 @@ const packDescriptions: Record<string, string> = {
   sjeldne_spillere: "五张卡，全部 80 或以上，且至少一张 83+。每天最多 3 次。",
   jumbo_premium_gull: "八张卡，全部 79+，保底三张 80+ 和一张 83+。每天最多 3 次。",
   skadoosh_dude: "十五张卡，全部 80+，保底一张 88+、两张 86+ 和四张 84+。每天最多 1 次。",
-  gullrush: "五张卡，全部 78+，保底两张 80+ 和一张 83+。",
   stjerneutvalg: "八张卡，全部 82+，保底一张 87+ 和两张 85+。每天最多 3 次。",
   formpakka: "一张特殊卡（状态卡或荣誉提名）和五张 83+ 的卡，保底一张 86+ 和两张 84+。每天最多 3 次。",
-  ikonjakt: "六张卡，全部 86+，保底两张 88+，约 17% 几率获得 Icon。每天最多 2 次。",
-  legendepakka: "十二张卡：一张 TOTS 卡和十一张 86+ 的卡，保底一张 90+ 和三张 88+。约 33% 几率获得 Icon。每天最多 1 次。",
+  ikonjakt: "八张卡，全部 86+，保底一张 90+ 和两张 88+，约 25% 几率获得 Icon。每天最多 1 次。",
 };
 
 export const market = {
