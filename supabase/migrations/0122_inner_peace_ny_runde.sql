@@ -1,9 +1,13 @@
 -- Inner Peace, ny runde med det endelige utvalget. PR #177 (0116 og 0117) ble merget og kjørt i produksjon før de siste justeringene,
 -- så databasen har den første utgaven (Eredivisie- og Liga Portugal-spillere, Thauvin, Mbappé og tre mindre kjente keepere). 0116 kan
--- ikke endres etter at den er på main, og noen kan allerede eie kort fra den første runden. Derfor:
+-- ikke endres etter at den er på main, så alt gjøres her:
 -- * De 30 endelige kortene legges i en ny Inner Peace-runde. Pakker trekker bare fra den nyeste runden.
--- * Kort fra den første runden som noen eier, er urørt. De beholder rating og stats og kan spilles, selges og byttes som før.
--- * Kort fra den første runden som ingen eier, slettes.
+-- * De 20 spillerne som bare var i den første utgaven (Thauvin, Mbappé, Pavlidis, Hadj Moussa og de andre) tas ut nå, også hos de som
+--   har fått kortet. Eierne får i stedet et av de nye kortene, byttet 1 til 1 etter rating og posisjon (tabellen står i 2).
+--   Kortet bytter plass i klubben: det mister plassen i elleveren og benken (som når et kort selges), havner på lageret hvis eieren
+--   allerede har spilleren i troppen, og en aktiv annonse på markedet avlyses. Kortet beholder id-en sin, så eierskap og historikk følger med.
+-- * De 10 spillerne som er med i begge utgavene (Messi, Olise, Berg, Pavlović, Camara, Dybala, Rogers, Cherki, João Pedro og Luis Díaz) er
+--   urørt hos eierne, også der ratingen er endret. Kort fra den første runden som ingen eier, slettes.
 -- Utvalget (valgt 18.10.2026, se 0116 for metoden): Messi er beholdt på 95 som Oogway. De 29 andre er kjente og lovende spillere fra de fem
 -- store ligaene (Premier League, LaLiga, Serie A, Bundesliga og Ligue 1), pluss nordmenn, som har gjort det best i år ifølge FotMob, med
 -- best rating til de beste. Ratingen følger FotMobs snittrating i hovedserien for 2026/27, justert for spilletid ved at ratingen trekkes
@@ -18,7 +22,7 @@
 -- av verdien, og dermed ca. 1300 MB (ca. 37 %). Hvor mye man får for kortene på overgangsmarkedet, avhenger av prisene folk betaler der.
 -- Hvis en av spillerne ikke finnes i katalogen, feiler migreringen i stedet for å lage færre enn 30 kort.
 
--- 1) Den nye runden. Pakkene trekker bare fra den nyeste Inner Peace-runden (se 3).
+-- 1) Den nye runden. Pakkene trekker bare fra den nyeste Inner Peace-runden (se 4).
 insert into special_rounds (kind, starts_at, ends_at) values ('inner_peace', '2026-10-18 17:00:00+02', '2100-01-01 00:00:00+00')
 on conflict (kind, starts_at) do nothing;
 
@@ -72,13 +76,70 @@ begin
 end;
 $fn$;
 
--- 2) Kort fra den første runden (0116) som ingen eier, slettes. Eide kort er urørt.
+-- 2) Bytte av de 20 spillerne som er tatt ut. Hver rad: kortet fra den første runden (gammel) og kortet eieren får (ny), valgt etter
+-- rating og posisjon. Der det er flere gamle enn nye på samme posisjon (keepere og midtstoppere), deler to gamle ett nytt.
+--   Thauvin RW 92 -> Ødegaard CAM 93          Hadj Moussa RW 93 -> Nusa LW 92           Mbappé ST 92 -> Nico Paz CAM 91
+--   Pavlidis ST 93 -> Aubameyang ST 89        Grüll LW 91 -> Hauge LW 89                Groß CM 91 -> Anderson CM 89
+--   Anton CB 90 -> Cubarsí CB 89              Upamecano CB 89 -> Huijsen CB 88          Ramón CB 89 -> Huijsen CB 88
+--   Read RB 89 -> Hall LB 89                  Gutiérrez LB 88 -> Davies LB 90           Schick ST 89 -> Conceição RW 88
+--   Sinayoko ST 88 -> Mastantuono RW 88       Füllkrug ST 88 -> Diomande RW 88          Gloukh CAM 88 -> Uzun CAM 88
+--   Brandt CAM 88 -> Güler CAM 89             Doumbia CAM 88 -> Fermín López CAM 89
+--   Vallés GK 90 -> Joan García GK 91         Dahmen GK 90 -> Joan García GK 91         Caprile GK 89 -> Trafford GK 88
+do $fn$
+declare
+  old_round uuid := (select id from special_rounds where kind = 'inner_peace' and starts_at = '2026-10-18 00:00:00+02');
+  new_round uuid := (select id from special_rounds where kind = 'inner_peace' and starts_at = '2026-10-18 17:00:00+02');
+  swap record;
+  owned record;
+  new_card special_cards%rowtype;
+  new_catalog player_catalog%rowtype;
+  swapped integer := 0;
+begin
+  for swap in
+    select * from (values
+      ('florian-thauvin', 'odegaard'), ('anis-hadj-moussa', 'nusa'), ('mbappe', 'nico-paz'),
+      ('vangelis-pavlidis', 'pierre-emerick-aubameyang'), ('marco-grull', 'jens-petter-hauge'), ('pascal-gross', 'elliot-anderson'),
+      ('waldemar-anton', 'cubarsi'), ('dayot-upamecano', 'dean-huijsen'), ('jacobo-ramon', 'dean-huijsen'),
+      ('givairo-read', 'lewis-hall'), ('miguel-gutierrez', 'davies'), ('patrik-schick', 'francisco-conceicao'),
+      ('lassine-sinayoko', 'franco-mastantuono'), ('niclas-fullkrug', 'yan-diomande'), ('oscar-gloukh', 'can-uzun'),
+      ('julian-brandt', 'arda-guler'), ('kamory-doumbia', 'fermin-lopez'),
+      ('alvaro-valles', 'joan-garcia'), ('finn-dahmen', 'joan-garcia'), ('elia-caprile', 'james-trafford')
+    ) as pair(old_slug, new_slug)
+  loop
+    select * into new_catalog from player_catalog where slug = swap.new_slug;
+    select * into new_card from special_cards where round_id = new_round and catalog_id = new_catalog.id;
+    if new_card.id is null then raise exception 'Fant ikke det nye kortet for %', swap.new_slug; end if;
+    for owned in
+      select card.id, card.owner_id, card.location
+      from manager_cards card
+      join special_cards old_card on old_card.id = card.special_card_id
+      join player_catalog old_catalog on old_catalog.id = old_card.catalog_id
+      where old_card.round_id = old_round and old_catalog.slug = swap.old_slug
+    loop
+      update market_listings set status = 'cancelled' where card_id = owned.id and status = 'active';
+      perform public.drop_card_from_lineup(owned.owner_id, owned.id);
+      update manager_cards set
+        catalog_id = new_catalog.id, name = new_catalog.name, position = new_catalog.position, overall = new_card.overall,
+        attributes = new_card.attributes, alt_positions = new_catalog.alt_positions, acquired_price = new_card.price, special_card_id = new_card.id,
+        location = case when owned.location = 'squad' and exists (
+          select 1 from manager_cards other
+          where other.owner_id = owned.owner_id and other.catalog_id = new_catalog.id and other.location = 'squad' and other.id <> owned.id
+        ) then 'storage' else owned.location end
+      where id = owned.id;
+      swapped := swapped + 1;
+    end loop;
+  end loop;
+  raise notice 'Byttet % Inner Peace-kort fra den første runden', swapped;
+end;
+$fn$;
+
+-- 3) Kort fra den første runden (0116) som ingen eier, slettes. Eide kort fra de ti spillerne som er med i begge utgavene er urørt.
 delete from special_cards card
 where card.kind = 'inner_peace'
   and card.round_id = (select id from special_rounds where kind = 'inner_peace' and starts_at = '2026-10-18 00:00:00+02')
   and not exists (select 1 from manager_cards owned where owned.special_card_id = card.id);
 
--- 3) Scope 'inner_peace' trekker bare fra den nyeste runden, vektet etter rating (0,625 per rating over 88). Resten er lik versjonen i 0116,
+-- 4) Scope 'inner_peace' trekker bare fra den nyeste runden, vektet etter rating (0,625 per rating over 88). Resten er lik versjonen i 0116,
 -- så 'mix' og alle de andre scopene virker som før. Skal funksjonen skrives om senere, må 'inner_peace' tas med.
 create or replace function public.draw_special_card(scope text, excluded uuid[])
 returns uuid
