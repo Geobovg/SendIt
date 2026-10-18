@@ -6,6 +6,7 @@ import { InformGallery } from "@/components/inform-gallery";
 import { TotsGallery } from "@/components/tots-gallery";
 import { IconGallery } from "@/components/icon-gallery";
 import { HonorableGallery } from "@/components/honorable-gallery";
+import { InnerPeaceGallery } from "@/components/inner-peace-gallery";
 import { ManagerCareer } from "@/components/manager-career";
 import { ManagerMatchHistory } from "@/components/manager-match-history";
 import { ManagerTopBar, managerSections, SubTabs, type ManagerSectionKey } from "@/components/manager-navigation";
@@ -13,7 +14,7 @@ import { AiSeasonDetails, FriendSeasonsPanel } from "@/components/season-panels"
 import { SbcPanel } from "@/components/sbc-panel";
 import { TransferMarket } from "@/components/transfer-market";
 import { currentUser, sessionUserId } from "@/lib/auth";
-import { getCareerChallenges, getCareerProfile, getCatalogPage, getInformHistory, getManagerCareer, getManagerRating, getPackShop, getSpecialCardsOfKind, getTotsCards, listManagerMatchHistory, listTransferMarket, ratingFromSquad } from "@/lib/career";
+import { getCareerChallenges, getCareerProfile, getCatalogPage, getInformHistory, getManagerCareer, getManagerRating, getInnerPeaceCards, getPackShop, getSpecialCardsOfKind, getTotsCards, listManagerMatchHistory, listTransferMarket, ratingFromSquad } from "@/lib/career";
 import { defaultCatalogFilters } from "@/lib/catalog-filters";
 import { listFriends } from "@/lib/friends";
 import { getDraftPage } from "@/lib/draft";
@@ -42,7 +43,7 @@ export default async function ManagerCareerSectionPage({ params, searchParams }:
   const draftPromise = active === "draft" ? getDraftPage(userId) : Promise.resolve(null);
   // Oppgjøret i draften må skje før budsjettet leses, så premien vises med en gang.
   const careerPromise = active === "draft" ? draftPromise.then(() => getCareerProfile(userId)) : getCareerProfile(userId);
-  const [user, career, manager, ratingInfo, catalogPage, listings, friendsData, season, history, sbcData, shop, informRounds, totsCards, iconCards, honorableCards, draftData] = await Promise.all([
+  const [user, career, manager, ratingInfo, catalogPage, listings, friendsData, season, history, sbcData, shop, informRounds, totsCards, iconCards, honorableCards, innerPeaceCards, draftData] = await Promise.all([
     currentUser(),
     careerPromise,
     needsCards.has(active) ? getManagerCareer(userId) : null,
@@ -58,6 +59,7 @@ export default async function ManagerCareerSectionPage({ params, searchParams }:
     active === "tots" ? getTotsCards() : null,
     active === "icons" ? getSpecialCardsOfKind("icon") : null,
     active === "honorable" ? getSpecialCardsOfKind("honorable") : null,
+    active === "innerpeace" ? getInnerPeaceCards() : null,
     draftPromise,
   ]);
   if (!user) redirect("/login");
@@ -74,6 +76,7 @@ export default async function ManagerCareerSectionPage({ params, searchParams }:
   else if (active === "tots") content = <TotsGallery cards={totsCards!} />;
   else if (active === "icons") content = <IconGallery cards={iconCards!} />;
   else if (active === "honorable") content = <HonorableGallery cards={honorableCards!} />;
+  else if (active === "innerpeace") content = <InnerPeaceGallery cards={innerPeaceCards!} />;
   else if (active === "draft") content = <DraftPanel data={draftData!} budget={career.manager_budget} />;
   else if (active === "pakker") content = <ManagerCareer {...manager!} budget={career.manager_budget} section="packs" shop={shop!} />;
   else if (active === "sesong") {

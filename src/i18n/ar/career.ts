@@ -22,6 +22,7 @@ export const career = {
     tots: "TOTS",
     icons: "Icons",
     honorable: "Honorable mention",
+    innerpeace: "Inner Peace",
   },
   subTabs: {
     squad: "فرقة",
@@ -287,6 +288,11 @@ export const career = {
     intro: (count: number) => `${count} بطاقة Honorable mention للاعبين الشباب المتألقين. ترقيات كبيرة إلى 85–90، وأندر بخمس مرات من بطاقات الفورمة في الحزم.`,
     boost: (boost: number) => `+${boost} عن البطاقة العادية`,
     empty: "لا توجد بطاقات Honorable mention هنا.",
+  },
+  innerPeace: {
+    intro: (count: number) => `${count} بطاقة Inner Peace للاعبين الأفضل حالًا هذا الموسم وفق FotMob. هدوء وتحكم وانسيابية، بتقييم 88–95. من Kachow pal فقط، وكلما ارتفع التقييم زادت ندرة البطاقة.`,
+    boost: (boost: number) => `+${boost} عن البطاقة العادية`,
+    empty: "لا توجد بطاقات Inner Peace هنا.",
   },
   informs: {
     intro: (total: number, rounds: number) => `${total} بطاقة فورمة من ${rounds} جولة. كل جمعة الساعة 18:00 يحصل اللاعبون الأفضل أداءً في المباريات الحقيقية على بطاقات جديدة بتقييم 82–90. كلما ارتفع التقييم، صارت أندر في الحزم.`,

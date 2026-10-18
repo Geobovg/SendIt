@@ -22,6 +22,7 @@ export const career = {
     tots: "TOTS",
     icons: "Icons",
     honorable: "Honorable mention",
+    innerpeace: "Inner Peace",
   },
   subTabs: {
     squad: "Squad",
@@ -287,6 +288,11 @@ export const career = {
     intro: (count: number) => `${count} Honorable mention cards for young players who have impressed. Big upgrades to 85–90, and five times rarer than Informs in packs.`,
     boost: (boost: number) => `+${boost} over the regular card`,
     empty: "No Honorable mention cards here.",
+  },
+  innerPeace: {
+    intro: (count: number) => `${count} Inner Peace cards for the players in the best form this season, according to FotMob. Calm, control and flow, rated 88–95. Only from Kachow pal, and the higher the rating, the rarer the card.`,
+    boost: (boost: number) => `+${boost} over the regular card`,
+    empty: "No Inner Peace cards here.",
   },
   informs: {
     intro: (total: number, rounds: number) => `${total} Inform cards from ${rounds} ${rounds === 1 ? "round" : "rounds"}. Every Friday at 18:00, the players who performed best in real matches get new cards rated 82–90. The higher the rating, the rarer in packs.`,

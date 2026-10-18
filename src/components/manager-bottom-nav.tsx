@@ -9,7 +9,7 @@ const tabs = [
   { href: "/managerkarriere", label: "home", icon: "⌂", match: (path: string) => path === "/managerkarriere" },
   { href: "/managerkarriere/lagtropp", label: "squad", icon: "◈", match: (path: string) => path.startsWith("/managerkarriere/lagtropp") || path.startsWith("/managerkarriere/klubblager") },
   { href: "/managerkarriere/spillermarked", label: "market", icon: "↗", match: (path: string) => path.startsWith("/managerkarriere/spillermarked") },
-  { href: "/managerkarriere/pakker", label: "packs", icon: "✦", match: (path: string) => path.startsWith("/managerkarriere/pakker") || path.startsWith("/managerkarriere/informs") || path.startsWith("/managerkarriere/icons") || path.startsWith("/managerkarriere/honorable") },
+  { href: "/managerkarriere/pakker", label: "packs", icon: "✦", match: (path: string) => path.startsWith("/managerkarriere/pakker") || path.startsWith("/managerkarriere/informs") || path.startsWith("/managerkarriere/icons") || path.startsWith("/managerkarriere/honorable") || path.startsWith("/managerkarriere/innerpeace") },
   { href: "/managerkarriere/sesong", label: "season", icon: "▤", match: (path: string) => ["/managerkarriere/sesong", "/managerkarriere/kamplobby", "/managerkarriere/karrierehistorikk"].some((prefix) => path.startsWith(prefix)) },
 ] as const;
 

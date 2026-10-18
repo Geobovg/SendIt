@@ -320,6 +320,20 @@ export async function getSpecialCardsOfKind(kind: "icon" | "honorable"): Promise
   });
 }
 
+/** Alle Inner Peace-kortene i den nyeste runden (migrering 0116 og 0122), sortert etter rating. Kort fra eldre runder er ikke med: eierne beholder dem, men de trekkes ikke lenger. */
+export async function getInnerPeaceCards(): Promise<InformCard[]> {
+  const db = supabaseAdmin();
+  const { data: round, error: roundError } = await db.from("special_rounds").select("id").eq("kind", "inner_peace").order("starts_at", { ascending: false }).limit(1).maybeSingle();
+  if (roundError) throw new Error(roundError.message);
+  if (!round) return [];
+  const { data, error } = await db.from("special_cards").select("id, kind, overall, boost, attributes, player_catalog(slug, name, position, accent, club)").eq("round_id", round.id).order("overall", { ascending: false }).order("id");
+  if (error) throw new Error(error.message);
+  return (data ?? []).flatMap((row) => {
+    const catalog = Array.isArray(row.player_catalog) ? row.player_catalog[0] : row.player_catalog;
+    return catalog ? [{ id: row.id, slug: catalog.slug, name: catalog.name, position: catalog.position, overall: row.overall, boost: row.boost, accent: catalog.accent, club: catalog.club, attributes: row.attributes as Record<string, number>, special: row.kind as SpecialKind }] : [];
+  });
+}
+
 // Katalogen har 1300+ kort, og databasen gir maks 1000 rader per spørring. Derfor søkes,
 // filtreres og sorteres det her, og bare én side med kort hentes om gangen.
 export async function getCatalogPage(filters: CatalogFilters, offset = 0): Promise<{ cards: CatalogCard[]; total: number }> {

@@ -146,6 +146,7 @@ export const market = {
     allTots: "Ver todos los TOTS",
     allIcons: "Ver todos los Icons",
     allHonorable: "Ver todas las Honorable mentions",
+    allInnerPeace: "Ver todas las cartas Inner Peace",
     informPulled: "¡INFORM!",
     untradable: " · no vendible",
     specialGuarantee: (count: number, scope: "current" | "all" | "tots") => `${count}× ${scope === "current" ? "Inform" : scope === "tots" ? "TOTS" : "carta especial"}`,

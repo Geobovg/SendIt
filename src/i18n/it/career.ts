@@ -22,6 +22,7 @@ export const career = {
     tots: "TOTS",
     icons: "Icons",
     honorable: "Honorable mention",
+    innerpeace: "Inner Peace",
   },
   subTabs: {
     squad: "Squadra",
@@ -287,6 +288,11 @@ export const career = {
     intro: (count: number) => `${count} carte Honorable mention per i giovani che si sono distinti. Grandi upgrade a 85–90, e cinque volte più rare degli Inform nei pacchetti.`,
     boost: (boost: number) => `+${boost} rispetto alla carta normale`,
     empty: "Nessuna carta Honorable mention qui.",
+  },
+  innerPeace: {
+    intro: (count: number) => `${count} carte Inner Peace per i giocatori nella forma migliore di questa stagione secondo FotMob. Calma, controllo e fluidità, valutazione 88–95. Solo nel Kachow pal, e più alta è la valutazione, più rara è la carta.`,
+    boost: (boost: number) => `+${boost} rispetto alla carta normale`,
+    empty: "Nessuna carta Inner Peace qui.",
   },
   informs: {
     intro: (total: number, rounds: number) => `${total} carte Inform da ${rounds} ${rounds === 1 ? "turno" : "turni"}. Ogni venerdì alle 18:00 i giocatori migliori nelle partite reali ricevono nuove carte da 82–90. Più alto il valore, più rara nei pacchetti.`,

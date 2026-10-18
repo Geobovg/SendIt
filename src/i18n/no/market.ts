@@ -149,6 +149,7 @@ export const market: MarketDict = {
     allTots: "Se alle TOTS",
     allIcons: "Se alle Icons",
     allHonorable: "Se alle Honorable mentions",
+    allInnerPeace: "Se alle Inner Peace-kort",
     informPulled: "INFORM!",
     untradable: " · kan ikke selges",
     specialGuarantee: (count, scope) => `${count}× ${scope === "current" ? "inform" : scope === "tots" ? "TOTS" : "spesialkort"}`,

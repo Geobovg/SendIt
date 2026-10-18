@@ -26,6 +26,7 @@ export const career: CareerDict = {
     tots: "TOTS",
     icons: "Icons",
     honorable: "Honorable mention",
+    innerpeace: "Inner Peace",
   },
   subTabs: {
     squad: "Lagtropp",
@@ -292,6 +293,11 @@ export const career: CareerDict = {
     intro: (count: number) => `${count} Honorable mention-kort til unge spillere som har imponert. Store oppgraderinger til 85–90, og fem ganger sjeldnere enn informs i pakker.`,
     boost: (boost: number) => `+${boost} fra vanlig-kortet`,
     empty: "Ingen Honorable mention-kort her.",
+  },
+  innerPeace: {
+    intro: (count: number) => `${count} Inner Peace-kort til spillerne som er i best form i år ifølge FotMob. Ro, kontroll og flyt, med rating 88–95. Kommer bare fra Kachow pal, og høy rating er sjeldnere enn lav.`,
+    boost: (boost: number) => `+${boost} fra vanlig-kortet`,
+    empty: "Ingen Inner Peace-kort her.",
   },
   informs: {
     intro: (total: number, rounds: number) => `${total} inform-kort fra ${rounds} ${rounds === 1 ? "runde" : "runder"}. Hver fredag kl. 18:00 får spillerne som har spilt best i ekte kamper nye kort på 82–90. Jo høyere rating, jo sjeldnere i pakker.`,

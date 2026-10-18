@@ -146,6 +146,7 @@ export const market = {
     allTots: "عرض كل بطاقات TOTS",
     allIcons: "عرض كل بطاقات Icon",
     allHonorable: "عرض كل بطاقات Honorable mention",
+    allInnerPeace: "عرض كل بطاقات Inner Peace",
     informPulled: "فورمة!",
     untradable: " · غير قابلة للبيع",
     specialGuarantee: (count: number, scope: "current" | "all" | "tots") => `${count}× ${scope === "current" ? "بطاقة فورمة" : scope === "tots" ? "TOTS" : "بطاقة خاصة"}`,
