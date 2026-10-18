@@ -19,7 +19,7 @@
 -- Hurtigsalg gir 25 % av kortets verdi (30 % for inform). Med den antatte fordelingen gir Stjerneutvalg og Formpakka
 -- ca. 50–65 % av prisen tilbake hvis man selger alt, Skadoosh dude ca. 70 % (mot ca. 105 % ved 1000 MB, der man kunne
 -- tjene på å åpne og selge) og Kachow pal ca. 37 %, med Inner Peace-kortet. Det siste er med vilje en dyr pakke for de som har mye MB.
--- Inner Peace-kortet gir ca. 300 MB ved hurtigsalg i snitt (vektet etter rating, se 0116).
+-- Inner Peace-kortet gir ca. 280 MB ved hurtigsalg i snitt (vektet etter rating, se 0116).
 
 -- 1) Skadoosh dude koster 1500 MB, og pakkene sorteres etter pris i butikken.
 update manager_packs set price = 1500, sort_order = 8 where key = 'skadoosh_dude';

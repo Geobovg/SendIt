@@ -1,22 +1,24 @@
 -- Spesialkort, femte type: Inner Peace. 30 spillere på 88–95. Temaet er roen fra Kung Fu Panda: Oogway, mesteren som aldri
 -- hastet, og Po, som finner ro og flyt når han slutter å tenke og bare spiller. Kortene går til de som er i flyt akkurat nå.
 -- * Messi er beholdt på 95. Han er Oogway, mesteren.
--- * De 29 andre er valgt etter FotMob (18.10.2026): de som har gjort det best i år, med best rating under Messi. Grunnlaget er
---   FotMobs snittrating i hovedserien for sesongen 2026/27 (profilsidene), justert for spilletid ved at ratingen trekkes mot 6,9
---   med en vekt på 360 minutter, så en toppkamp ikke slår 700 minutter jevn form. Minst 300 minutter og maks tre keepere.
---   Rekkefølgen gir ratingen: best 94, så 93 (2), 92 (3), 91 (4), 90 (5), 89 (6) og 88 (8). Messi på 95 er alene på toppen.
--- * Ratingen følger prestasjonen, ikke vanlig-kortet, så spillere med lavere vanlig-kort får store løft (opptil +19). Ratingen er
---   alltid minst ett over vanlig-kortet. Alle stats får samme løft som ratingen (maks 99), som for honorable mention.
---   Kortet koster 2 ganger verdien på ratingen.
--- * Utvalget er spillere fra de fem store ligaene (Premier League, LaLiga, Serie A, Bundesliga og Ligue 1) og nordmenn.
---   Grunnlaget er alle spillertroppene i de fem ligaene og i Eliteserien (112 lag), og de som finnes i katalogen og har høy
---   FotMob-rating er sjekket mot profilsiden for spilletid. Spillere uten minst 300 minutter er ikke vurdert (Aron Dønnum har
---   8,69, men bare 70 minutter). Nordmenn er med: Patrick Berg (Bodø/Glimt), Jens Petter Hauge (Bodø/Glimt) og Antonio Nusa
---   (RB Leipzig). Spillerne fra Eredivisie og Liga Portugal fra forrige utkast er byttet ut, og de 29 spillerne fra det første
+-- * De 29 andre er kjente og lovende spillere fra de fem store ligaene (Premier League, LaLiga, Serie A, Bundesliga og Ligue 1),
+--   pluss nordmenn, som har gjort det best i år ifølge FotMob (18.10.2026). Ratingen følger formen: FotMobs snittrating i
+--   hovedserien for 2026/27, justert for spilletid ved at ratingen trekkes mot 6,9 med en vekt på 360 minutter, så en toppkamp
+--   ikke slår 700 minutter jevn form. Minst 300 minutter.
+-- * «Kjent» og «lovende» er vurdert ut fra FotMob: markedsverdi, alder og navn. De fleste er 25 år eller yngre med markedsverdi
+--   over 20 millioner euro (Olise, Pavlović, Rogers, Cherki, Nico Paz, Nusa, Güler, Cubarsí, Mainoo og flere), pluss noen
+--   kjente veteraner (Dybala, Thauvin, Aubameyang) og nordmennene Berg, Hauge og Nusa. Ukjente spillere med lav markedsverdi
+--   og spillere som bare får +1 eller +2 (Bellingham, Mbappé) er ikke med.
+-- * Realistiske løft: ratingen er best 94, og ingen får mer enn 11 over vanlig-kortet, bortsett fra Patrick Berg (+14), som har
+--   spilt 1790 minutter i Eliteserien. De fleste får 5–11. Ratingen følger formen, så beste form gir best rating, men aldri mer
+--   enn 11 over vanlig-kortet. Alle stats får samme løft som ratingen (maks 99), som for honorable mention. Kortet koster 2
+--   ganger verdien på ratingen.
+-- * Utvalget er valgt fra alle spillertroppene i de fem ligaene og Eliteserien (112 lag), de som finnes i katalogen og har
+--   FotMob-rating og spilletid. Aron Dønnum har 8,69, men bare 70 minutter, og er ikke med. De 29 spillerne fra det første
 --   utkastet er ikke med igjen.
 -- * Kortet trekkes bare av pakker med special_scope 'inner_peace', foreløpig Kachow pal (0117). Lavere rating er vanligere, så
---   95 er sjeldnest: hvert kort vektes med 0,625 per rating over 88, og sjansen per trekk blir ca. 52 % for 88, 24 % for 89,
---   13 % for 90, 6 % for 91, 3 % for 92, 1,2 % for 93, 0,4 % for 94 og 0,2 % for 95. Det gir 90+ i ca. 24 %.
+--   95 er sjeldnest: hvert kort vektes med 0,625 per rating over 88, og sjansen per trekk blir ca. 51 % for 88, 32 % for 89,
+--   11 % for 90, 4 % for 91, 1,7 % for 92, 0,3 % for 94 og 0,2 % for 95. Det gir 90+ i ca. 17 %.
 -- * Hvis en av spillerne ikke finnes i katalogen i databasen, feiler migreringen i stedet for å lage færre enn 30 kort.
 
 -- 1) Inner Peace er en ny type i rundene og kortene, og et nytt scope for spesialkort i pakker.
@@ -33,35 +35,35 @@ on conflict (kind, starts_at) do nothing;
 
 with picks (slug, overall) as (values
   ('messi', 95),             -- Lionel Messi, Oogway: mesteren
-  ('olise', 94),                   -- Michael Olise, Bayern München: FotMob 8,55 på 483 min, 5 mål og 2 assist (vanlig-kort 85)
-  ('mbappe', 93),                  -- Kylian Mbappé, Real Madrid: FotMob 8,10 på 720 min, 7 mål og 2 assist (vanlig-kort 91)
-  ('patrick-berg', 93),            -- Patrick Berg, Bodø/Glimt, nordmann: FotMob 7,85 på 1790 min, 2 mål og 2 assist (vanlig-kort 74)
-  ('florian-thauvin', 92),         -- Florian Thauvin, Lens: FotMob 8,16 på 607 min, 3 mål og 6 assist (vanlig-kort 78)
-  ('marco-grull', 92),             -- Marco Grüll, Werder Bremen: FotMob 8,15 på 535 min, 2 mål og 5 assist (vanlig-kort 73)
-  ('aleksandar-pavlovic', 92),     -- Aleksandar Pavlović, Bayern München: FotMob 8,15 på 457 min, 2 mål og 1 assist (vanlig-kort 82)
-  ('lamine-camara', 91),           -- Lamine Camara, Monaco: FotMob 8,01 på 540 min, 0 mål og 1 assist (vanlig-kort 79)
-  ('pascal-gross', 91),            -- Pascal Groß, Brighton & Hove Albion: FotMob 7,98 på 540 min, 3 mål og 4 assist (vanlig-kort 80)
-  ('waldemar-anton', 91),          -- Waldemar Anton, Borussia Dortmund: FotMob 7,97 på 540 min, 0 mål og 1 assist (vanlig-kort 82)
-  ('paulo-dybala', 91),            -- Paulo Dybala, Roma: FotMob 7,99 på 496 min, 0 mål og 4 assist (vanlig-kort 81)
-  ('maximilian-mittelstadt', 90),  -- Maximilian Mittelstädt, VfB Stuttgart: FotMob 8,05 på 438 min, 1 mål og 1 assist (vanlig-kort 79)
-  ('morgan-rogers', 90),           -- Morgan Rogers, Chelsea: FotMob 7,90 på 613 min, 4 mål og 1 assist (vanlig-kort 83)
-  ('alvaro-valles', 90),           -- Álvaro Vallés, Real Betis: FotMob 7,81 på 810 min, 0 mål og 0 assist (vanlig-kort 75)
-  ('bellingham', 90),              -- Jude Bellingham, Real Madrid: FotMob 7,88 på 619 min, 3 mål og 2 assist (vanlig-kort 89)
-  ('finn-dahmen', 90),             -- Finn Dahmen, Augsburg: FotMob 7,93 på 540 min, 0 mål og 0 assist (vanlig-kort 76)
-  ('jens-petter-hauge', 89),       -- Jens Petter Hauge, Bodø/Glimt, nordmann: FotMob 7,69 på 1287 min, 5 mål og 4 assist (vanlig-kort 78)
-  ('rayan-cherki', 89),            -- Rayan Cherki, Manchester City: FotMob 8,04 på 395 min, 4 mål og 2 assist (vanlig-kort 84)
-  ('elia-caprile', 89),            -- Elia Caprile, Cagliari: FotMob 7,89 på 540 min, 0 mål og 0 assist (vanlig-kort 76)
-  ('matthias-ginter', 89),         -- Matthias Ginter, Freiburg: FotMob 7,95 på 450 min, 0 mål og 3 assist (vanlig-kort 79)
-  ('dayot-upamecano', 89),         -- Dayot Upamecano, Bayern München: FotMob 7,89 på 495 min, 1 mål og 0 assist (vanlig-kort 86)
-  ('patrik-schick', 89),           -- Patrik Schick, Bayer Leverkusen: FotMob 7,96 på 344 min, 5 mål og 1 assist (vanlig-kort 81)
-  ('jacobo-ramon', 88),            -- Jacobo Ramón, Como: FotMob 7,74 på 540 min, 1 mål og 0 assist (vanlig-kort 75)
-  ('nusa', 88),                    -- Antonio Nusa, RB Leipzig, nordmann: FotMob 7,79 på 466 min, 3 mål og 3 assist (vanlig-kort 83)
-  ('joao-pedro', 88),              -- João Pedro, Chelsea: FotMob 7,74 på 521 min, 5 mål og 3 assist (vanlig-kort 82)
-  ('lassine-sinayoko', 88),        -- Lassine Sinayoko, Paris FC: FotMob 7,70 på 521 min, 4 mål og 1 assist (vanlig-kort 74)
-  ('luis-diaz', 88),               -- Luis Díaz, Bayern München: FotMob 7,70 på 445 min, 4 mål og 1 assist (vanlig-kort 84)
-  ('miguel-gutierrez', 88),        -- Miguel Gutiérrez, Bayer Leverkusen: FotMob 7,70 på 443 min, 1 mål og 3 assist (vanlig-kort 78)
-  ('niclas-fullkrug', 88),         -- Niclas Füllkrug, Werder Bremen: FotMob 7,66 på 486 min, 6 mål og 0 assist (vanlig-kort 77)
-  ('kamory-doumbia', 88)          -- Kamory Doumbia, Brest: FotMob 7,60 på 568 min, 4 mål og 1 assist (vanlig-kort 72)
+  ('olise', 94),                      -- Michael Olise, Bayern München, 24 år: FotMob 8,55 på 483 min, 5 mål og 2 assist (vanlig-kort 85)
+  ('aleksandar-pavlovic', 92),        -- Aleksandar Pavlović, Bayern München, 22 år: FotMob 8,15 på 457 min, 2 mål og 1 assist (vanlig-kort 82)
+  ('paulo-dybala', 92),               -- Paulo Dybala, Roma, 32 år: FotMob 7,99 på 496 min, 0 mål og 4 assist (vanlig-kort 81)
+  ('morgan-rogers', 91),              -- Morgan Rogers, Chelsea, 24 år: FotMob 7,90 på 613 min, 4 mål og 1 assist (vanlig-kort 83)
+  ('rayan-cherki', 91),               -- Rayan Cherki, Manchester City, 23 år: FotMob 8,04 på 395 min, 4 mål og 2 assist (vanlig-kort 84)
+  ('nico-paz', 91),                   -- Nico Paz, Como, 22 år: FotMob 7,88 på 510 min, 1 mål og 1 assist (vanlig-kort 82)
+  ('lamine-camara', 90),              -- Lamine Camara, Monaco, 22 år: FotMob 8,01 på 540 min, 0 mål og 1 assist (vanlig-kort 79)
+  ('davies', 90),                     -- Alphonso Davies, Bayern München, 25 år: FotMob 8,02 på 362 min, 0 mål og 2 assist (vanlig-kort 84)
+  ('nusa', 90),                       -- Antonio Nusa, RB Leipzig, 21 år, nordmann: FotMob 7,79 på 466 min, 3 mål og 3 assist (vanlig-kort 83)
+  ('joao-pedro', 90),                 -- João Pedro, Chelsea, 25 år: FotMob 7,74 på 521 min, 5 mål og 3 assist (vanlig-kort 82)
+  ('luis-diaz', 90),                  -- Luis Díaz, Bayern München, 29 år: FotMob 7,70 på 445 min, 4 mål og 1 assist (vanlig-kort 84)
+  ('florian-thauvin', 89),            -- Florian Thauvin, Lens, 33 år: FotMob 8,16 på 607 min, 3 mål og 6 assist (vanlig-kort 78)
+  ('jens-petter-hauge', 89),          -- Jens Petter Hauge, Bodø/Glimt, 27 år, nordmann: FotMob 7,69 på 1287 min, 5 mål og 4 assist (vanlig-kort 78)
+  ('pierre-emerick-aubameyang', 89),  -- Pierre-Emerick Aubameyang, Deportivo A Coruña, 37 år: FotMob 7,70 på 560 min, 5 mål og 2 assist (vanlig-kort 78)
+  ('fermin-lopez', 89),               -- Fermín López, Barcelona, 23 år: FotMob 7,63 på 538 min, 4 mål og 3 assist (vanlig-kort 82)
+  ('arda-guler', 89),                 -- Arda Güler, Real Madrid, 21 år: FotMob 7,62 på 426 min, 1 mål og 2 assist (vanlig-kort 84)
+  ('cubarsi', 89),                    -- Pau Cubarsí, Barcelona, 19 år: FotMob 7,56 på 512 min, 0 mål og 2 assist (vanlig-kort 82)
+  ('elliot-anderson', 89),            -- Elliot Anderson, Manchester City, 23 år: FotMob 7,55 på 518 min, 0 mål og 1 assist (vanlig-kort 83)
+  ('jobe-bellingham', 89),            -- Jobe Bellingham, Borussia Dortmund, 21 år: FotMob 7,52 på 460 min, 0 mål og 1 assist (vanlig-kort 78)
+  ('lewis-hall', 89),                 -- Lewis Hall, Newcastle United, 22 år: FotMob 7,42 på 629 min, 1 mål og 1 assist (vanlig-kort 79)
+  ('patrick-berg', 88),               -- Patrick Berg, Bodø/Glimt, 28 år, nordmann: FotMob 7,85 på 1790 min, 2 mål og 2 assist (vanlig-kort 74)
+  ('kobbie-mainoo', 88),              -- Kobbie Mainoo, Manchester United, 21 år: FotMob 7,49 på 447 min, 0 mål og 1 assist (vanlig-kort 82)
+  ('james-trafford', 88),             -- James Trafford, Leeds United, 24 år: FotMob 7,38 på 540 min, 0 mål og 0 assist (vanlig-kort 80)
+  ('can-uzun', 88),                   -- Can Uzun, Eintracht Frankfurt, 20 år: FotMob 7,43 på 414 min, 2 mål og 0 assist (vanlig-kort 78)
+  ('francisco-conceicao', 88),        -- Francisco Conceição, Juventus, 23 år: FotMob 7,30 på 409 min, 1 mål og 1 assist (vanlig-kort 82)
+  ('joan-garcia', 88),                -- Joan García, Barcelona, 25 år: FotMob 7,18 på 675 min, 0 mål og 0 assist (vanlig-kort 82)
+  ('franco-mastantuono', 88),         -- Franco Mastantuono, Fiorentina, 19 år: FotMob 7,22 på 467 min, 3 mål og 0 assist (vanlig-kort 78)
+  ('yan-diomande', 88),               -- Yan Diomande, Real Madrid, 19 år: FotMob 7,18 på 366 min, 1 mål og 1 assist (vanlig-kort 77)
+  ('dean-huijsen', 88)               -- Dean Huijsen, Real Madrid, 21 år: FotMob 7,07 på 502 min, 0 mål og 0 assist (vanlig-kort 82)
 )
 insert into special_cards (round_id, kind, catalog_id, overall, boost, attributes, price)
 select round.id, 'inner_peace', catalog.id, rating.overall, rating.overall - catalog.overall,

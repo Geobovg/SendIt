@@ -70,7 +70,7 @@ Team of the Season, spesialkortet for de beste spillerne i hver liga, som i FC. 
 _Avoid_: Sesongens lag, Sesong (det er noe annet, se over)
 
 **Inner Peace**:
-Spesialkort, femte type (migrering 0116): 30 spillere på 88–95 med temaet ro og flyt fra Kung Fu Panda. Messi er mesteren (Oogway) på 95, og de 29 andre er de som har gjort det best i sesongen 2026/27 ifølge FotMob (snittrating justert for spilletid, valgt 18.10.2026), med best rating til de beste. De kommer fra de fem store ligaene, pluss nordmenn (Patrick Berg, Jens Petter Hauge og Antonio Nusa). Ratingen følger prestasjonen og er alltid over vanlig-kortet, så spillere med lavt vanlig-kort kan få et stort løft. Kortet kommer bare fra pakker som garanterer det, foreløpig Kachow pal (migrering 0117). Lavere rating er vanligere, så 90+ er ca. 24 %. Kortet koster 2 ganger verdien på ratingen.
+Spesialkort, femte type (migrering 0116): 30 spillere på 88–95 med temaet ro og flyt fra Kung Fu Panda. Messi er mesteren (Oogway) på 95, og de 29 andre er kjente og lovende spillere fra de fem store ligaene, pluss nordmenn (Patrick Berg, Jens Petter Hauge og Antonio Nusa), som har gjort det best i sesongen 2026/27 ifølge FotMob (snittrating justert for spilletid, valgt 18.10.2026). Ratingen følger formen, men er aldri mer enn 11 over vanlig-kortet (Berg har +14), og best er 94. Kortet kommer bare fra pakker som garanterer det, foreløpig Kachow pal (migrering 0117). Lavere rating er vanligere, så 90+ er ca. 17 %. Kortet koster 2 ganger verdien på ratingen.
 _Avoid_: Fred, Zen
 
 **Pakke**:
