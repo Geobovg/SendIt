@@ -4,7 +4,7 @@ Vi trengte en langsiktig bruk for MB og en grunn til å åpne appen flere ganger
 
 ## Alle starter likt
 
-Alle starter på samme nivå på sitt eget stadion, uansett arena, divisjon, klubb-XP eller hva de ellers har oppnådd. Det de allerede har oppnådd, beholder de, men ingenting av det gir forsprang her: stadionet leser ingenting fra arenaer, divisjoner eller klubbnivå. Byggere låses opp med klubbhuset, ikke med fremgang andre steder. Dermed kommer man bare lengre i stadionet ved å bruke tid og MB på det.
+Alle starter på samme nivå på sitt eget stadion, uansett arena, divisjon, klubb-XP eller hva de ellers har oppnådd. Det de allerede har oppnådd, beholder de, men ingenting av det gir forsprang her: stadionet leser ingenting fra arenaer, divisjoner eller klubbnivå. Flere byggere låses opp med klubbhuset (i Clash kjøper man dem med edelstener), ikke med fremgang andre steder. Dermed kommer man bare lengre i stadionet ved å bruke tid og MB på det.
 
 ## Hva det er
 
@@ -12,7 +12,7 @@ Syv bygninger, med nivå opp til 5 eller 10 (alle tallene ligger i `src/lib/stad
 
 | Bygning | Start | Maks | Hva den gjør |
 | --- | --- | --- | --- |
-| Klubbhus | 1 | 5 | Setter taket for de andre (2 nivåer per klubbhusnivå) og gir byggere: 1 til klubbhus 2, 2 til klubbhus 4, 3 på klubbhus 5. |
+| Klubbhus | 1 | 5 | Setter taket for de andre (2 nivåer per klubbhusnivå) og gir byggere: 2 til å begynne med, så én til for hvert klubbhusnivå fra 3, opp til 5. |
 | Billettluke | 1 | 10 | Gruva: lager 1–12 MB i timen døgnet rundt. |
 | Kasse | 1 | 10 | Lageret: bestemmer hvor mange timer med produksjon billettluka og treningsfeltet kan fylle seg opp (6–48 timer) før de stopper. |
 | Treningsfelt | 0 | 10 | Lager 1–15 klubb-XP i timen på samme måte. |
@@ -20,7 +20,7 @@ Syv bygninger, med nivå opp til 5 eller 10 (alle tallene ligger i `src/lib/stad
 | Supporterfelt | 0 | 10 | Dugnad: alle oppgraderinger blir 2 % raskere per nivå (opp til 20 %). |
 | Speiderhytte | 0 | 10 | Sender ut en speider i 24 timer. Han kommer hjem med en pakke eller en spiller du kan kjøpe. |
 
-Oppgraderinger koster MB og tar fra 10 minutter til 5 dager (før dugnaden). Samlerne fylles opp til kassas kapasitet og må tømmes, og tiden de sto fulle er tapt, som i Clash. Bygget er ferdig når tiden er ute, uansett om appen er åpen.
+Oppgraderinger koster MB og tar fra 10 minutter til 5 dager (før dugnaden). Hver byggher jobber med én ting om gangen, men med flere byggere kan flere ting bygges samtidig, som i Clash. Vi startet først med én byggher, men det ble for tregt sammenlignet med Clash, så alle starter nå med to. Vi har ikke bekreftet hvor mange byggere Clash starter med (kildene var uklare), bare at hver byggher tar én oppgradering om gangen og at man kan ha opptil fem eller seks. Samlerne fylles opp til kassas kapasitet og må tømmes, og tiden de sto fulle er tapt, som i Clash. Bygget er ferdig når tiden er ute, uansett om appen er åpen.
 
 **Hurtigbygging mot MB.** En pågående oppgradering kan gjøres ferdig med en gang: 20 MB per time som er igjen, og gratis de siste 5 minuttene (som i Clash). Det er det eneste stedet MB kan kjøpe tid, og det betyr at den som har mest MB kan bygge raskest. Det er et valg vi tok, og taket på hvor mye en bygning gir, er det som begrenser hva det kan bli til.
 

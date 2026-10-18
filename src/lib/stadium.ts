@@ -35,8 +35,8 @@ export const buildings: Record<BuildingKey, BuildingSpec> = {
   speiderhytte: { startLevel: 0, maxLevel: 10, costs: [150, 300, 550, 900, 1400, 2200, 3400, 5200, 7500, 10000], minutes: [H, 3 * H, 6 * H, 12 * H, D, 36 * H, 2 * D, 3 * D, 4 * D, 5 * D] },
 };
 
-/** Antall byggere, altså hvor mange oppgraderinger som kan pågå samtidig: 1 til klubbhus 2, 2 til klubbhus 4, og 3 på klubbhus 5. */
-export const buildersFor = (levels: StadiumLevels) => (levels.klubbhus >= 5 ? 3 : levels.klubbhus >= 3 ? 2 : 1);
+/** Antall byggere, altså hvor mange oppgraderinger som kan pågå samtidig, som i Clash: 2 til å begynne med, og én til for hvert klubbhusnivå fra 3, opp til 5. */
+export const buildersFor = (levels: StadiumLevels) => Math.min(5, Math.max(2, levels.klubbhus));
 
 /** Timer med produksjon kassa rommer, per kassenivå. Gjelder både billettluka og treningsfeltet. */
 export const storageHours = [6, 8, 10, 12, 16, 20, 24, 30, 36, 48];

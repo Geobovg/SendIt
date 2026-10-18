@@ -34,21 +34,28 @@ assert.equal(s.levelCap("tribune", withLevels({ klubbhus: 3 }).levels), 6);
 assert.deepEqual(s.planUpgrade(withLevels({ klubbhus: 5, billettluke: 10 }), "billettluke", now), { block: "max_level" });
 assert.deepEqual(s.planUpgrade(withLevels({ klubbhus: 5 }), "klubbhus", now), { block: "max_level" });
 
-// Byggere: 1 til klubbhus 2, 2 til klubbhus 4 og 3 på klubbhus 5.
-assert.deepEqual([1, 2, 3, 4, 5].map((level) => s.buildersFor(withLevels({ klubbhus: level }).levels)), [1, 1, 2, 2, 3]);
+// Byggere, som i Clash: 2 til å begynne med, og én til for hvert klubbhusnivå fra 3, opp til 5.
+assert.deepEqual([1, 2, 3, 4, 5].map((level) => s.buildersFor(withLevels({ klubbhus: level }).levels)), [2, 2, 3, 4, 5]);
+// Med to byggere kan to ting bygges samtidig, men ikke den samme bygningen to ganger og ikke en tredje.
 const busyOne = { ...fresh(), upgrades: [upgrading("billettluke", 2, 10)] };
-assert.deepEqual(s.planUpgrade(busyOne, "tribune", now), { block: "builders_busy", to: 1 });
+assert.deepEqual(s.planUpgrade(busyOne, "tribune", now), { to: 1, cost: 60, minutes: 15, minKlubbhus: 1 });
 assert.deepEqual(s.planUpgrade(busyOne, "billettluke", now), { block: "busy" });
-// Med to byggere er det plass til en til, men ikke til en tredje.
-const two = withLevels({ klubbhus: 3 }, { upgrades: [upgrading("billettluke", 2, 10)] });
-assert.deepEqual(s.planUpgrade(two, "tribune", now), { to: 1, cost: 60, minutes: 15, minKlubbhus: 1 });
-const twoBusy = { ...two, upgrades: [...two.upgrades, upgrading("tribune", 1, 15)] };
-assert.deepEqual(s.planUpgrade(twoBusy, "kasse", now), { block: "builders_busy", to: 2 });
+const busyTwo = { ...fresh(), upgrades: [upgrading("billettluke", 2, 10), upgrading("kasse", 2, 15)] };
+assert.deepEqual(s.planUpgrade(busyTwo, "tribune", now), { block: "builders_busy", to: 1 });
+assert.deepEqual(s.planUpgrade(busyTwo, "kasse", now), { block: "busy" });
+// Klubbhus 3 gir en tredje byggher, og klubbhus 5 gir fem.
+const three = withLevels({ klubbhus: 3 }, { upgrades: busyTwo.upgrades });
+assert.deepEqual(s.planUpgrade(three, "tribune", now), { to: 1, cost: 60, minutes: 15, minKlubbhus: 1 });
+const threeBusy = { ...three, upgrades: [...three.upgrades, upgrading("tribune", 1, 15)] };
+assert.deepEqual(s.planUpgrade(threeBusy, "treningsfelt", now), { block: "builders_busy", to: 1 });
+const fiveBusy = withLevels({ klubbhus: 5 }, { upgrades: ["billettluke", "kasse", "tribune", "treningsfelt"].map((key) => upgrading(key, 1, 30)) });
+assert.deepEqual(s.planUpgrade(fiveBusy, "supporterfelt", now), { to: 1, cost: 100, minutes: 30, minKlubbhus: 1 });
+assert.deepEqual(s.planUpgrade({ ...fiveBusy, upgrades: [...fiveBusy.upgrades, upgrading("supporterfelt", 1, 30)] }, "speiderhytte", now), { block: "builders_busy", to: 1 });
 // Ferdig oppgradering regnes som utført, og byggeren er ledig.
-assert.equal(s.effectiveLevels(busyOne, at(10)).billettluke, 2);
-assert.equal(s.effectiveLevels(busyOne, at(9)).billettluke, 1);
-assert.deepEqual(s.planUpgrade(busyOne, "tribune", at(10)), { to: 1, cost: 60, minutes: 15, minKlubbhus: 1 });
-assert.deepEqual(s.planUpgrade(busyOne, "billettluke", at(10)), { to: 3, block: "klubbhus_low", minKlubbhus: 2 });
+assert.equal(s.effectiveLevels(busyTwo, at(10)).billettluke, 2);
+assert.equal(s.effectiveLevels(busyTwo, at(9)).billettluke, 1);
+assert.deepEqual(s.planUpgrade(busyTwo, "tribune", at(10)), { to: 1, cost: 60, minutes: 15, minKlubbhus: 1 });
+assert.deepEqual(s.planUpgrade(busyTwo, "billettluke", at(10)), { to: 3, block: "klubbhus_low", minKlubbhus: 2 });
 
 // Dugnad: supporterfeltet kutter 2 % av byggetiden per nivå.
 assert.equal(s.buildMinutes(100, withLevels({}).levels), 100);
