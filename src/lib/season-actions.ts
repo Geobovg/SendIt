@@ -14,6 +14,7 @@ import { MANAGER_KICKOFF_VERSION, planManagerTimeline, type ManagerKickoffEvent 
 import { managerMatchLimitError } from "./match-limit";
 import { managerTeamSnapshots } from "./manager-snapshot";
 import { getFriendSeasonByCode } from "./seasons";
+import { withHomeBonus } from "./stadium-data";
 import { supabaseAdmin } from "./supabase/server";
 
 type Db = ReturnType<typeof supabaseAdmin>;
@@ -72,7 +73,7 @@ export async function playAiSeasonMatchAction(_prev: ActionState, _formData: For
   const opponent = theirs ? userTeamAsOpponent(theirs, team, maxOverall) : aiTeamSnapshot(season.id, team, maxOverall);
   // Kvalikkampen må ha en vinner: likt etter 90′ gir ekstraomganger, og likt etter 120′ straffekonkurranse.
   // Du står alltid som hjemmelag i selve kampen. Hjemme og borte i sesongoppsettet gjelder bare tabellen.
-  const result = await kickOffFixture(db, next.id, { type: "kickoff", version: MANAGER_KICKOFF_VERSION, home: mine, away: opponent, knockout: next.stage === "playoff" }, { home_user_id: user.id, away_user_id: null, away_ai_name: team.name });
+  const result = await kickOffFixture(db, next.id, { type: "kickoff", version: MANAGER_KICKOFF_VERSION, home: await withHomeBonus(mine, db), away: opponent, knockout: next.stage === "playoff" }, { home_user_id: user.id, away_user_id: null, away_ai_name: team.name });
   if ("error" in result) return { error: result.error };
   seasonPaths();
   redirect(`/managerkarriere/kamp/${result.matchId}`);
@@ -113,7 +114,7 @@ export async function playFriendSeasonMatchAction(_prev: ActionState, formData: 
   if ("error" in snapshots) return { error: snapshots.error };
   const home = snapshots.get(fixture.home_user_id); const away = snapshots.get(fixture.away_user_id);
   if (!home || !away) return { error: errors.bothNeedEleven };
-  const result = await kickOffFixture(db, fixture.id, { type: "kickoff", version: MANAGER_KICKOFF_VERSION, home, away, ratingWeight: FRIEND_SEASON_RATING_WEIGHT }, { home_user_id: fixture.home_user_id, away_user_id: fixture.away_user_id, away_ai_name: null });
+  const result = await kickOffFixture(db, fixture.id, { type: "kickoff", version: MANAGER_KICKOFF_VERSION, home: await withHomeBonus(home, db), away, ratingWeight: FRIEND_SEASON_RATING_WEIGHT }, { home_user_id: fixture.home_user_id, away_user_id: fixture.away_user_id, away_ai_name: null });
   if ("error" in result) return { error: result.error };
   seasonPaths();
   redirect(`/managerkarriere/kamp/${result.matchId}`);

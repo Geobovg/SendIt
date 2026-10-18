@@ -12,6 +12,7 @@ import { ManagerMatchHistory } from "@/components/manager-match-history";
 import { ManagerTopBar, managerSections, SubTabs, type ManagerSectionKey } from "@/components/manager-navigation";
 import { AiSeasonDetails, FriendSeasonsPanel } from "@/components/season-panels";
 import { SbcPanel } from "@/components/sbc-panel";
+import { StadiumPanel } from "@/components/stadium-panel";
 import { TransferMarket } from "@/components/transfer-market";
 import { currentUser, sessionUserId } from "@/lib/auth";
 import { getCareerChallenges, getCareerProfile, getCatalogPage, getInformHistory, getManagerCareer, getManagerRating, getInnerPeaceCards, getPackShop, getSpecialCardsOfKind, getTotsCards, listManagerMatchHistory, listTransferMarket, ratingFromSquad } from "@/lib/career";
@@ -20,6 +21,7 @@ import { listFriends } from "@/lib/friends";
 import { getDraftPage } from "@/lib/draft";
 import { getSbcData } from "@/lib/sbc-data";
 import { getAiSeason, getFriendSeasons } from "@/lib/seasons";
+import { getStadiumState } from "@/lib/stadium-data";
 import { getT } from "@/i18n/server";
 
 export const dynamic = "force-dynamic";
@@ -43,7 +45,7 @@ export default async function ManagerCareerSectionPage({ params, searchParams }:
   const draftPromise = active === "draft" ? getDraftPage(userId) : Promise.resolve(null);
   // Oppgjøret i draften må skje før budsjettet leses, så premien vises med en gang.
   const careerPromise = active === "draft" ? draftPromise.then(() => getCareerProfile(userId)) : getCareerProfile(userId);
-  const [user, career, manager, ratingInfo, catalogPage, listings, friendsData, season, history, sbcData, shop, informRounds, totsCards, iconCards, honorableCards, innerPeaceCards, draftData] = await Promise.all([
+  const [user, career, manager, ratingInfo, catalogPage, listings, friendsData, season, history, sbcData, shop, informRounds, totsCards, iconCards, honorableCards, innerPeaceCards, draftData, stadiumState] = await Promise.all([
     currentUser(),
     careerPromise,
     needsCards.has(active) ? getManagerCareer(userId) : null,
@@ -61,6 +63,7 @@ export default async function ManagerCareerSectionPage({ params, searchParams }:
     active === "honorable" ? getSpecialCardsOfKind("honorable") : null,
     active === "innerpeace" ? getInnerPeaceCards() : null,
     draftPromise,
+    active === "stadion" ? getStadiumState(userId) : null,
   ]);
   if (!user) redirect("/login");
   const t = await getT(); const tabs = t.career.subTabs;
@@ -77,7 +80,10 @@ export default async function ManagerCareerSectionPage({ params, searchParams }:
   else if (active === "icons") content = <IconGallery cards={iconCards!} />;
   else if (active === "honorable") content = <HonorableGallery cards={honorableCards!} />;
   else if (active === "innerpeace") content = <InnerPeaceGallery cards={innerPeaceCards!} />;
-  else if (active === "draft") content = <DraftPanel data={draftData!} budget={career.manager_budget} />;
+  else if (active === "stadion") {
+    const stadium = stadiumState!;
+    content = <StadiumPanel state={{ levels: stadium.levels, collectedAt: stadium.collectedAt.toISOString(), upgrades: stadium.upgrades.map((upgrade) => ({ ...upgrade, endsAt: upgrade.endsAt.toISOString() })) }} serverNow={new Date().toISOString()} budget={career.manager_budget} />;
+  } else if (active === "draft") content = <DraftPanel data={draftData!} budget={career.manager_budget} />;
   else if (active === "pakker") content = <ManagerCareer {...manager!} budget={career.manager_budget} section="packs" shop={shop!} />;
   else if (active === "sesong") {
     if (friendsData) {
