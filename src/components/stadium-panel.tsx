@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition, type CSSProperties, type ReactNode } from "react";
 import { useT } from "@/i18n/client";
 import {
   chooseScoutAction, collectStadiumAction, openScoutAction, sendScoutAction, speedUpStadiumAction, startStadiumUpgradeAction, type StadiumResult,
@@ -46,6 +46,27 @@ function Bar({ value, color, className = "" }: { value: number; color: string; c
   return <div className={`h-2 overflow-hidden rounded-full bg-white/10 ${className}`}><div className="h-full rounded-full transition-[width] duration-1000 ease-linear" style={{ width: `${Math.round(Math.min(1, Math.max(0, value)) * 100)}%`, backgroundColor: color }} /></div>;
 }
 
+const confettiColors = ["#f472b6", "#38bdf8", "#fde68a", "#4ade80", "#ffffff", "#fb923c"];
+
+/** Liten feiring over scenen: konfetti og en melding. Forsvinner av seg selv, eller når man trykker på den. */
+function Celebration({ level, seats, onDone }: { level: number; seats: string; onDone: () => void }) {
+  const text = useT().stadium;
+  useEffect(() => {
+    const timer = setTimeout(onDone, 5200);
+    return () => clearTimeout(timer);
+  }, [onDone]);
+  return <>
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
+      {Array.from({ length: 42 }, (_, i) => <span key={i} className="stadium-confetti" style={{ left: `${(i * 37) % 100}%`, width: 6 + (i % 3) * 2, height: 9 + (i % 4) * 2, backgroundColor: confettiColors[i % confettiColors.length], borderRadius: i % 3 ? 1 : 9, ["--d" as string]: `${((i * 13) % 20) / 10}s`, ["--dx" as string]: `${((i * 29) % 90) - 45}px`, ["--spin" as string]: `${360 + ((i * 53) % 540)}deg` } as CSSProperties} />)}
+    </div>
+    <button type="button" onClick={onDone} role="status" className="stadium-toast absolute left-1/2 top-[13%] z-30 grid w-[min(86%,20rem)] gap-1 rounded-2xl border-2 border-sky-300/60 bg-slate-950/90 px-5 py-4 text-center shadow-2xl">
+      <span className="text-4xl" aria-hidden="true">🎉</span>
+      <span className="text-lg font-black leading-tight text-white">{text.levelUp(level)}</span>
+      <span className="text-sm font-bold text-sky-200">🏟️ {text.capacity(seats)}</span>
+    </button>
+  </>;
+}
+
 export function StadiumPanel({ state: serverState, serverNow, budget }: Props) {
   const t = useT(); const text = t.stadium;
   const state = parseState(serverState);
@@ -55,12 +76,38 @@ export function StadiumPanel({ state: serverState, serverNow, budget }: Props) {
   const [selected, setSelected] = useState<BuildingKey | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  // Kveldsmodus: flomlysene på. Som standard etter klokka (kveld og natt), og man kan velge selv. Valget huskes bare i denne nettleseren.
+  const [night, setNight] = useState(false);
+  useEffect(() => {
+    let stored: string | null = null;
+    try { stored = window.localStorage.getItem("stadium-night"); } catch { stored = null; }
+    const hour = new Date().getHours();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- klokka og lagringen finnes bare i nettleseren, så valget kan først settes etter at siden er lastet
+    setNight(stored === null ? hour >= 19 || hour < 6 : stored === "1");
+  }, []);
+  const toggleNight = () => {
+    setNight(!night);
+    try { window.localStorage.setItem("stadium-night", night ? "0" : "1"); } catch { /* Uten lagring huskes ikke valget. */ }
+  };
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date(Date.now() + offset)), 1000);
     return () => clearInterval(timer);
   }, [offset]);
 
   const levels = effectiveLevels(state, now);
+
+  // Feiring når tribunen får nytt nivå, enten mens man ser på eller mens man var borte (det sist sette nivået huskes i nettleseren).
+  const [celebrate, setCelebrate] = useState<number | null>(null);
+  const seenTribune = useRef<number | null>(null);
+  const closeCelebration = useCallback(() => setCelebrate(null), []);
+  useEffect(() => {
+    let stored = 0;
+    try { stored = Number(window.localStorage.getItem("stadium-tribune-seen")) || 0; } catch { stored = 0; }
+    const before = seenTribune.current ?? stored;
+    seenTribune.current = levels.tribune;
+    try { window.localStorage.setItem("stadium-tribune-seen", String(levels.tribune)); } catch { /* Uten lagring feires bare nivåer man ser komme mens siden er åpen. */ }
+    if (before > 0 && levels.tribune > before) setCelebrate(levels.tribune);
+  }, [levels.tribune]);
   const running = activeUpgrades(state, now);
   const builderCount = buildersFor(levels);
   const income = incomeOf(levels); const xp = xpOf(levels);
@@ -212,8 +259,10 @@ export function StadiumPanel({ state: serverState, serverNow, budget }: Props) {
 
     <div className="grid gap-4 lg:grid-cols-[minmax(0,34rem)_minmax(0,1fr)] lg:items-start">
       <div className="relative mx-auto w-full max-w-lg overflow-hidden rounded-2xl border border-white/10 shadow-xl" style={{ aspectRatio: `${SCENE_W} / ${SCENE_H}` }}>
-        <StadiumScene levels={levels} building={running.map((upgrade) => upgrade.building)} />
+        <StadiumScene levels={levels} building={running.map((upgrade) => upgrade.building)} night={night || celebrate !== null} celebrate={celebrate !== null} />
+        <button type="button" aria-pressed={night} aria-label={night ? text.lightsOff : text.lightsOn} title={night ? text.lightsOff : text.lightsOn} onClick={toggleNight} className="absolute left-2 top-2 z-20 grid size-9 place-items-center rounded-full border border-white/25 bg-slate-950/70 text-lg shadow transition hover:bg-slate-900">{night ? "☀️" : "🌙"}</button>
         {buildingKeys.map(tile)}
+        {celebrate !== null ? <Celebration level={celebrate} seats={spaced(seatsOf(levels))} onDone={closeCelebration} /> : null}
       </div>
 
       <div className="grid gap-3 lg:sticky lg:top-4">

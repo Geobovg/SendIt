@@ -35,7 +35,9 @@ Stadionet er en tegnet scene (`src/components/stadium-scene.tsx`), ikke ikoner p
 - **Klubbhus** går fra et lite hus med saltak til en borg med glassatrium og gullkuppel. **Kasse**, **billettluke**, **treningsfelt** og **speiderhytte** får hver sin utvikling (søyler og gullbarrer, flere luker og kø, gjerde og lys, speidertårn med radar).
 - En bygning på nivå 0 er en tom tomt. En bygning som oppgraderes vises som før med en byggekran til den er ferdig, og «popper» opp når den får nytt nivå.
 
-Under en oppgradering står det en byggekran ved bygningen. Knappene, boblene og nedtellingene er vanlig HTML lagt over tegningen med posisjonene i `sceneSpots`, så tilgjengelighet og klikk virker som før. Tilfeldige posisjoner (fansene) kommer fra en heltallshash, ikke `Math.sin`, fordi Node og nettleseren runder ulikt og det ga hydreringsfeil.
+Under en oppgradering står det en byggekran ved bygningen. **Kveldsmodus og feiring.** Knappen øverst til venstre i scenen (🌙/☀️) slår på flomlysene: scenen mørkner, og lyset fra mastene lyser opp banen. Jo flere master (to fra tribunenivå 3, fire fra 6), jo større lysflate, så uten master er det ingenting å se i mørket (`floodlights` i `stadium-arena.tsx`, `NightLayer` i `stadium-scene.tsx`). Som standard følger den klokka (kveld og natt fra 19 til 6), og valget huskes bare i denne nettleseren. Når tribunen får nytt nivå, tennes flomlysene med rakettbyger, konfetti og en melding som forsvinner av seg selv etter fem sekunder. Feiringen kommer også hvis nivået økte mens man var borte, siden det sist sette nivået ligger i nettleseren (`stadium-tribune-seen`). Første gang man åpner stadionet feires ingenting. Uten lagring feires bare det man ser komme. Alt er ren pynt.
+
+Knappene, boblene og nedtellingene er vanlig HTML lagt over tegningen med posisjonene i `sceneSpots`, så tilgjengelighet og klikk virker som før. Tilfeldige posisjoner (fansene) kommer fra en heltallshash, ikke `Math.sin`, fordi Node og nettleseren runder ulikt og det ga hydreringsfeil.
 
 ## Valg vi tok
 

@@ -11,6 +11,7 @@ const CY = 288;
 const PL = 16; // banen: lengde langs X
 const PW = 10; // banen: bredde langs Y
 const APRON = 1.2; // avstand fra banelinjene til tribunene
+const MAST_H = 6.4 * ZS; // høyden på lysmastene i piksler
 
 type V = [number, number, number];
 const P = ([x, y, z]: V): [number, number] => [CX + (x - PL / 2 - (y - PW / 2)) * UNIT, CY + (x - PL / 2 + (y - PW / 2)) * UNIT * 0.5 - z * ZS];
@@ -215,7 +216,7 @@ function Fence({ axis, plane, from, to }: { axis: Axis; plane: number; from: num
 }
 
 function Mast({ x, y, glow, level }: { x: number; y: number; glow: boolean; level: number }) {
-  const [bx, by] = P([x, y, 0]); const h = 6.4 * ZS; const top = by - h;
+  const [bx, by] = P([x, y, 0]); const h = MAST_H; const top = by - h;
   const zig = Array.from({ length: 7 }, (_, i) => `${f1(bx + (i % 2 ? 2.2 : -2.2))},${f1(by - (h / 6) * i)}`).join(" ");
   return <g>
     {glow ? <polygon points={`${f1(bx)},${f1(top)} ${f1(P([PL / 2 - 3, PW / 2 - 2.5, 0])[0])},${f1(P([PL / 2 - 3, PW / 2 - 2.5, 0])[1])} ${f1(P([PL / 2 + 3, PW / 2 + 2.5, 0])[0])},${f1(P([PL / 2 + 3, PW / 2 + 2.5, 0])[1])}`} fill="#fff7c2" opacity=".07" /> : null}
@@ -238,7 +239,8 @@ function Scoreboard({ x, y }: { x: number; y: number }) {
   </g>;
 }
 
-export function Stadium({ level, fans }: { level: number; fans: number }) {
+/** Mål og sider som stadionet har på et nivå, og hvor lysmastene står. */
+function layout(level: number) {
   const hasMain = level >= 1; const hasSide = level >= 3; const hasEnd = level >= 5; const hasFront = level >= 7;
   const upper = level >= 6 ? level - 4 + (level >= 9 ? 1 : 0) : 0;
   const main = hasMain ? profile(Math.min(6, 2 + level), upper) : null;
@@ -249,11 +251,21 @@ export function Stadium({ level, fans }: { level: number; fans: number }) {
   const yTo = PW + APRON + (hasFront ? dEnd : 0);
   const xMin = hasSide ? xFrom : -APRON; const yMin = hasMain ? -APRON - d1 : -APRON;
   const endH = 1.5 + Math.max(0, level - 5) * 0.32; const frontH = 1.5 + Math.max(0, level - 7) * 0.32;
-
-  // Masta står i hjørnene utenfor tribunene.
+  // Masta står i hjørnene utenfor tribunene: to fra nivå 3 og fire fra nivå 6.
   const masts: [number, number][] = [];
   if (level >= 3) masts.push([xMin - 1, yTo + 0.8], [xTo + 0.8, yMin - 1]);
   if (level >= 6) masts.push([xMin - 1, yMin - 1], [xTo + 0.8, yTo + 0.8]);
+  return { hasMain, hasSide, hasEnd, hasFront, main, side, dEnd, xFrom, xTo, yTo, xMin, yMin, endH, frontH, masts };
+}
+
+/** Lyskasterne i tegningens koordinater (til kveldsmodusen) og midten av banen. Flere master gir mer lys. */
+export function floodlights(level: number) {
+  const { masts } = layout(level);
+  return { heads: masts.map(([x, y]) => { const [bx, by] = P([x, y, 0]); return [bx, by - MAST_H - 4] as [number, number]; }), pitch: P([PL / 2, PW / 2, 0]) };
+}
+
+export function Stadium({ level, fans }: { level: number; fans: number }) {
+  const { hasMain, hasSide, hasEnd, hasFront, main, side, dEnd, xFrom, xTo, yTo, xMin, yMin, endH, frontH, masts } = layout(level);
 
   const roofMain = main && level >= 4 ? <Roof axis="x" from={xFrom} to={xTo} depth={main.depth} top={main.top} glass={level >= 8} /> : null;
   const roofSide = side && level >= 6 ? <Roof axis="y" from={-APRON} to={yTo} depth={side.depth} top={side.top} glass={level >= 8} /> : null;

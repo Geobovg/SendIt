@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { BuildingKey, StadiumLevels } from "@/lib/stadium";
-import { Stadium } from "./stadium-arena";
+import { Stadium, floodlights } from "./stadium-arena";
 
 // Selve stadionet slik managerens egen base ser ut. Tegningen leser bare nivåene, så den er ren pynt: ingenting her
 // påvirker spillet. Hver bygning og stadionet blir større og finere for hvert nivå (se ADR 0004).
@@ -197,8 +197,57 @@ function Art({ children, level, at }: { children: ReactNode; level: number; at: 
   return <g transform={`translate(${x} ${y + h / 2 - 10})`}><g key={level} className="stadium-pop">{children}</g></g>;
 }
 
+/**
+ * Kveldsmodus: scenen mørkner, og flomlysene lyser opp banen. Jo flere master, jo større lysflate, så bedre fasiliteter
+ * gir mer lys. Bygningene har et lite lyshull hver, så de ikke forsvinner. Tonen er en maske over hele tegningen.
+ */
+function NightLayer({ levels, on }: { levels: StadiumLevels; on: boolean }) {
+  const { heads, pitch } = floodlights(levels.tribune);
+  const reach = heads.length >= 4 ? 150 : heads.length >= 2 ? 110 : 0;
+  return <g style={{ opacity: on ? 1 : 0, transition: "opacity .9s ease" }} pointerEvents="none">
+    <defs>
+      <radialGradient id="ss-hole"><stop offset="0" stopColor="#000" stopOpacity="1" /><stop offset="1" stopColor="#000" stopOpacity="0" /></radialGradient>
+      <radialGradient id="ss-lit"><stop offset="0" stopColor="#fff7c2" stopOpacity=".34" /><stop offset="1" stopColor="#fff7c2" stopOpacity="0" /></radialGradient>
+      <mask id="ss-night-mask">
+        <rect width={SCENE_W} height={SCENE_H} fill="#fff" />
+        {reach ? <ellipse cx={pitch[0]} cy={pitch[1]} rx={reach * 1.25} ry={reach * 0.78} fill="url(#ss-hole)" /> : null}
+        {heads.map(([x, y]) => <circle key={`${x}-${y}`} cx={x} cy={y} r="38" fill="url(#ss-hole)" />)}
+        {buildingKeysLit(levels).map((key) => { const { x, y, w, h } = sceneSpots[key]; return <ellipse key={key} cx={x} cy={y + h / 2 - 26} rx={w * 0.5} ry={h * 0.42} fill="url(#ss-hole)" opacity=".85" />; })}
+      </mask>
+    </defs>
+    <rect width={SCENE_W} height={SCENE_H} fill="#050b22" opacity=".66" mask="url(#ss-night-mask)" />
+    {reach ? <ellipse cx={pitch[0]} cy={pitch[1]} rx={reach * 1.05} ry={reach * 0.62} fill="url(#ss-lit)" style={{ mixBlendMode: "screen" }} /> : null}
+    {heads.map(([x, y]) => <g key={`${x}-${y}`} className="stadium-pulse" style={{ mixBlendMode: "screen" }}>
+      <polygon points={`${x},${y} ${pitch[0] - 60},${pitch[1] - 8} ${pitch[0] + 60},${pitch[1] + 22}`} fill="#fff7c2" opacity=".16" />
+      <circle cx={x} cy={y} r="15" fill="#fff7c2" opacity=".42" />
+    </g>)}
+  </g>;
+}
+
+/** Bygningene som har et lyshull om natten: alle som er bygd, men ikke tribunen (den har flomlysene). */
+const buildingKeysLit = (levels: StadiumLevels) => (Object.keys(sceneSpots) as BuildingKey[]).filter((key) => key !== "tribune" && levels[key] > 0);
+
+/** Rakettbyger over stadionet. Plasseringen ligger på den ytre gruppen og animasjonen på den indre (CSS-transform overstyrer transform-attributtet), og hver byge får litt forsinkelse, så de ikke går av samtidig. */
+const bursts: { x: number; y: number; delay: number; colors: [string, string] }[] = [
+  { x: 118, y: 196, delay: 0.2, colors: ["#f472b6", "#fde68a"] },
+  { x: 286, y: 178, delay: 0.7, colors: ["#38bdf8", "#ffffff"] },
+  { x: 200, y: 142, delay: 1.2, colors: ["#fbbf24", "#fb7185"] },
+  { x: 152, y: 244, delay: 1.7, colors: ["#4ade80", "#ffffff"] },
+  { x: 256, y: 232, delay: 2.1, colors: ["#a78bfa", "#fde68a"] },
+];
+function Fireworks() {
+  return <g pointerEvents="none">
+    {bursts.map(({ x, y, delay, colors }) => <g key={`${x}-${y}`} transform={`translate(${x} ${y})`}>
+      <g className="stadium-burst" style={{ ["--d" as string]: `${delay}s` }}>
+        {Array.from({ length: 14 }, (_, i) => { const angle = (i / 14) * Math.PI * 2; return <line key={i} x1={Math.cos(angle) * 8} y1={Math.sin(angle) * 8} x2={Math.cos(angle) * (i % 2 ? 24 : 32)} y2={Math.sin(angle) * (i % 2 ? 24 : 32)} stroke={colors[i % 2]} strokeWidth="2.2" strokeLinecap="round" />; })}
+        <circle r="3" fill="#fff" />
+      </g>
+    </g>)}
+  </g>;
+}
+
 /** Hele scenen. `building` er bygningene som oppgraderes nå: de får en byggekran, men vises som før til de er ferdige. */
-export function StadiumScene({ levels, building }: { levels: StadiumLevels; building: BuildingKey[] }) {
+export function StadiumScene({ levels, building, night = false, celebrate = false }: { levels: StadiumLevels; building: BuildingKey[]; night?: boolean; celebrate?: boolean }) {
   return <svg viewBox={`0 0 ${SCENE_W} ${SCENE_H}`} className="absolute inset-0 h-full w-full" aria-hidden="true">
     <defs>
       <pattern id="ss-stripes" width="56" height="10" patternUnits="userSpaceOnUse"><rect width="28" height="10" fill="#14532d" /><rect x="28" width="28" height="10" fill="#166534" /></pattern>
@@ -218,6 +267,8 @@ export function StadiumScene({ levels, building }: { levels: StadiumLevels; buil
     <Art at="treningsfelt" level={levels.treningsfelt}><TrainingGround level={levels.treningsfelt} /></Art>
 
     {building.map((key) => { const { x, y, w, h } = sceneSpots[key]; return key === "tribune" ? <Crane key={key} x={346} y={338} /> : <Crane key={key} x={x + w / 2 - 14} y={y - h / 2 + 52} />; })}
+    <NightLayer levels={levels} on={night} />
+    {celebrate ? <Fireworks /> : null}
     <rect width={SCENE_W} height={SCENE_H} fill="url(#ss-vignette)" pointerEvents="none" />
   </svg>;
 }
