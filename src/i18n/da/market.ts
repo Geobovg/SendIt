@@ -18,6 +18,11 @@ const packNames: Record<string, string> = {
   sjeldne_spillere: "Sjældne spillere",
   jumbo_premium_gull: "Jumbo premium-guld",
   skadoosh_dude: "Skadoosh dude",
+  gullrush: "Guldfeber",
+  stjerneutvalg: "Stjerneudvalg",
+  formpakka: "Formpakke",
+  ikonjakt: "Ikonjagt",
+  legendepakka: "Legendepakke",
 };
 
 const packDescriptions: Record<string, string> = {
@@ -40,6 +45,11 @@ const packDescriptions: Record<string, string> = {
   sjeldne_spillere: "Fem kort, alle på 80 eller bedre, og mindst ét på 83+. Maks 3 om dagen.",
   jumbo_premium_gull: "Otte kort, alle 79+, tre på 80+ og ét på 83+ garanteret. Maks 3 om dagen.",
   skadoosh_dude: "Femten kort, alle 80+, ét på 88+, to på 86+ og fire på 84+ garanteret. Maks 1 om dagen.",
+  gullrush: "Fem kort, alle 78+, to på 80+ og ét på 83+ garanteret.",
+  stjerneutvalg: "Otte kort, alle 82+, ét på 87+ og to på 85+ garanteret. Maks 3 om dagen.",
+  formpakka: "Ét specialkort (inform eller honorable mention) og fem kort på 83+, ét på 86+ og to på 84+ garanteret. Maks 3 om dagen.",
+  ikonjakt: "Seks kort, alle 86+, to på 88+ garanteret, og cirka 17 % chance for en Icon. Maks 2 om dagen.",
+  legendepakka: "Tolv kort: ét TOTS-kort og elleve på 86+, ét på 90+ og tre på 88+ garanteret. Cirka 33 % chance for en Icon. Maks 1 om dagen.",
 };
 
 export const market = {

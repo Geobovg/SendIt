@@ -18,6 +18,11 @@ const packNames: Record<string, string> = {
   sjeldne_spillere: "Harvinaiset pelaajat",
   jumbo_premium_gull: "Jumbo premium -kulta",
   skadoosh_dude: "Skadoosh dude",
+  gullrush: "Kultakuume",
+  stjerneutvalg: "Tähtivalikoima",
+  formpakka: "Muotopakkaus",
+  ikonjakt: "Ikonijahti",
+  legendepakka: "Legendapakkaus",
 };
 
 const packDescriptions: Record<string, string> = {
@@ -40,6 +45,11 @@ const packDescriptions: Record<string, string> = {
   sjeldne_spillere: "Viisi korttia, kaikki 80 tai parempia, ja vähintään yksi 83+. Enintään 3 päivässä.",
   jumbo_premium_gull: "Kahdeksan korttia, kaikki 79+, kolme 80+ ja yksi 83+ taattu. Enintään 3 päivässä.",
   skadoosh_dude: "Viisitoista korttia, kaikki 80+, yksi 88+, kaksi 86+ ja neljä 84+ taattu. Enintään 1 päivässä.",
+  gullrush: "Viisi korttia, kaikki 78+, kaksi 80+ ja yksi 83+ taattu.",
+  stjerneutvalg: "Kahdeksan korttia, kaikki 82+, yksi 87+ ja kaksi 85+ taattu. Enintään 3 päivässä.",
+  formpakka: "Yksi erikoiskortti (inform tai honorable mention) ja viisi 83+ korttia, yksi 86+ ja kaksi 84+ taattu. Enintään 3 päivässä.",
+  ikonjakt: "Kuusi korttia, kaikki 86+, kaksi 88+ taattu, ja noin 17 % mahdollisuus Iconiin. Enintään 2 päivässä.",
+  legendepakka: "Kaksitoista korttia: yksi TOTS-kortti ja yksitoista 86+ korttia, yksi 90+ ja kolme 88+ taattu. Noin 33 % mahdollisuus Iconiin. Enintään 1 päivässä.",
 };
 
 export const market = {

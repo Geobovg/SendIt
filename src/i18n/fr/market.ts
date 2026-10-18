@@ -18,6 +18,11 @@ const packNames: Record<string, string> = {
   sjeldne_spillere: "Joueurs rares",
   jumbo_premium_gull: "Pack Or Premium Jumbo",
   skadoosh_dude: "Skadoosh dude",
+  gullrush: "Ruée vers l'or",
+  stjerneutvalg: "Sélection d'étoiles",
+  formpakka: "Pack Forme",
+  ikonjakt: "Chasse à l'Icon",
+  legendepakka: "Pack Légende",
 };
 
 const packDescriptions: Record<string, string> = {
@@ -40,6 +45,11 @@ const packDescriptions: Record<string, string> = {
   sjeldne_spillere: "Cinq cartes, toutes 80 ou plus, dont au moins une 83+. 3 max par jour.",
   jumbo_premium_gull: "Huit cartes, toutes 79+, dont trois 80+ et une 83+ garanties. 3 max par jour.",
   skadoosh_dude: "Quinze cartes, toutes 80+, dont une 88+, deux 86+ et quatre 84+ garanties. 1 max par jour.",
+  gullrush: "Cinq cartes, toutes 78+, dont deux 80+ et une 83+ garanties.",
+  stjerneutvalg: "Huit cartes, toutes 82+, dont une 87+ et deux 85+ garanties. 3 max par jour.",
+  formpakka: "Une carte spéciale (inform ou honorable mention) et cinq cartes 83+, dont une 86+ et deux 84+ garanties. 3 max par jour.",
+  ikonjakt: "Six cartes, toutes 86+, dont deux 88+ garanties, et environ 17 % de chance d'avoir une Icon. 2 max par jour.",
+  legendepakka: "Douze cartes : une carte TOTS et onze 86+, dont une 90+ et trois 88+ garanties. Environ 33 % de chance d'avoir une Icon. 1 max par jour.",
 };
 
 export const market = {
