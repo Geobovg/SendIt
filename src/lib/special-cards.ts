@@ -1,8 +1,8 @@
-// Spesialkort (migrering 0060). Inform, TOTS (0065), Icons (0074) og Honorable mention (0088) ligger i special_cards.kind i databasen; nye typer legges til der
+// Spesialkort (migrering 0060). Inform, TOTS (0065), Icons (0074), Honorable mention (0088) og Inner Peace (0116) ligger i special_cards.kind i databasen; nye typer legges til der
 // og her, og får egen stil på kortbildet. «personal» er de personlige kortene (migrering 0063), som har
 // egen tabell, men vises med samme mekanikk.
 
-export type SpecialKind = "inform" | "tots" | "icon" | "honorable" | "personal";
+export type SpecialKind = "inform" | "tots" | "icon" | "honorable" | "inner_peace" | "personal";
 
 /** Fargene på et spesialkort: bakgrunn, kantlinje og teksten i merket. */
 export const specialStyles: Record<SpecialKind, { background: string; border: string; badge: string; glow: string }> = {
@@ -32,6 +32,13 @@ export const specialStyles: Record<SpecialKind, { background: string; border: st
     border: "#d7dee6",
     badge: "#7ff5c3",
     glow: "#34e0a1",
+  },
+  // Inner Peace, ro og kontroll som i Kung Fu Panda: mørk fiolett kveldshimmel med ferskenrosa lys fra øvre hjørne og gullkant.
+  inner_peace: {
+    background: "radial-gradient(circle at 85% 0%, rgba(255,170,150,.6), transparent 42%), radial-gradient(circle at 8% 100%, rgba(245,208,120,.22), transparent 38%), linear-gradient(160deg, #3d1f5c 0%, #22103a 55%, #0e0620 100%)",
+    border: "#f5d078",
+    badge: "#ffc4ad",
+    glow: "#ff9d86",
   },
   // Inspirert av FUTTIES i FC: sommerlig rosa, oransje og gult, med solstråler fra øvre hjørne.
   personal: {

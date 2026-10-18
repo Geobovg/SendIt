@@ -270,7 +270,7 @@ export const career = {
     unusableCard: "Truppen innehåller ett kort som du inte kan använda",
     wrongPosition: "En spelare är i en position han inte kan spela",
   },
-  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", honorable: "HON. MENTION", personal: "PERSONLIG" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", honorable: "Honorable mention", personal: "Personligt kort" }, untradable: "Kan inte säljas", anyPosition: "ALLA", personalHint: "Spelar alla positioner. +1 i betyg för varje ny division du når" },
+  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", honorable: "HON. MENTION", inner_peace: "INNER PEACE", personal: "PERSONLIG" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", honorable: "Honorable mention", inner_peace: "Inner Peace", personal: "Personligt kort" }, untradable: "Kan inte säljas", anyPosition: "ALLA", personalHint: "Spelar alla positioner. +1 i betyg för varje ny division du når" },
   tots: {
     intro: (count: number) => `${count} Team of the Season-kort med de bästa spelarna i varje liga. De kan dyka upp i paket.`,
     all: "Alla",

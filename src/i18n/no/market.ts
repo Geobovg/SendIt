@@ -21,6 +21,9 @@ const packNames: Record<string, string> = {
   sjeldne_spillere: "Sjeldne spillere",
   jumbo_premium_gull: "Jumbo premium gull",
   skadoosh_dude: "Skadoosh dude",
+  stjerneutvalg: "Stjerneutvalg",
+  formpakka: "Formpakka",
+  kachow_pal: "Kachow pal",
 };
 
 const packDescriptions: Record<string, string> = {
@@ -43,6 +46,9 @@ const packDescriptions: Record<string, string> = {
   sjeldne_spillere: "Fem kort, alle på 80 eller bedre, og minst ett på 83+. Maks 3 per dag.",
   jumbo_premium_gull: "Åtte kort, alle 79+, garantert tre på 80+ og ett på 83+. Maks 3 per dag.",
   skadoosh_dude: "Femten kort, alle 80+, garantert ett på 88+, to på 86+ og fire på 84+. Maks 1 per dag.",
+  stjerneutvalg: "Åtte kort, alle 82+, garantert ett på 87+ og to på 85+. Maks 3 per dag.",
+  formpakka: "Ett spesialkort (inform eller honorable mention) og fem kort på 83+, garantert ett på 86+ og to på 84+. Maks 3 per dag.",
+  kachow_pal: "Ni kort: ett Inner Peace-kort (88–95) og åtte kort på 86+, garantert ett på 90+ og to på 88+, og ca. 9 % sjanse for en Icon. Maks 1 per dag.",
 };
 
 export const market: MarketDict = {

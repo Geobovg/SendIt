@@ -18,6 +18,9 @@ const packNames: Record<string, string> = {
   sjeldne_spillere: "Joueurs rares",
   jumbo_premium_gull: "Pack Or Premium Jumbo",
   skadoosh_dude: "Skadoosh dude",
+  stjerneutvalg: "Sélection d'étoiles",
+  formpakka: "Pack Forme",
+  kachow_pal: "Kachow pal",
 };
 
 const packDescriptions: Record<string, string> = {
@@ -40,6 +43,9 @@ const packDescriptions: Record<string, string> = {
   sjeldne_spillere: "Cinq cartes, toutes 80 ou plus, dont au moins une 83+. 3 max par jour.",
   jumbo_premium_gull: "Huit cartes, toutes 79+, dont trois 80+ et une 83+ garanties. 3 max par jour.",
   skadoosh_dude: "Quinze cartes, toutes 80+, dont une 88+, deux 86+ et quatre 84+ garanties. 1 max par jour.",
+  stjerneutvalg: "Huit cartes, toutes 82+, dont une 87+ et deux 85+ garanties. 3 max par jour.",
+  formpakka: "Une carte spéciale (inform ou honorable mention) et cinq cartes 83+, dont une 86+ et deux 84+ garanties. 3 max par jour.",
+  kachow_pal: "Neuf cartes : une carte Inner Peace (88–95) et huit 86+, dont une 90+ et deux 88+ garanties, et environ 9 % de chance d'avoir une Icon. 1 max par jour.",
 };
 
 export const market = {

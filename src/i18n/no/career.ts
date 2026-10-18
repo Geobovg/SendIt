@@ -275,7 +275,7 @@ export const career: CareerDict = {
     unusableCard: "Troppen inneholder et kort du ikke kan bruke",
     wrongPosition: "En spiller står i en posisjon han ikke kan spille",
   },
-  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", honorable: "HON. MENTION", personal: "PERSONLIG" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", honorable: "Honorable mention", personal: "Personlig kort" }, untradable: "Kan ikke selges", anyPosition: "ALLE", personalHint: "Spiller alle posisjoner. +1 i rating for hver ny divisjon du når" },
+  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", honorable: "HON. MENTION", inner_peace: "INNER PEACE", personal: "PERSONLIG" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", honorable: "Honorable mention", inner_peace: "Inner Peace", personal: "Personlig kort" }, untradable: "Kan ikke selges", anyPosition: "ALLE", personalHint: "Spiller alle posisjoner. +1 i rating for hver ny divisjon du når" },
   tots: {
     intro: (count: number) => `${count} Team of the Season-kort med de beste spillerne i hver liga. De kan dukke opp i pakker.`,
     all: "Alle",
