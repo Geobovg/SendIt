@@ -23,6 +23,7 @@ export const career = {
     icons: "Icons",
     honorable: "Honorable mention",
     innerpeace: "Inner Peace",
+    stadion: "Stadion",
   },
   subTabs: {
     squad: "Truppen",

@@ -32,6 +32,10 @@ _Avoid_: Liga, Turnering (Turnering er noe annet, se over)
 Et av fem stadioner i AI-sesongen, som i Clash Royale: Gamle Gress, Ullevaal, Wembley Stadium, Old Trafford og Camp Nou. Hver arena har ti **divisjoner**, så stigen er 50 nivåer lang. Vinner du divisjon 1, går du opp til divisjon 10 i neste arena. Du faller aldri ut av en arena du har nådd. AI-klubbene blir jevnere og får en skjult styrkebonus jo høyere arenaen er, og opprykkspremien ganges opp.
 _Avoid_: Liga, Nivå, Stadion alene (Stadion er navnet, Arena er nivået)
 
+**Stadion**:
+Managerens eget stadion, som en Clash of Clans-base (migrering 0123, ADR 0004). Alle starter likt, uansett arena, divisjon eller klubbnivå, og stadionet gir ingen fordel i selve kampene. Syv bygninger oppgraderes med MB og tid: **klubbhus** (setter taket for de andre og gir flere byggere), **billettluke** (gruve som lager MB), **kasse** (lager som bestemmer hvor lenge billettluka og treningsfeltet kan fylle seg opp), **treningsfelt** (lager klubb-XP), **tribune** (mer MB fra billettluka), **supporterfelt** (dugnad: kortere byggetid) og **speiderhytte** (en speider er ute i 24 timer og kommer hjem med en pakke eller en spiller på 87–94 som man kan kjøpe, med rating og pakke etter hyttas nivå; man velger alltid én). Samlerne må tømmes, og tiden de sto fulle er tapt. Pågående oppgraderinger kan gjøres ferdige mot MB (20 MB per time som er igjen, gratis de siste 5 minuttene). Alt ligger i `src/lib/stadium.ts`. Heter «Stadium» på engelsk.
+_Avoid_: Arena (arenaen er vanskelighetsnivået på stigen, ikke managerens eget stadion), Klubbanlegg
+
 **Divisjon**:
 Et av ti vanskelighetsnivåer i hver **arena** (Divisjon 10 lavest, Divisjon 1 høyest), der AI-troppenes samlede rating skaleres opp jo høyere divisjon. Etter en AI-sesong rykker topp 2 opp i divisjon 10–7 og bare vinneren i divisjon 6–1; vinneren av divisjon 1 går til neste arena. Plassen rett under spiller **kvalik**. De to nederste rykker ned, unntatt i divisjon 10, som er gulvet i arenaen. Belønningen for opprykk øker jo høyere divisjonen du rykker opp til er.
 _Avoid_: Nivå (brukes om klubbnivå/XP, som er noe annet), Liga

@@ -12,7 +12,8 @@ import { profile } from "./profile";
 import { quiz } from "./quiz";
 import { sbc } from "./sbc";
 import { seasons } from "./seasons";
+import { stadium } from "./stadium";
 import { tournaments } from "./tournaments";
 import type { Dictionary } from "../en";
 
-export const sv: Dictionary = { draft, common, auth, profile, friends, tournaments, career, chemistry, market, match, seasons, sbc, femmer, quiz, dbErrors };
+export const sv: Dictionary = { draft, common, auth, profile, friends, tournaments, career, chemistry, market, match, seasons, stadium, sbc, femmer, quiz, dbErrors };
