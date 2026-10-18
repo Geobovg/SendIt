@@ -52,3 +52,5 @@ supabase/.temp/
 
 # fotmob-skript: rå sidedata fra FotMob (stort, hentes på nytt ved behov)
 /scripts/fotmob/data/cache/
+/scripts/fotmob/data/form.json
+/scripts/fotmob/data/form.sql

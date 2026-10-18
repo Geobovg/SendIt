@@ -2,7 +2,7 @@
 // FotMob har ikke noe åpent API, så vi leser dataene som ligger i selve sidene. Vær snill mot serveren:
 // pause mellom kall, og alt caches i data/cache slik at vi aldri henter det samme to ganger.
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 
 const cache = new URL("./data/cache/", import.meta.url);
 mkdirSync(cache, { recursive: true });
@@ -10,10 +10,13 @@ mkdirSync(cache, { recursive: true });
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 export const pause = (ms) => new Promise((r) => setTimeout(r, ms));
 
-/** Henter siden som tekst. `nokkel` er filnavnet i cachen. Returnerer { sideData, fraCache }. */
-export async function hentSide(sti, nokkel, { forsinkelse = 1200 } = {}) {
+/**
+ * Henter siden som tekst. `nokkel` er filnavnet i cachen. Returnerer { sideData, fraCache }.
+ * `maksAlder` (ms): en cachet side som er eldre enn dette hentes på nytt (for sider som endrer seg, som terminlister).
+ */
+export async function hentSide(sti, nokkel, { forsinkelse = 1200, maksAlder = Infinity } = {}) {
   const fil = new URL(`${nokkel}.json`, cache);
-  if (existsSync(fil)) return { sideData: JSON.parse(readFileSync(fil, "utf8")), fraCache: true };
+  if (existsSync(fil) && Date.now() - statSync(fil).mtimeMs < maksAlder) return { sideData: JSON.parse(readFileSync(fil, "utf8")), fraCache: true };
   await pause(forsinkelse);
   let html = "";
   for (let forsok = 1; forsok <= 3; forsok++) {
