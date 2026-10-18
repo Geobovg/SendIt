@@ -43,6 +43,7 @@ export const stadium: StadiumDict = {
   speedUp: (cost: number) => `أنهِ الآن · ${cost} MB`,
   needsClubhouse: (level: number) => `يتطلب مبنى النادي مستوى ${level}`,
   builders: (used: number, total: number) => `عمال البناء ${used}/${total}`,
+  capacity: (seats: string) => `السعة ${seats} مقعد`,
   effectKlubbhus: (builders: number, cap: number) => `عمال البناء: ${builders} · المباني الأخرى حتى المستوى ${cap}`,
   effectKasse: (hours: number) => `تتسع لدخل ${hours} ساعة`,
   effectTribune: (pct: number) => `+${pct}% من دخل شباك التذاكر`,

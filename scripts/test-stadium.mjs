@@ -130,4 +130,10 @@ for (let level = 1; level <= 10; level += 1) {
   if (level > 1) assert.ok(s.scoutReward(level).maxOverall >= s.scoutReward(level - 1).maxOverall, `speider ${level} blir ikke dårligere`);
 }
 
+// Kapasiteten på stadionet vokser med tribunen og er bare pynt (ingen virkning i spillet).
+assert.equal(s.seatCapacities.length, s.buildings.tribune.maxLevel + 1);
+for (let level = 1; level <= s.buildings.tribune.maxLevel; level += 1) assert.ok(s.seatCapacities[level] > s.seatCapacities[level - 1], `kapasitet stiger ved tribunenivå ${level}`);
+assert.equal(s.seatsOf(s.startLevels()), 200);
+assert.equal(s.seatsOf({ ...s.startLevels(), tribune: 10 }), 80_000);
+
 console.log("Stadion: alle sjekker bestått.");

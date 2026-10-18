@@ -41,6 +41,7 @@ export const stadium = {
   speedUp: (cost: number) => `Finish now · ${cost} MB`,
   needsClubhouse: (level: number) => `Needs club house level ${level}`,
   builders: (used: number, total: number) => `Builders ${used}/${total}`,
+  capacity: (seats: string) => `Capacity ${seats} seats`,
   effectKlubbhus: (builders: number, cap: number) => `Builders: ${builders} · Other buildings up to level ${cap}`,
   effectKasse: (hours: number) => `Holds ${hours} hours of income`,
   effectTribune: (pct: number) => `+${pct}% ticket income`,

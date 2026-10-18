@@ -26,6 +26,17 @@ Oppgraderinger koster MB og tar fra 10 minutter til 5 dager (før dugnaden). Hve
 
 **Speiderhytta.** Nivået på hytta avgjør hva speideren finner. Spilleren er en tilfeldig aktiv spiller i katalogen som manageren ikke eier fra før, med rating fra 87 på nivå 1 til 92–94 på nivå 10 (trinnene står i `scoutRatings`), og koster 60 % av katalogprisen (katalogprisen er kortets verdi: 280 MB for en 87-er og 2000 MB for en 93–94-er, så 168–1200 MB). Hurtigsalg gir bare 25 %, så det er ingenting å tjene på å kjøpe og selge. Pakka er en av de eksisterende pakkene, bedre jo høyere nivå: Premium gullpakke på nivå 1–2, Sjeldne spillere på 3–4, Jumbo premium gull på 5–6, Stjerneutvalg på 7–8 og Formpakka på 9–10. Manageren velger alltid mellom spilleren og pakka, og begge avslutter oppdraget. Kjøper man spilleren, bruker det samme plass- og duplikatregler som katalogkjøp (men uten taket på 83 i rating, siden det er poenget). Pakka havner i gratispakkene og åpnes som alle andre.
 
+## Tegningen vokser med nivåene
+
+Stadionet er en tegnet scene (`src/components/stadium-scene.tsx`), ikke ikoner på en grønn flate. Alt som tegnes leses fra nivåene, så tegningen er ren pynt og påvirker ingenting i spillet. Det som skjer når man oppgraderer:
+
+- **Tribune** er selve stadionet. Nivå 0 er en bar bane med to benker. Hvert nivå legger til en rad med seter, så skålen blir bredere og høyere. Fra nivå 6 kommer det tak bak, fra 9 hele veien rundt, og på 10 en lysende LED-stripe. Lysmaster kommer fra nivå 3 (bak) og 6 (foran), og lysstråler og videotavle fra 8. Fasaden mot veien får flere porter og en gullport på 10. Kapasiteten (`seatsOf`, 200 til 80 000 plasser) står over scenen.
+- **Supporterfelt** fyller plassene: jo høyere nivå, jo tettere sitter fansen, og fra nivå 6 er det tre farger. Selve feltet får flere fans, vimpler, tromme, tifo-banner og røykbomber.
+- **Klubbhus** går fra et lite hus med saltak til en borg med glassatrium og gullkuppel. **Kasse**, **billettluke**, **treningsfelt** og **speiderhytte** får hver sin utvikling (søyler og gullbarrer, flere luker og kø, gjerde og lys, speidertårn med radar).
+- En bygning på nivå 0 er en tom tomt. En bygning som oppgraderes vises som før med en byggekran til den er ferdig, og «popper» opp når den får nytt nivå.
+
+Knappene, boblene og nedtellingene er vanlig HTML lagt over tegningen med posisjonene i `sceneSpots`, så tilgjengelighet og klikk virker som før. Tilfeldige posisjoner (fansene) kommer fra en heltallshash, ikke `Math.sin`, fordi Node og nettleseren runder ulikt og det ga hydreringsfeil.
+
 ## Valg vi tok
 
 **Lat ferdigstilling.** En oppgradering lagrer bare nivået den går til og når den er ferdig (`upgrade_to`, `upgrade_ends_at`). Ingen jobb kjører i bakgrunnen. Les-koden regner en oppgradering som utført når tiden er passert (`effectiveLevels`), og skrivefunksjonene i databasen rydder opp først (`stadium_settle`). Alternativet var en planlagt jobb som flytter nivåene, men det gir mer å drifte og ingenting å vinne.
@@ -47,7 +58,7 @@ Oppgraderinger koster MB og tar fra 10 minutter til 5 dager (før dugnaden). Hve
 
 ## Ikke med i første versjon
 
-- Rutenett der man plasserer bygningene selv (de står på faste plasser i scenen).
+- Rutenett der man plasserer bygningene selv (de står på faste plasser i scenen, se `sceneSpots`).
 - Raid på venners stadion, og å se en venns stadion.
 - Flere bygninger: flomlys (kveldskamper), murer og forsvar.
 - Å avbryte en oppgradering mot refusjon.

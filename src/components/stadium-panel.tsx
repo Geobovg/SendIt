@@ -1,31 +1,36 @@
 "use client";
 
-import { useEffect, useState, useTransition, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useState, useTransition, type ReactNode } from "react";
 import { useT } from "@/i18n/client";
 import {
   chooseScoutAction, collectStadiumAction, openScoutAction, sendScoutAction, speedUpStadiumAction, startStadiumUpgradeAction, type StadiumResult,
 } from "@/lib/stadium-actions";
 import {
-  activeUpgrades, buildersFor, buildingKeys, buildings, collectable, effectiveLevels, incomeOf, levelCap, parseState, planUpgrade, scoutReward, scoutStatus, secondsLeft,
+  activeUpgrades, buildersFor, buildingKeys, buildings, collectable, effectiveLevels, incomeOf, levelCap, parseState, planUpgrade, scoutReward, scoutStatus, seatsOf, secondsLeft,
   speedupCost, storageHours, xpOf, DUGNAD_PER_LEVEL, TRIBUNE_BONUS_PER_LEVEL,
   type BuildingKey, type Collector, type StadiumLevels, type StadiumPanelState,
 } from "@/lib/stadium";
 import { PlayerCardFace } from "./player-card-face";
+import { SCENE_H, SCENE_W, StadiumScene, sceneSpots } from "./stadium-scene";
 import { buttonClass, secondaryButtonClass } from "./ui";
 
 type Props = { state: StadiumPanelState; serverNow: string; budget: number };
 
-// Plassering i scenen i prosent: m = mobil (høy scene), d = bredere skjermer.
-type Spot = { color: string; icon: string; m: [number, number]; d: [number, number]; big?: boolean };
+// Farge og ikon for hver bygning. Hvor den står i scenen, ligger i `sceneSpots` i stadium-scene.tsx.
+type Spot = { color: string; icon: string };
 const look: Record<BuildingKey, Spot> = {
-  klubbhus: { color: "#f2c94c", icon: "🏛️", m: [50, 11], d: [50, 15], big: true },
-  billettluke: { color: "#4ade80", icon: "🎟️", m: [17, 28], d: [17, 31] },
-  treningsfelt: { color: "#fb923c", icon: "🏋️", m: [83, 28], d: [83, 31] },
-  kasse: { color: "#a78bfa", icon: "🏦", m: [17, 58], d: [17, 69] },
-  supporterfelt: { color: "#f472b6", icon: "📣", m: [83, 58], d: [83, 69] },
-  tribune: { color: "#5cc8ff", icon: "🏟️", m: [31, 85], d: [31, 88] },
-  speiderhytte: { color: "#2dd4bf", icon: "🕵️", m: [69, 85], d: [69, 88] },
+  klubbhus: { color: "#f2c94c", icon: "🏛️" },
+  billettluke: { color: "#4ade80", icon: "🎟️" },
+  treningsfelt: { color: "#fb923c", icon: "🏋️" },
+  kasse: { color: "#a78bfa", icon: "🏦" },
+  supporterfelt: { color: "#f472b6", icon: "📣" },
+  tribune: { color: "#5cc8ff", icon: "🏟️" },
+  speiderhytte: { color: "#2dd4bf", icon: "🕵️" },
 };
+
+const percent = (value: number, total: number) => `${(value / total) * 100}%`;
+/** 12 400 i stedet for 12400, med fast mellomrom så server og nettleser skriver likt. */
+const spaced = (value: number) => String(value).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 
 /** De to største enhetene, f.eks. «2d 4h», «3h 20min» eller «45s». */
 function formatDuration(totalSeconds: number, units: { d: string; h: string; m: string; s: string }) {
@@ -95,26 +100,27 @@ export function StadiumPanel({ state: serverState, serverNow, budget }: Props) {
     return null;
   };
 
+  // Trykkflaten over tegningen: selve bygningen er tegnet av StadiumScene, her ligger bare knappen, bobler og tekst.
   const tile = (key: BuildingKey) => {
-    const { color, icon, m, d, big } = look[key];
+    const { color } = look[key]; const spot = sceneSpots[key];
     const level = levels[key]; const upgrade = running.find((entry) => entry.building === key);
     const isSelected = selected === key; const built = level > 0;
     const left = upgrade ? secondsLeft(upgrade.endsAt, now) : 0;
     const total = upgrade ? Math.max(1, (upgrade.endsAt.getTime() - upgrade.startedAt.getTime()) / 1000) : 1;
-    return <div key={key} className="absolute left-(--mx) top-(--my) z-10 -translate-x-1/2 -translate-y-1/2 sm:left-(--dx) sm:top-(--dy)" style={{ "--mx": `${m[0]}%`, "--my": `${m[1]}%`, "--dx": `${d[0]}%`, "--dy": `${d[1]}%`, width: big ? "clamp(76px, 22%, 128px)" : "clamp(62px, 18%, 104px)" } as CSSProperties}>
+    const frame = isSelected ? "border-white/90 bg-white/10 ring-4 ring-white/40" : upgrade ? "stadium-hazard border-dashed border-amber-300/80" : "border-transparent hover:border-white/40 hover:bg-white/5";
+    return <div key={key} className="absolute z-10 -translate-x-1/2 -translate-y-1/2" style={{ left: percent(spot.x, SCENE_W), top: percent(spot.y, SCENE_H), width: percent(spot.w, SCENE_W), height: percent(spot.h, SCENE_H) }}>
       {bubble(key)}
-      <button type="button" aria-pressed={isSelected} aria-label={`${text.buildings[key].name} · ${built ? text.level(level) : text.notBuilt}`} onClick={() => setSelected(isSelected ? null : key)}
-        className={`relative grid aspect-square w-full place-items-center rounded-2xl border-2 transition ${isSelected ? "scale-110 ring-4 ring-white/80" : "hover:scale-105"} ${built ? "" : "border-dashed opacity-80"}`}
-        style={{ borderColor: color, background: built ? `linear-gradient(160deg, ${color}66, #0b1420 85%)` : "rgba(8,16,27,.7)", boxShadow: built ? `0 8px 20px ${color}40` : undefined }}>
-        <span className={`leading-none ${big ? "text-5xl" : "text-4xl"} ${built ? "" : "grayscale"}`}>{built ? icon : "＋"}</span>
-        {built && !upgrade ? <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-black text-slate-950 shadow" style={{ backgroundColor: color }}>{text.level(level)}</span> : null}
+      <button type="button" aria-pressed={isSelected} aria-label={`${text.buildings[key].name} · ${built ? text.level(level) : text.notBuilt}`} onClick={() => setSelected(isSelected ? null : key)} className={`absolute inset-0 rounded-2xl border-2 transition ${frame}`}>
+        {!built && !upgrade ? <span className="absolute left-1/2 top-1/2 grid size-9 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 bg-slate-950/80 text-xl font-black" style={{ borderColor: color, color }}>＋</span> : null}
         {upgrade ? <>
-          <span className="absolute inset-0 grid place-items-center rounded-2xl bg-black/55 text-3xl"><span className="animate-pulse">🚧</span></span>
-          <span className="absolute inset-x-1.5 bottom-1.5"><Bar value={1 - left / total} color={color} className="h-1.5" /></span>
-          <span className="absolute -top-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-slate-950/90 px-1.5 py-0.5 text-[10px] font-black text-amber-300">{duration(left)}</span>
+          <span className="absolute inset-x-2 bottom-2"><Bar value={1 - left / total} color={color} className="h-1.5" /></span>
+          <span className="absolute -top-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-slate-950/90 px-1.5 py-0.5 text-[10px] font-black text-amber-300">🚧 {duration(left)}</span>
         </> : null}
       </button>
-      <p className="mt-3 -mx-3 text-center text-[10px] font-black uppercase leading-tight tracking-wide text-white/80 drop-shadow">{text.buildings[key].name}</p>
+      <div className="pointer-events-none absolute left-1/2 top-full z-10 flex -translate-x-1/2 flex-col items-center gap-0.5 pt-0.5">
+        {built && !upgrade ? <span className="whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-black text-slate-950 shadow" style={{ backgroundColor: color }}>{text.level(level)}</span> : null}
+        <p className="whitespace-nowrap text-center text-[10px] font-black uppercase leading-tight tracking-wide text-white/85 [text-shadow:0_1px_3px_#000]">{text.buildings[key].name}</p>
+      </div>
     </div>;
   };
 
@@ -196,24 +202,22 @@ export function StadiumPanel({ state: serverState, serverNow, budget }: Props) {
     </header>
 
     <div className="flex flex-wrap items-center gap-2 text-xs font-bold">
+      <span className="rounded-full border border-sky-300/30 bg-sky-300/10 px-3 py-1.5 text-sky-200">🏟️ {text.capacity(spaced(seatsOf(levels)))}</span>
       <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5">🔨 {text.builders(running.length, builderCount)}</span>
       {running.map((upgrade) => <button key={upgrade.building} type="button" onClick={() => setSelected(upgrade.building)} className="rounded-full border border-amber-300/40 bg-amber-300/10 px-3 py-1.5 text-amber-200">{look[upgrade.building].icon} {text.buildings[upgrade.building].name} · {duration(secondsLeft(upgrade.endsAt, now))}</button>)}
       {Array.from({ length: Math.max(0, builderCount - running.length) }, (_, index) => <span key={index} className="rounded-full border border-dashed border-white/25 px-3 py-1.5 text-white/55">{text.builderFree}</span>)}
     </div>
 
-    <div className="relative mx-auto aspect-[5/7] w-full max-w-4xl overflow-hidden rounded-2xl border border-white/10 shadow-xl sm:aspect-[16/10]" style={{ background: "repeating-linear-gradient(90deg, #14532d 0, #14532d 7%, #166534 7%, #166534 14%)" }}>
-      <div className="absolute inset-0" style={{ background: "radial-gradient(circle at 50% 50%, transparent 45%, rgba(3,10,6,.65) 100%)" }} />
-      <div className="absolute left-1/2 top-[44%] h-[28%] w-[38%] -translate-x-1/2 -translate-y-1/2 rounded-md sm:top-1/2 sm:h-[32%] border-2 border-emerald-100/50 bg-emerald-600/40" style={{ boxShadow: `0 0 0 ${Math.round(2 + levels.tribune * 1.6)}px rgba(92,200,255,${(0.12 + levels.tribune * 0.07).toFixed(2)})` }}>
-        <div className="absolute inset-y-0 left-1/2 w-0.5 -translate-x-1/2 bg-emerald-100/50" />
-        <div className="absolute left-1/2 top-1/2 aspect-square h-1/3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-emerald-100/50" />
+    <div className="grid gap-4 lg:grid-cols-[minmax(0,34rem)_minmax(0,1fr)] lg:items-start">
+      <div className="relative mx-auto w-full max-w-lg overflow-hidden rounded-2xl border border-white/10 shadow-xl" style={{ aspectRatio: `${SCENE_W} / ${SCENE_H}` }}>
+        <StadiumScene levels={levels} building={running.map((upgrade) => upgrade.building)} />
+        {buildingKeys.map(tile)}
       </div>
-      <span className="absolute left-[6%] top-[6%] text-2xl opacity-80" aria-hidden="true">🌳</span><span className="absolute right-[6%] top-[6%] text-2xl opacity-80" aria-hidden="true">🌳</span>
-      <span className="absolute left-[44%] top-[40%] text-xl sm:top-[44%]" aria-hidden="true">⚽</span>
-      {buildingKeys.map(tile)}
+
+      <div className="grid gap-3 lg:sticky lg:top-4">
+        {error ? <p role="alert" className="rounded-lg border border-rose-400/40 bg-rose-400/10 px-3 py-2 text-sm font-bold text-rose-200">{error}</p> : null}
+        {selected ? sheet(selected) : <p className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-center text-sm text-white/65">{text.tapHint}</p>}
+      </div>
     </div>
-
-    {error ? <p role="alert" className="rounded-lg border border-rose-400/40 bg-rose-400/10 px-3 py-2 text-sm font-bold text-rose-200">{error}</p> : null}
-
-    {selected ? sheet(selected) : <p className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-center text-sm text-white/65">{text.tapHint}</p>}
   </div>;
 }

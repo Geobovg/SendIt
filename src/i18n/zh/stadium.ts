@@ -43,6 +43,7 @@ export const stadium: StadiumDict = {
   speedUp: (cost: number) => `立即完成 · ${cost} MB`,
   needsClubhouse: (level: number) => `需要俱乐部大楼 ${level} 级`,
   builders: (used: number, total: number) => `建造工 ${used}/${total}`,
+  capacity: (seats: string) => `容量 ${seats} 个座位`,
   effectKlubbhus: (builders: number, cap: number) => `建造工:${builders} · 其他建筑最高 ${cap} 级`,
   effectKasse: (hours: number) => `可容纳 ${hours} 小时的收入`,
   effectTribune: (pct: number) => `售票处收入 +${pct}%`,
