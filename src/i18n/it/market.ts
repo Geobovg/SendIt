@@ -45,7 +45,7 @@ const packDescriptions: Record<string, string> = {
   skadoosh_dude: "Quindici carte, tutte 80+, con una 88+, due 86+ e quattro 84+ garantite. Max 1 al giorno.",
   stjerneutvalg: "Otto carte, tutte 82+, con una 87+ e due 85+ garantite. Max 3 al giorno.",
   formpakka: "Una carta speciale (inform o honorable mention) e cinque carte da 83+, con una 86+ e due 84+ garantite. Max 3 al giorno.",
-  ikonjakt: "Otto carte, tutte 86+, con una 90+ e due 88+ garantite, e circa il 25% di probabilità di una Icon. Max 1 al giorno.",
+  ikonjakt: "Otto carte, tutte 86+, con tre 88+ garantite, e circa il 22% di probabilità di una Icon. Max 1 al giorno.",
 };
 
 export const market = {
