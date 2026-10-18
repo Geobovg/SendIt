@@ -45,7 +45,7 @@ const packDescriptions: Record<string, string> = {
   skadoosh_dude: "十五张卡，全部 80+，保底一张 88+、两张 86+ 和四张 84+。每天最多 1 次。",
   stjerneutvalg: "八张卡，全部 82+，保底一张 87+ 和两张 85+。每天最多 3 次。",
   formpakka: "一张特殊卡（状态卡或荣誉提名）和五张 83+ 的卡，保底一张 86+ 和两张 84+。每天最多 3 次。",
-  kachow_pal: "九张卡：一张 88+ 的特殊卡（状态卡或荣誉提名）和八张 86+ 的卡，保底一张 90+ 和两张 88+，约 9% 几率获得 Icon。每天最多 1 次。",
+  kachow_pal: "九张卡：一张 Inner Peace 卡（88–95）和八张 86+ 的卡，保底一张 90+ 和两张 88+，约 9% 几率获得 Icon。每天最多 1 次。",
 };
 
 export const market = {

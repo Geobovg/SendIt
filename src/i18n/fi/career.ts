@@ -270,7 +270,7 @@ export const career = {
     unusableCard: "Joukkueessa on kortti, jota et voi käyttää",
     wrongPosition: "Pelaaja on tilanteessa, jossa hän ei voi pelata",
   },
-  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", honorable: "HON. MENTION", personal: "HENKILÖKOHTAINEN" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", honorable: "Honorable mention", personal: "Henkilökohtainen kortti" }, untradable: "Ei myytävissä", anyPosition: "KAIKKI", personalHint: "Pelaa kaikilla pelipaikoilla. +1 luokitus jokaisesta uudesta divisioonasta, jonka saavutat" },
+  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", honorable: "HON. MENTION", inner_peace: "INNER PEACE", personal: "HENKILÖKOHTAINEN" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", honorable: "Honorable mention", inner_peace: "Inner Peace", personal: "Henkilökohtainen kortti" }, untradable: "Ei myytävissä", anyPosition: "KAIKKI", personalHint: "Pelaa kaikilla pelipaikoilla. +1 luokitus jokaisesta uudesta divisioonasta, jonka saavutat" },
   tots: {
     intro: (count: number) => `${count} Team of the Season -korttia jokaisen liigan parhaista pelaajista. Niitä voi saada paketeista.`,
     all: "Kaikki",

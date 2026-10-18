@@ -45,7 +45,7 @@ const packDescriptions: Record<string, string> = {
   skadoosh_dude: "Fifteen cards, all 80+, with one 88+, two 86+ and four 84+ guaranteed. Max 1 per day.",
   stjerneutvalg: "Eight cards, all 82+, with one 87+ and two 85+ guaranteed. Max 3 per day.",
   formpakka: "One special card (inform or honorable mention) and five cards rated 83+, with one 86+ and two 84+ guaranteed. Max 3 per day.",
-  kachow_pal: "Nine cards: one special card rated 88+ (inform or honorable mention) and eight rated 86+, with one 90+ and two 88+ guaranteed, and about a 9% chance of an Icon. Max 1 per day.",
+  kachow_pal: "Nine cards: one Inner Peace card (88–95) and eight rated 86+, with one 90+ and two 88+ guaranteed, and about a 9% chance of an Icon. Max 1 per day.",
 };
 
 export const market = {
