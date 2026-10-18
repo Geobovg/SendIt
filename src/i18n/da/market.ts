@@ -45,7 +45,7 @@ const packDescriptions: Record<string, string> = {
   skadoosh_dude: "Femten kort, alle 80+, ét på 88+, to på 86+ og fire på 84+ garanteret. Maks 1 om dagen.",
   stjerneutvalg: "Otte kort, alle 82+, ét på 87+ og to på 85+ garanteret. Maks 3 om dagen.",
   formpakka: "Ét specialkort (inform eller honorable mention) og fem kort på 83+, ét på 86+ og to på 84+ garanteret. Maks 3 om dagen.",
-  kachow_pal: "Otte kort, alle 86+, ét på 90+ og to på 88+ garanteret, og cirka 9 % chance for en Icon. Maks 1 om dagen.",
+  kachow_pal: "Ni kort: ét TOTS-kort (88+) og otte på 86+, ét på 90+ og to på 88+ garanteret, og cirka 9 % chance for en Icon. Maks 1 om dagen.",
 };
 
 export const market = {

@@ -3,7 +3,8 @@
 --   Formpakka       750 MB   Ett garantert spesialkort (inform eller honorable mention) og fem kort på 83+, garantert
 --                            ett på 86+ og to på 84+. Maks 3 per dag.
 --   Skadoosh dude  1500 MB   Uendret, men prisen går opp fra 1000 MB. Fortsatt maks 1 per dag.
---   Kachow pal     3500 MB   8 kort, alle 86+, garantert ett på 90+ og to på 88+, og ca. 9 % sjanse for en Icon. Maks 1 per dag.
+--   Kachow pal     3500 MB   Ett garantert TOTS-kort (88+) og åtte kort på 86+, garantert ett på 90+ og to på 88+, og ca. 9 %
+--                            sjanse for en Icon. Maks 1 per dag.
 -- Alle bruker mekanikkene som finnes fra før (sjikt, garantier, inform/honorable/Icon-sjanser og kjøpsgrense per dag),
 -- så ingenting i pakkeåpningen er endret. Pakkene sorteres etter pris, så Skadoosh dude får nytt sort_order.
 --
@@ -14,16 +15,18 @@
 --   Stjerneutvalg (500)   84,3    100 %    100 %    47,3 %   6,6 %    -        21,5 %
 --   Formpakka (750)       85,8    100 %    100 %    48,6 %   14,2 %   -        9,4 %   (pluss ett garantert spesialkort)
 --   Skadoosh dude (1500)  85,7    100 %    100 %    100 %    44,6 %   3,0 %    67,2 %
---   Kachow pal (3500)     87,8    100 %    100 %    100 %    100 %    8,8 %    31,8 %
+--   Kachow pal (3500)     87,8    100 %    100 %    100 %    100 %    8,7 %    31,7 %  (pluss ett garantert TOTS-kort)
 -- Hurtigsalg gir 25 % av kortets verdi (30 % for inform). Med den antatte fordelingen gir Stjerneutvalg og Formpakka
 -- ca. 50–65 % av prisen tilbake hvis man selger alt, Skadoosh dude ca. 70 % (mot ca. 105 % ved 1000 MB, der man kunne
--- tjene på å åpne og selge) og Kachow pal ca. 29 %. Det siste er med vilje en dyr pakke for de som har mye MB.
+-- tjene på å åpne og selge) og Kachow pal ca. 38 %, med TOTS-kortet. Det siste er med vilje en dyr pakke for de som har mye MB.
+-- Alle 200 TOTS-kortene har rating 88–95 (0065), så scope 'tots' gir alltid et spesialkort over 87.
 
 -- 1) Skadoosh dude koster 1500 MB, og pakkene sorteres etter pris i butikken.
 update manager_packs set price = 1500, sort_order = 8 where key = 'skadoosh_dude';
 
--- 2) De tre nye pakkene. Formpakka har ett garantert spesialkort (special_guarantee), som kommer i tillegg til de
--- andre kortene og telles med i card_count. Spesialkortet er inform eller honorable mention (scope 'mix', se 0114).
+-- 2) De tre nye pakkene. Formpakka og Kachow pal har ett garantert spesialkort (special_guarantee), som kommer i tillegg
+-- til de andre kortene og telles med i card_count. I Formpakka er det inform eller honorable mention (scope 'mix', se 0114),
+-- og i Kachow pal et TOTS-kort (scope 'tots').
 -- Oddsen er vekter per sjikt (se 0034).
 insert into manager_packs (key, name, description, price, card_count, guarantee_min, guarantee_count, guarantees, odds, accent, sort_order,
   inform_chance, tots_chance, icon_chance, honorable_chance, special_guarantee, special_scope, purchasable, weekly_limit, daily_purchase_limit, untradable, daily_limit, available_from, available_until) values
@@ -35,10 +38,10 @@ insert into manager_packs (key, name, description, price, card_count, guarantee_
     '[{"min":86,"count":1},{"min":84,"count":2}]',
     '[{"min":83,"max":83,"weight":22},{"min":84,"max":84,"weight":20},{"min":85,"max":85,"weight":18},{"min":86,"max":86,"weight":17},{"min":87,"max":87,"weight":11},{"min":88,"max":89,"weight":9},{"min":90,"max":99,"weight":3}]',
     '#34d399', 7, 0.02, 0, 0, 0.01, 1, 'mix', true, null, 3, false, null, null, null),
-  ('kachow_pal', 'Kachow pal', 'Åtte kort, alle 86+, garantert ett på 90+ og to på 88+, og ca. 9 % sjanse for en Icon. Maks 1 per dag.', 3500, 8, 88, 3,
+  ('kachow_pal', 'Kachow pal', 'Ni kort: ett TOTS-kort (88+) og åtte kort på 86+, garantert ett på 90+ og to på 88+, og ca. 9 % sjanse for en Icon. Maks 1 per dag.', 3500, 9, 88, 3,
     '[{"min":90,"count":1},{"min":88,"count":2}]',
     '[{"min":86,"max":86,"weight":34},{"min":87,"max":87,"weight":27},{"min":88,"max":88,"weight":17},{"min":89,"max":89,"weight":11},{"min":90,"max":90,"weight":6},{"min":91,"max":91,"weight":3},{"min":92,"max":99,"weight":2}]',
-    '#a78bfa', 9, 0.05, 0, 0.0112, 0.04, 0, 'current', true, null, 1, false, null, null, null)
+    '#a78bfa', 9, 0.05, 0, 0.0112, 0.04, 1, 'tots', true, null, 1, false, null, null, null)
 on conflict (key) do update set
   name = excluded.name, description = excluded.description, price = excluded.price, card_count = excluded.card_count,
   guarantee_min = excluded.guarantee_min, guarantee_count = excluded.guarantee_count, guarantees = excluded.guarantees, odds = excluded.odds,
