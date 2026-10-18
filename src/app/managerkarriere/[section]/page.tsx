@@ -21,6 +21,7 @@ import { listFriends } from "@/lib/friends";
 import { getDraftPage } from "@/lib/draft";
 import { getSbcData } from "@/lib/sbc-data";
 import { getAiSeason, getFriendSeasons } from "@/lib/seasons";
+import { serializeState } from "@/lib/stadium";
 import { getStadiumState } from "@/lib/stadium-data";
 import { getT } from "@/i18n/server";
 
@@ -81,8 +82,7 @@ export default async function ManagerCareerSectionPage({ params, searchParams }:
   else if (active === "honorable") content = <HonorableGallery cards={honorableCards!} />;
   else if (active === "innerpeace") content = <InnerPeaceGallery cards={innerPeaceCards!} />;
   else if (active === "stadion") {
-    const stadium = stadiumState!;
-    content = <StadiumPanel state={{ levels: stadium.levels, collectedAt: stadium.collectedAt.toISOString(), upgrades: stadium.upgrades.map((upgrade) => ({ ...upgrade, endsAt: upgrade.endsAt.toISOString() })) }} serverNow={new Date().toISOString()} budget={career.manager_budget} />;
+    content = <StadiumPanel state={serializeState(stadiumState!)} serverNow={new Date().toISOString()} budget={career.manager_budget} />;
   } else if (active === "draft") content = <DraftPanel data={draftData!} budget={career.manager_budget} />;
   else if (active === "pakker") content = <ManagerCareer {...manager!} budget={career.manager_budget} section="packs" shop={shop!} />;
   else if (active === "sesong") {

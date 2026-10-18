@@ -8,7 +8,6 @@ import type { ActionState } from "./actions";
 import { autoShotCell, getManagerKickoff, isAiTeam, keeperIsManager, MANAGER_KICKOFF_VERSION, MAX_SUBSTITUTIONS, getManagerShots, matchClock, NO_EXTENSION, planManagerTimeline, plannedDurationMs, playersById, resolveShot, SHOT_CHOICE_MS, shotKeeperRating, shotTakerShooting, shotMinutesOf, matchExtension, squadAtSubWindow, SUB_WINDOW_MAX_MS, SUB_WINDOW_MINUTE, subReadySides, subWindowClosed, subWindowMs, type ManagerKickoffEvent, type ManagerMatchEvent, type MatchClock, type MatchSide, type ShotResult } from "./manager-match";
 import { managerTeamSnapshots } from "./manager-snapshot";
 import { managerMatchLimitError } from "./match-limit";
-import { withHomeBonus } from "./stadium-data";
 import { supabaseAdmin } from "./supabase/server";
 
 function profilePaths() { revalidatePath("/profile"); revalidatePath("/managerkarriere"); }
@@ -18,7 +17,7 @@ async function createManagerKickoff(db: ReturnType<typeof supabaseAdmin>, homeUs
   if ("error" in snapshots) return snapshots;
   const home = snapshots.get(homeUserId); const away = snapshots.get(awayUserId);
   if (!home || !away) return { error: (await getT()).career.errors.bothNeedLineup };
-  return { type: "kickoff", version: MANAGER_KICKOFF_VERSION, home: await withHomeBonus(home, db), away };
+  return { type: "kickoff", version: MANAGER_KICKOFF_VERSION, home, away };
 }
 
 export async function createCareerChallengeAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
