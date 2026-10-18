@@ -270,7 +270,7 @@ export const career = {
     unusableCard: "تحتوي الفرقة على بطاقة لا يمكنك استخدامها",
     wrongPosition: "اللاعب في مركز لا يستطيع اللعب فيه",
   },
-  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", honorable: "HON. MENTION", personal: "شخصية" }, name: { inform: "بطاقة الفورمة", tots: "Team of the Season", icon: "أيقونة", honorable: "Honorable mention", personal: "بطاقة شخصية" }, untradable: "غير قابلة للبيع", anyPosition: "الكل", personalHint: "تلعب في كل المراكز. +1 تقييم لكل درجة جديدة تصل إليها" },
+  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", honorable: "HON. MENTION", inner_peace: "INNER PEACE", personal: "شخصية" }, name: { inform: "بطاقة الفورمة", tots: "Team of the Season", icon: "أيقونة", honorable: "Honorable mention", inner_peace: "Inner Peace", personal: "بطاقة شخصية" }, untradable: "غير قابلة للبيع", anyPosition: "الكل", personalHint: "تلعب في كل المراكز. +1 تقييم لكل درجة جديدة تصل إليها" },
   tots: {
     intro: (count: number) => `${count} بطاقة Team of the Season لأفضل اللاعبين في كل دوري. يمكن أن تظهر في الحزم.`,
     all: "الكل",

@@ -1,11 +1,11 @@
 // Lager klubbendringene (og riktig liga) fra FotMob som en migrering, pluss en rapport til kontroll.
-// Bruk: node scripts/fotmob/klubb-migrering.mjs <migreringsnummer>   (f.eks. 0122)
+// Bruk: node scripts/fotmob/klubb-migrering.mjs <migreringsnummer>   (f.eks. 0119)
 // Skriver supabase/migrations/<nr>_klubber_fra_fotmob.sql og data/klubbrapport.md
 import { readFileSync, writeFileSync } from "node:fs";
 import { normaliser } from "./fotmob.mjs";
 
 const nr = process.argv[2];
-if (!/^\d{4}$/.test(nr ?? "")) throw new Error("Oppgi migreringsnummer, f.eks. 0122");
+if (!/^\d{4}$/.test(nr ?? "")) throw new Error("Oppgi migreringsnummer, f.eks. 0119");
 const les = (f) => JSON.parse(readFileSync(new URL(`./data/${f}`, import.meta.url), "utf8"));
 const katalog = new Map(les("katalog.json").map((s) => [s.slug, s]));
 const match = les("match.json");

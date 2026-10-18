@@ -18,6 +18,9 @@ const packNames: Record<string, string> = {
   sjeldne_spillere: "Seltene Spieler",
   jumbo_premium_gull: "Jumbo-Premium-Gold",
   skadoosh_dude: "Skadoosh dude",
+  stjerneutvalg: "Sternauswahl",
+  formpakka: "Formpaket",
+  kachow_pal: "Kachow pal",
 };
 
 const packDescriptions: Record<string, string> = {
@@ -40,6 +43,9 @@ const packDescriptions: Record<string, string> = {
   sjeldne_spillere: "Fünf Karten, alle 80 oder besser, und mindestens eine 83+. Max. 3 pro Tag.",
   jumbo_premium_gull: "Acht Karten, alle 79+, drei mit 80+ und eine mit 83+ garantiert. Max. 3 pro Tag.",
   skadoosh_dude: "Fünfzehn Karten, alle 80+, eine mit 88+, zwei mit 86+ und vier mit 84+ garantiert. Max. 1 pro Tag.",
+  stjerneutvalg: "Acht Karten, alle 82+, eine mit 87+ und zwei mit 85+ garantiert. Max. 3 pro Tag.",
+  formpakka: "Eine Spezialkarte (Inform oder Honorable Mention) und fünf Karten mit 83+, eine mit 86+ und zwei mit 84+ garantiert. Max. 3 pro Tag.",
+  kachow_pal: "Neun Karten: eine Inner-Peace-Karte (88–95) und acht mit 86+, eine mit 90+ und zwei mit 88+ garantiert, und etwa 9 % Chance auf eine Icon. Max. 1 pro Tag.",
 };
 
 export const market = {
