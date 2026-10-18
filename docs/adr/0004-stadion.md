@@ -30,12 +30,12 @@ Oppgraderinger koster MB og tar fra 10 minutter til 5 dager (før dugnaden). Hve
 
 Stadionet er en tegnet scene (`src/components/stadium-scene.tsx`), ikke ikoner på en grønn flate. Alt som tegnes leses fra nivåene, så tegningen er ren pynt og påvirker ingenting i spillet. Det som skjer når man oppgraderer:
 
-- **Tribune** er selve stadionet. Nivå 0 er en bar bane med to benker. Hvert nivå legger til en rad med seter, så skålen blir bredere og høyere. Fra nivå 6 kommer det tak bak, fra 9 hele veien rundt, og på 10 en lysende LED-stripe. Lysmaster kommer fra nivå 3 (bak) og 6 (foran), og lysstråler og videotavle fra 8. Fasaden mot veien får flere porter og en gullport på 10. Kapasiteten (`seatsOf`, 200 til 80 000 plasser) står over scenen.
+- **Tribune** er selve stadionet, tegnet isometrisk i 3D (`src/components/stadium-arena.tsx`). Nivå 0 er en bar bane med gjerde. Nivå 1 er en liten hovedtribune, og hvert nivå legger til seterader. Nivå 3 gir tribune langs en side og de første lysmastene, nivå 4 tak over hovedtribunen, nivå 5 en lav tribune i enden med fasade, buer og hovedinngang, og nivå 6 en øvre etasje, tak på langsiden og flere master. Nivå 7 gir den siste siden og videotavle, nivå 8 glasstak og lysstråler, nivå 9 en lysende LED-stripe og en rad til i øvre etasje, og nivå 10 har monument ved inngangen. Kapasiteten (`seatsOf`, 200 til 80 000 plasser) står over scenen.
 - **Supporterfelt** fyller plassene: jo høyere nivå, jo tettere sitter fansen, og fra nivå 6 er det tre farger. Selve feltet får flere fans, vimpler, tromme, tifo-banner og røykbomber.
 - **Klubbhus** går fra et lite hus med saltak til en borg med glassatrium og gullkuppel. **Kasse**, **billettluke**, **treningsfelt** og **speiderhytte** får hver sin utvikling (søyler og gullbarrer, flere luker og kø, gjerde og lys, speidertårn med radar).
 - En bygning på nivå 0 er en tom tomt. En bygning som oppgraderes vises som før med en byggekran til den er ferdig, og «popper» opp når den får nytt nivå.
 
-Knappene, boblene og nedtellingene er vanlig HTML lagt over tegningen med posisjonene i `sceneSpots`, så tilgjengelighet og klikk virker som før. Tilfeldige posisjoner (fansene) kommer fra en heltallshash, ikke `Math.sin`, fordi Node og nettleseren runder ulikt og det ga hydreringsfeil.
+Under en oppgradering står det en byggekran ved bygningen. Knappene, boblene og nedtellingene er vanlig HTML lagt over tegningen med posisjonene i `sceneSpots`, så tilgjengelighet og klikk virker som før. Tilfeldige posisjoner (fansene) kommer fra en heltallshash, ikke `Math.sin`, fordi Node og nettleseren runder ulikt og det ga hydreringsfeil.
 
 ## Valg vi tok
 

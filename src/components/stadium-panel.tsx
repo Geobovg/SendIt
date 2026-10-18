@@ -107,15 +107,17 @@ export function StadiumPanel({ state: serverState, serverNow, budget }: Props) {
     const isSelected = selected === key; const built = level > 0;
     const left = upgrade ? secondsLeft(upgrade.endsAt, now) : 0;
     const total = upgrade ? Math.max(1, (upgrade.endsAt.getTime() - upgrade.startedAt.getTime()) / 1000) : 1;
-    const frame = isSelected ? "border-white/90 bg-white/10 ring-4 ring-white/40" : upgrade ? "stadium-hazard border-dashed border-amber-300/80" : "border-transparent hover:border-white/40 hover:bg-white/5";
+    const frame = isSelected ? "border-white/90 bg-white/10 ring-4 ring-white/40" : "border-transparent hover:border-white/40 hover:bg-white/5";
     return <div key={key} className="absolute z-10 -translate-x-1/2 -translate-y-1/2" style={{ left: percent(spot.x, SCENE_W), top: percent(spot.y, SCENE_H), width: percent(spot.w, SCENE_W), height: percent(spot.h, SCENE_H) }}>
       {bubble(key)}
       <button type="button" aria-pressed={isSelected} aria-label={`${text.buildings[key].name} · ${built ? text.level(level) : text.notBuilt}`} onClick={() => setSelected(isSelected ? null : key)} className={`absolute inset-0 rounded-2xl border-2 transition ${frame}`}>
         {!built && !upgrade ? <span className="absolute left-1/2 top-1/2 grid size-9 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 bg-slate-950/80 text-xl font-black" style={{ borderColor: color, color }}>＋</span> : null}
-        {upgrade ? <>
-          <span className="absolute inset-x-2 bottom-2"><Bar value={1 - left / total} color={color} className="h-1.5" /></span>
-          <span className="absolute -top-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-slate-950/90 px-1.5 py-0.5 text-[10px] font-black text-amber-300">🚧 {duration(left)}</span>
-        </> : null}
+        {upgrade ? (key === "tribune"
+          ? <span className="absolute inset-x-24 bottom-1 grid justify-items-center gap-1"><span className="whitespace-nowrap rounded-full bg-slate-950/90 px-2 py-0.5 text-[10px] font-black text-amber-300">🚧 {duration(left)}</span><Bar value={1 - left / total} color={color} className="h-1.5 w-full" /></span>
+          : <>
+            <span className="absolute inset-x-2 bottom-2"><Bar value={1 - left / total} color={color} className="h-1.5" /></span>
+            <span className="absolute -top-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-slate-950/90 px-1.5 py-0.5 text-[10px] font-black text-amber-300">🚧 {duration(left)}</span>
+          </>) : null}
       </button>
       <div className="pointer-events-none absolute left-1/2 top-full z-10 flex -translate-x-1/2 flex-col items-center gap-0.5 pt-0.5">
         {built && !upgrade ? <span className="whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-black text-slate-950 shadow" style={{ backgroundColor: color }}>{text.level(level)}</span> : null}

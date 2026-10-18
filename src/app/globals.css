@@ -1770,10 +1770,6 @@ body:has(.manager-bottom-nav) .audio-fab {
   }
 }
 
-.stadium-hazard {
-  background: repeating-linear-gradient(45deg, rgba(250, 204, 21, 0.16) 0 9px, rgba(15, 23, 42, 0.3) 9px 18px);
-}
-
 @media (prefers-reduced-motion: reduce) {
   .stadium-pop,
   .stadium-pulse,
