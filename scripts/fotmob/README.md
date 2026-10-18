@@ -18,7 +18,7 @@ Det de brukes til:
 
 | Skript | Resultat |
 |---|---|
-| `synk-form.mjs [--skriv]` | Kampkarakterer siste uke → `fotmob_form` (0121). Kjøres av `.github/workflows/fotmob-form.yml` fredag ettermiddag |
+| `synk-form.mjs [--skriv]` | Kampkarakterer siste uke → `fotmob_form` (0118). Kjøres av `.github/workflows/fotmob-form.yml` fredag ettermiddag |
 | `klubb-migrering.mjs <nr>` | Klubb og liga fra FotMob → migrering + `data/klubbrapport.md` |
 | `egenskaper.mjs [<nr>]` | Egenskaper fra sesongstatistikk → migrering |
 | `alt-posisjoner.mjs [<nr>]` | Alternative posisjoner (samme regler som 0112) → migrering |
