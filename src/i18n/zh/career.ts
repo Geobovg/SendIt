@@ -23,6 +23,7 @@ export const career = {
     icons: "传奇",
     honorable: "荣誉提名卡",
     innerpeace: "Inner Peace",
+    stadion: "球场",
   },
   subTabs: {
     squad: "小队",

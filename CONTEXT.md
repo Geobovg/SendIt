@@ -32,6 +32,10 @@ _Avoid_: Liga, Turnering (Turnering er noe annet, se over)
 Et av fem stadioner i AI-sesongen, som i Clash Royale: Gamle Gress, Ullevaal, Wembley Stadium, Old Trafford og Camp Nou. Hver arena har ti **divisjoner**, så stigen er 50 nivåer lang. Vinner du divisjon 1, går du opp til divisjon 10 i neste arena. Du faller aldri ut av en arena du har nådd. AI-klubbene blir jevnere og får en skjult styrkebonus jo høyere arenaen er, og opprykkspremien ganges opp.
 _Avoid_: Liga, Nivå, Stadion alene (Stadion er navnet, Arena er nivået)
 
+**Stadion**:
+Managerens eget stadion, som i Clash of Clans (migrering 0123, ADR 0004). Tre bygninger oppgraderes med MB og tid, og det er én byggher, så bare én oppgradering kan pågå om gangen: **klubbhus** (setter taket for de andre, 2 nivåer per klubbhusnivå), **billettluke** (gir MB i timen, lagrer 8 timers produksjon og må tømmes, tiden den står full er tapt) og **tribune** (hjemmebanebonus på +0,1 rating per nivå, opp til +1,0, som skjult styrke for hjemmelaget i AI-sesongen, vennesesonger og utfordringer, ikke i draft og Femmer). Alt ligger i `src/lib/stadium.ts`, og oppgraderinger regnes som ferdige når tiden er ute uten at noe kjører i bakgrunnen. Ingenting kan kjøpes med ekte penger eller hoppes over. Heter «Stadium» på engelsk.
+_Avoid_: Arena (arenaen er vanskelighetsnivået på stigen, ikke managerens eget stadion), Klubbanlegg
+
 **Divisjon**:
 Et av ti vanskelighetsnivåer i hver **arena** (Divisjon 10 lavest, Divisjon 1 høyest), der AI-troppenes samlede rating skaleres opp jo høyere divisjon. Etter en AI-sesong rykker topp 2 opp i divisjon 10–7 og bare vinneren i divisjon 6–1; vinneren av divisjon 1 går til neste arena. Plassen rett under spiller **kvalik**. De to nederste rykker ned, unntatt i divisjon 10, som er gulvet i arenaen. Belønningen for opprykk øker jo høyere divisjonen du rykker opp til er.
 _Avoid_: Nivå (brukes om klubbnivå/XP, som er noe annet), Liga
