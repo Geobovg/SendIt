@@ -20,7 +20,7 @@ const packNames: Record<string, string> = {
   skadoosh_dude: "Skadoosh dude",
   stjerneutvalg: "明星精选",
   formpakka: "状态包",
-  ikonjakt: "Icon 追猎",
+  kachow_pal: "Kachow pal",
 };
 
 const packDescriptions: Record<string, string> = {
@@ -45,7 +45,7 @@ const packDescriptions: Record<string, string> = {
   skadoosh_dude: "十五张卡，全部 80+，保底一张 88+、两张 86+ 和四张 84+。每天最多 1 次。",
   stjerneutvalg: "八张卡，全部 82+，保底一张 87+ 和两张 85+。每天最多 3 次。",
   formpakka: "一张特殊卡（状态卡或荣誉提名）和五张 83+ 的卡，保底一张 86+ 和两张 84+。每天最多 3 次。",
-  ikonjakt: "八张卡，全部 86+，保底三张 88+，约 22% 几率获得 Icon。每天最多 1 次。",
+  kachow_pal: "八张卡，全部 86+，保底一张 90+ 和两张 88+，约 9% 几率获得 Icon。每天最多 1 次。",
 };
 
 export const market = {

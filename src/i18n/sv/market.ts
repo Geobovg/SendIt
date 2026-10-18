@@ -20,7 +20,7 @@ const packNames: Record<string, string> = {
   skadoosh_dude: "Skadoosh dude",
   stjerneutvalg: "Stjärnurval",
   formpakka: "Formpaket",
-  ikonjakt: "Ikonjakt",
+  kachow_pal: "Kachow pal",
 };
 
 const packDescriptions: Record<string, string> = {
@@ -45,7 +45,7 @@ const packDescriptions: Record<string, string> = {
   skadoosh_dude: "Femton kort, alla 80+, ett på 88+, två på 86+ och fyra på 84+ garanterade. Max 1 per dag.",
   stjerneutvalg: "Åtta kort, alla 82+, ett på 87+ och två på 85+ garanterade. Max 3 per dag.",
   formpakka: "Ett specialkort (inform eller honorable mention) och fem kort på 83+, ett på 86+ och två på 84+ garanterade. Max 3 per dag.",
-  ikonjakt: "Åtta kort, alla 86+, tre på 88+ garanterade, och cirka 22 % chans till en Icon. Max 1 per dag.",
+  kachow_pal: "Åtta kort, alla 86+, ett på 90+ och två på 88+ garanterade, och cirka 9 % chans till en Icon. Max 1 per dag.",
 };
 
 export const market = {

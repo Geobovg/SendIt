@@ -20,7 +20,7 @@ const packNames: Record<string, string> = {
   skadoosh_dude: "Skadoosh dude",
   stjerneutvalg: "Sélection d'étoiles",
   formpakka: "Pack Forme",
-  ikonjakt: "Chasse à l'Icon",
+  kachow_pal: "Kachow pal",
 };
 
 const packDescriptions: Record<string, string> = {
@@ -45,7 +45,7 @@ const packDescriptions: Record<string, string> = {
   skadoosh_dude: "Quinze cartes, toutes 80+, dont une 88+, deux 86+ et quatre 84+ garanties. 1 max par jour.",
   stjerneutvalg: "Huit cartes, toutes 82+, dont une 87+ et deux 85+ garanties. 3 max par jour.",
   formpakka: "Une carte spéciale (inform ou honorable mention) et cinq cartes 83+, dont une 86+ et deux 84+ garanties. 3 max par jour.",
-  ikonjakt: "Huit cartes, toutes 86+, dont trois 88+ garanties, et environ 22 % de chance d'avoir une Icon. 1 max par jour.",
+  kachow_pal: "Huit cartes, toutes 86+, dont une 90+ et deux 88+ garanties, et environ 9 % de chance d'avoir une Icon. 1 max par jour.",
 };
 
 export const market = {
