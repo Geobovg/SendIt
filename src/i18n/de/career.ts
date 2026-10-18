@@ -270,7 +270,7 @@ export const career = {
     unusableCard: "Der Trupp enthält eine Karte, die Sie nicht verwenden können",
     wrongPosition: "Ein Spieler befindet sich auf einer Position, die er nicht spielen kann",
   },
-  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", honorable: "HON. MENTION", personal: "PERSÖNLICH" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", honorable: "Honorable Mention", personal: "Persönliche Karte" }, untradable: "Nicht handelbar", anyPosition: "ALLE", personalHint: "Spielt jede Position. +1 Wertung für jede neue Division, die du erreichst" },
+  special: { badge: { inform: "INFORM", tots: "TOTS", icon: "ICON", honorable: "HON. MENTION", inner_peace: "INNER PEACE", personal: "PERSÖNLICH" }, name: { inform: "Inform", tots: "Team of the Season", icon: "Icon", honorable: "Honorable Mention", inner_peace: "Inner Peace", personal: "Persönliche Karte" }, untradable: "Nicht handelbar", anyPosition: "ALLE", personalHint: "Spielt jede Position. +1 Wertung für jede neue Division, die du erreichst" },
   tots: {
     intro: (count: number) => `${count} Team-of-the-Season-Karten mit den besten Spielern jeder Liga. Sie können in Packs auftauchen.`,
     all: "Alle",

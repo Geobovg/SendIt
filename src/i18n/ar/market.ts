@@ -18,6 +18,9 @@ const packNames: Record<string, string> = {
   sjeldne_spillere: "لاعبون نادرون",
   jumbo_premium_gull: "حزمة ذهبية مميزة عملاقة",
   skadoosh_dude: "Skadoosh dude",
+  stjerneutvalg: "اختيار النجوم",
+  formpakka: "حزمة الفورمة",
+  kachow_pal: "Kachow pal",
 };
 
 const packDescriptions: Record<string, string> = {
@@ -40,6 +43,9 @@ const packDescriptions: Record<string, string> = {
   sjeldne_spillere: "خمس بطاقات، كلها بتقييم 80 أو أكثر، وواحدة على الأقل 83+. 3 كحد أقصى يوميًا.",
   jumbo_premium_gull: "ثماني بطاقات، كلها بتقييم 79+، مع ضمان ثلاث بتقييم 80+ وواحدة 83+. 3 كحد أقصى يوميًا.",
   skadoosh_dude: "خمس عشرة بطاقة، كلها بتقييم 80+، مع ضمان واحدة بتقييم 88+ واثنتين 86+ وأربع 84+. 1 كحد أقصى يوميًا.",
+  stjerneutvalg: "ثماني بطاقات، كلها بتقييم 82+، مع ضمان واحدة 87+ واثنتين 85+. 3 كحد أقصى يوميًا.",
+  formpakka: "بطاقة خاصة واحدة (فورمة أو إشادة) وخمس بطاقات بتقييم 83+، مع ضمان واحدة 86+ واثنتين 84+. 3 كحد أقصى يوميًا.",
+  kachow_pal: "تسع بطاقات: بطاقة Inner Peace واحدة (88–95) وثماني بطاقات بتقييم 86+، مع ضمان واحدة 90+ واثنتين 88+، وفرصة تقارب 9% للحصول على Icon. 1 كحد أقصى يوميًا.",
 };
 
 export const market = {
