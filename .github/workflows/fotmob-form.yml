@@ -1,4 +1,4 @@
-# Henter kampkarakterer fra FotMob for siste uke og legger dem i fotmob_form, som ukens inform-runde leser (migrering 0117).
+# Henter kampkarakterer fra FotMob for siste uke og legger dem i fotmob_form, som ukens inform-runde leser (migrering 0121).
 # Kjører fredag ettermiddag, før inform-runden lages kl. 18:00 norsk tid. Kan også startes for hånd.
 # Bruker SUPABASE_DB_URL, samme hemmelighet som migreringsjobben.
 name: FotMob-form

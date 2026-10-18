@@ -12,7 +12,7 @@ const tropper = les("tropper.json");
 const deler = (navn) => normaliser(navn).split(" ").filter(Boolean);
 const fm = tropper.map((p) => ({ ...p, norm: normaliser(p.name), tokens: deler(p.name) }));
 
-// Navn som er skrevet annerledes i katalogen (slug -> FotMob-navn) legges inn her etter hvert som vi finner dem.
+// data/manuelle.json: slug -> FotMob-ID for navn som er skrevet annerledes, eller null når et navnetreff er feil person.
 const manuelle = existsOverrides();
 function existsOverrides() {
   try { return les("manuelle.json"); } catch { return {}; }
@@ -43,7 +43,10 @@ for (const s of katalog) {
     resultat.push({ slug: s.slug, name: s.name, club: s.club, position: s.position, overall: s.overall, art: "ikon", fotmobId: null });
     continue;
   }
-  if (manuell) {
+  if (manuell === null) {
+    // null i manuelle.json = vi vet at treffet ville blitt en annen spiller med samme navn
+    art = "ingen";
+  } else if (manuell) {
     treff = fm.filter((p) => p.id === manuell);
     art = "manuell";
   } else {

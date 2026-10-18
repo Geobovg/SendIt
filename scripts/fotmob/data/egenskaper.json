@@ -2842,20 +2842,6 @@
   "physical": 3
  },
  {
-  "slug": "pedro",
-  "name": "Pedro",
-  "position": "RW",
-  "overall": 74,
-  "minutter": 2389,
-  "vekt": 1,
-  "pace": 0,
-  "shooting": 6,
-  "passing": 4,
-  "dribbling": 3,
-  "defending": -1,
-  "physical": -3
- },
- {
   "slug": "reda-belahyane",
   "name": "Reda Belahyane",
   "position": "CM",

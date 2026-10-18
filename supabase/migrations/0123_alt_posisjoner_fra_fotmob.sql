@@ -1,5 +1,5 @@
 -- Alternative posisjoner oppdatert fra FotMob (2026-10-18), samme regler som 0112.
--- Bare spillere der listen er endret siden 0112 er med (44 stk).
+-- Bare spillere der listen er endret siden 0112 er med (43 stk).
 
 update player_catalog as catalog
 set alt_positions = alt.positions
@@ -32,7 +32,6 @@ from (values
     ('andreas-hanche-olsen', array[]::text[]),
     ('andre', array['CM']),
     ('emanuel-emegha', array[]::text[]),
-    ('pedro', array['ST']),
     ('ben-doak', array['LW']),
     ('vinicius-souza', array['CM']),
     ('kalvin-phillips', array['CM']),

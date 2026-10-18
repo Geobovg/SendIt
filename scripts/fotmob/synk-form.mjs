@@ -1,5 +1,5 @@
 // Henter kampkarakterer fra FotMob for ferdigspilte kamper siste uke og lagrer dem per katalogspiller i data/form.json.
-// Med --skriv skrives de også til databasen (tabellen fotmob_form, migrering 0117), som ukens inform-runde leser.
+// Med --skriv skrives de også til databasen (tabellen fotmob_form, migrering 0121), som ukens inform-runde leser.
 // Bruk: node scripts/fotmob/synk-form.mjs [--dager 7] [--skriv]
 // --skriv krever SUPABASE_DB_URL i miljøet (samme tilkoblingsstreng som migreringsjobben) og at psql er installert.
 // Uten --skriv skrives bare data/form.json og data/form.sql, så resultatet kan sjekkes først.

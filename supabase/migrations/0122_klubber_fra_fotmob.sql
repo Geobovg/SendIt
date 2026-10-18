@@ -1,4 +1,4 @@
--- Klubb og liga fra FotMob (2026-10-18): 84 spillere har byttet klubb siden katalogen sist ble oppdatert (0018/0019).
+-- Klubb og liga fra FotMob (2026-10-18): 83 spillere har byttet klubb siden katalogen sist ble oppdatert (0018/0019).
 -- * Klubben er den spilleren står på i FotMobs tropp nå (utlånte spillere står på klubben de spiller for, som ellers i katalogen).
 -- * player_catalog.league følger klubben (0046 satte den fra football_clubs), så den må settes på nytt for dem som bytter klubb. Vi setter den for alle fra klubben:
 --   de fem store ligaene + Eredivisie, Primeira Liga, Süper Lig og Saudi Pro League, alt annet er 'other'. Icons (league = 'icons') røres ikke.
@@ -20,7 +20,6 @@ with club_map (slug, club) as (
     ('el-chadaille-bitshiabu', 'Galatasaray'),
     ('kosta-nedeljkovic', 'Rangers'),
     ('mattia-perin', 'Palermo'),
-    ('pedro', 'Flamengo'),
     ('marcus-holmgren-pedersen', 'Olympiacos'),
     ('cyril-ngonge', 'Monza'),
     ('simon-adingra', 'Ajax'),

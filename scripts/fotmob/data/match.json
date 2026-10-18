@@ -4643,11 +4643,12 @@
   "club": "Lazio",
   "position": "RW",
   "overall": 74,
-  "art": "annen-klubb",
-  "fotmobId": 750067,
-  "fotmobName": "Pedro",
-  "fotmobTeam": "Flamengo",
-  "fotmobPosition": "ST"
+  "art": "ingen",
+  "fotmobId": null,
+  "fotmobName": null,
+  "fotmobTeam": null,
+  "fotmobPosition": null,
+  "kandidater": []
  },
  {
   "slug": "samuel-gigot",

@@ -7,6 +7,8 @@ import { readFileSync, writeFileSync } from "node:fs";
 const les = (f) => JSON.parse(readFileSync(new URL(`./data/${f}`, import.meta.url), "utf8"));
 const katalog = new Map(les("katalog.json").map((s) => [s.slug, s]));
 const profiler = les("profiler.json");
+// Bare spillere med et sikkert treff (profiler.json kan inneholde treff som siden er fjernet)
+const sikre = new Set(les("match.json").filter((r) => r.fotmobId && !/^(flere|usikker)/.test(r.art)).map((r) => r.slug));
 const oversett = { AM: "CAM", DM: "CDM", RM: "RW", LM: "LW", RWB: "RB", LWB: "LB" };
 
 // Dagens verdier = 0112 (siste migrering som setter alt_positions for hele katalogen)
@@ -16,7 +18,7 @@ const naa = new Map([...sql0112.matchAll(/^\s*\('([a-z0-9-]+)',\s*array(?:\[\]::
 const ny = new Map();
 for (const [slug, p] of Object.entries(profiler)) {
   const s = katalog.get(slug);
-  if (!s || slug.startsWith("icon-")) continue;
+  if (!s || slug.startsWith("icon-") || !sikre.has(slug)) continue;
   const tall = new Map();
   for (const q of p.positions ?? []) {
     const pos = oversett[q.pos] ?? q.pos;

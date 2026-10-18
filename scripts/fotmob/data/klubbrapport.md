@@ -1,6 +1,6 @@
 # Klubbendringer fra FotMob
 
-84 endringer, 0 utelatt som tvilsomme.
+83 endringer, 0 utelatt som tvilsomme.
 
 | Spiller | Pos (katalog / FotMob) | Fra | Til | Liga | Match | FotMob-navn | Alder |
 |---|---|---|---|---|---|---|--:|
@@ -18,7 +18,6 @@
 | El Chadaille Bitshiabu | CB / CB | RB Leipzig | Galatasaray | super_lig | annen-klubb | El Chadaille Bitshiabu | 21 |
 | Kosta Nedeljković | RB / RB,RWB | Aston Villa | Rangers (ny klubb) | other | annen-klubb | Kosta Nedeljković | 20 |
 | Mattia Perin | GK / GK | Juventus | Palermo | other | annen-klubb | Mattia Perin | 33 |
-| Pedro | RW / ST | Lazio | Flamengo | other | annen-klubb | Pedro | 29 |
 | Marcus Holmgren Pedersen | RB / RWB,RM,RB | Torino | Olympiacos | other | annen-klubb | Marcus Holmgren Pedersen | 26 |
 | Cyril Ngonge | RW / ST,RW,CAM | Torino | Monza | serie_a | annen-klubb | Cyril Ngonge | 26 |
 | Simon Adingra | LW / LWB,LW,LM,ST,RW | Monaco | Ajax | eredivisie | annen-klubb | Simon Adingra | 24 |
