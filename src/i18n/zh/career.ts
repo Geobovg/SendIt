@@ -22,6 +22,7 @@ export const career = {
     tots: "TOTS",
     icons: "传奇",
     honorable: "荣誉提名卡",
+    innerpeace: "Inner Peace",
   },
   subTabs: {
     squad: "小队",
@@ -287,6 +288,11 @@ export const career = {
     intro: (count: number) => `${count} 张荣誉提名卡，献给表现出色的年轻球员。评分大幅提升至 85–90，在卡包中比状态卡稀有五倍。`,
     boost: (boost: number) => `比普通卡 +${boost}`,
     empty: "这里没有荣誉提名卡。",
+  },
+  innerPeace: {
+    intro: (count: number) => `${count} 张 Inner Peace 卡，授予本赛季状态最好的球员（依据 FotMob）。冷静、掌控与流畅，评分 88–95。只能从 Kachow pal 获得，评分越高越稀有。`,
+    boost: (boost: number) => `比普通卡 +${boost}`,
+    empty: "这里没有 Inner Peace 卡。",
   },
   informs: {
     intro: (total: number, rounds: number) => `共 ${rounds} 轮，${total} 张状态卡。每周五 18:00，真实比赛中表现最好的球员会获得 82–90 的新卡。评分越高，在卡包中越稀有。`,

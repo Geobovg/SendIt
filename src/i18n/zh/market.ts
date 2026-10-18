@@ -146,6 +146,7 @@ export const market = {
     allTots: "查看全部 TOTS",
     allIcons: "查看全部传奇卡",
     allHonorable: "查看全部荣誉提名卡",
+    allInnerPeace: "查看所有 Inner Peace 卡",
     informPulled: "状态卡！",
     untradable: " · 不可交易",
     specialGuarantee: (count: number, scope: "current" | "all" | "tots") => `${count}× ${scope === "current" ? "状态卡" : scope === "tots" ? "TOTS" : "特殊卡"}`,

@@ -307,6 +307,7 @@ export function PackStore({ packs, freePacks, budget, shop }: { packs: ManagerPa
       <Link href="/managerkarriere/informs" className="text-xs font-black tracking-wide underline-offset-4 hover:underline" style={{ color: specialStyles.inform.border }}>{tp.allInforms} →</Link>
       <Link href="/managerkarriere/icons" className="text-xs font-black tracking-wide underline-offset-4 hover:underline" style={{ color: specialStyles.icon.glow }}>{tp.allIcons} →</Link>
       <Link href="/managerkarriere/honorable" className="text-xs font-black tracking-wide underline-offset-4 hover:underline" style={{ color: specialStyles.honorable.glow }}>{tp.allHonorable} →</Link>
+      <Link href="/managerkarriere/innerpeace" className="text-xs font-black tracking-wide underline-offset-4 hover:underline" style={{ color: specialStyles.inner_peace.glow }}>{tp.allInnerPeace} →</Link>
     </div>
 
     <div className="grid gap-3 sm:grid-cols-2">

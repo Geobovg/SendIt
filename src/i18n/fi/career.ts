@@ -22,6 +22,7 @@ export const career = {
     tots: "TOTS",
     icons: "Icons",
     honorable: "Honorable mention",
+    innerpeace: "Inner Peace",
   },
   subTabs: {
     squad: "Ryhmä",
@@ -287,6 +288,11 @@ export const career = {
     intro: (count: number) => `${count} Honorable mention -korttia nuorille pelaajille, jotka ovat tehneet vaikutuksen. Isot päivitykset tasolle 85–90, ja paketeissa viisi kertaa harvinaisempia kuin informit.`,
     boost: (boost: number) => `+${boost} tavalliseen korttiin`,
     empty: "Ei Honorable mention -kortteja.",
+  },
+  innerPeace: {
+    intro: (count: number) => `${count} Inner Peace -korttia kauden parhaassa kunnossa oleville pelaajille FotMobin mukaan. Rauhaa, hallintaa ja flow'ta, arvosana 88–95. Vain Kachow pal -pakista, ja mitä korkeampi arvosana, sitä harvinaisempi kortti.`,
+    boost: (boost: number) => `+${boost} tavalliseen korttiin`,
+    empty: "Täällä ei ole Inner Peace -kortteja.",
   },
   informs: {
     intro: (total: number, rounds: number) => `${total} Inform-korttia ${rounds} kierrokselta. Joka perjantai klo 18.00 oikeissa otteluissa parhaiten pelanneet saavat uudet 82–90-kortit. Mitä korkeampi luokitus, sitä harvinaisempi paketeissa.`,

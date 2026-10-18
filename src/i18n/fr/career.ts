@@ -22,6 +22,7 @@ export const career = {
     tots: "TOTS",
     icons: "Icons",
     honorable: "Honorable mention",
+    innerpeace: "Inner Peace",
   },
   subTabs: {
     squad: "Escouade",
@@ -287,6 +288,11 @@ export const career = {
     intro: (count: number) => `${count} cartes Honorable mention pour les jeunes joueurs qui ont brillé. De gros upgrades à 85–90, et cinq fois plus rares que les Informs dans les packs.`,
     boost: (boost: number) => `+${boost} par rapport à la carte normale`,
     empty: "Aucune carte Honorable mention ici.",
+  },
+  innerPeace: {
+    intro: (count: number) => `${count} cartes Inner Peace pour les joueurs en meilleure forme cette saison selon FotMob. Calme, contrôle et fluidité, notes de 88 à 95. Uniquement dans le Kachow pal, et plus la note est haute, plus la carte est rare.`,
+    boost: (boost: number) => `+${boost} par rapport à la carte normale`,
+    empty: "Aucune carte Inner Peace ici.",
   },
   informs: {
     intro: (total: number, rounds: number) => `${total} cartes Inform sur ${rounds} ${rounds === 1 ? "tour" : "tours"}. Chaque vendredi à 18h00, les joueurs les plus performants en vrais matchs reçoivent de nouvelles cartes notées 82–90. Plus la note est haute, plus elle est rare dans les packs.`,

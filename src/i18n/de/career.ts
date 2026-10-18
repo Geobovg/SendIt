@@ -22,6 +22,7 @@ export const career = {
     tots: "TOTS",
     icons: "Icons",
     honorable: "Honorable Mention",
+    innerpeace: "Inner Peace",
   },
   subTabs: {
     squad: "Kader",
@@ -287,6 +288,11 @@ export const career = {
     intro: (count: number) => `${count} Honorable-Mention-Karten für junge Spieler, die überzeugt haben. Große Upgrades auf 85–90 und in Paketen fünfmal seltener als Informs.`,
     boost: (boost: number) => `+${boost} gegenüber der normalen Karte`,
     empty: "Keine Honorable-Mention-Karten hier.",
+  },
+  innerPeace: {
+    intro: (count: number) => `${count} Inner-Peace-Karten für die Spieler in der besten Form dieser Saison laut FotMob. Ruhe, Kontrolle und Flow, Rating 88–95. Nur aus dem Kachow pal, und je höher das Rating, desto seltener die Karte.`,
+    boost: (boost: number) => `+${boost} gegenüber der normalen Karte`,
+    empty: "Hier gibt es keine Inner-Peace-Karten.",
   },
   informs: {
     intro: (total: number, rounds: number) => `${total} Inform-Karten aus ${rounds} ${rounds === 1 ? "Runde" : "Runden"}. Jeden Freitag um 18:00 Uhr bekommen die Spieler, die in echten Spielen am besten waren, neue Karten mit 82–90. Je höher die Wertung, desto seltener in Packs.`,

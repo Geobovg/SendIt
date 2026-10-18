@@ -22,6 +22,7 @@ export const career = {
     tots: "TOTS",
     icons: "Icons",
     honorable: "Honorable mention",
+    innerpeace: "Inner Peace",
   },
   subTabs: {
     squad: "Truppen",
@@ -287,6 +288,11 @@ export const career = {
     intro: (count: number) => `${count} Honorable mention-kort för unga spelare som har imponerat. Stora uppgraderingar till 85–90, och fem gånger ovanligare än informs i paket.`,
     boost: (boost: number) => `+${boost} från vanliga kortet`,
     empty: "Inga Honorable mention-kort här.",
+  },
+  innerPeace: {
+    intro: (count: number) => `${count} Inner Peace-kort för spelarna i bäst form den här säsongen enligt FotMob. Lugn, kontroll och flyt, med rating 88–95. Bara från Kachow pal, och ju högre rating, desto sällsyntare kort.`,
+    boost: (boost: number) => `+${boost} från vanliga kortet`,
+    empty: "Inga Inner Peace-kort här.",
   },
   informs: {
     intro: (total: number, rounds: number) => `${total} Informkort från ${rounds} ${rounds === 1 ? "omgång" : "omgångar"}. Varje fredag kl. 18:00 får spelarna som spelat bäst i riktiga matcher nya kort på 82–90. Ju högre betyg, desto ovanligare i paket.`,
