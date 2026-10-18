@@ -18,12 +18,15 @@ function existsOverrides() {
   try { return les("manuelle.json"); } catch { return {}; }
 }
 
+// a = katalognavn, b = FotMob-navn (som tokens)
 function delvis(a, b) {
-  // Alle ordene i det korteste navnet finnes i det lengste (Vinícius Júnior ~ Vinicius Junior, Trent ~ Trent Alexander-Arnold)
+  // Alle ordene i det korteste navnet finnes i det lengste (Vinícius Júnior ~ Vinicius Junior, Alisson ~ Alisson Becker).
+  // Ett enkelt ord hos FotMob (Kevin, Pedro, Marcelo) er for svakt til å regnes som treff på et lengre katalognavn.
   const [kort, lang] = a.length <= b.length ? [a, b] : [b, a];
+  if (kort === b && kort.length === 1 && a.length > 1) return false;
   if (kort.length === 1 && kort[0].length < 4) return false;
   return kort.every((t) => lang.includes(t)) ||
-    // Etternavn likt + fornavn starter likt (Mikel Merino / M. Merino)
+    // Etternavn likt + fornavn starter likt (Dani Carvajal ~ Daniel Carvajal)
     (a.at(-1) === b.at(-1) && a.length > 1 && b.length > 1 && (a[0].startsWith(b[0]) || b[0].startsWith(a[0])));
 }
 
