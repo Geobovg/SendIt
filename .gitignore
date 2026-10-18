@@ -49,3 +49,6 @@ Git-PR-arbeidsflyt-Tournament-app.docx
 
 # supabase cli
 supabase/.temp/
+
+# fotmob-skript: rå sidedata fra FotMob (stort, hentes på nytt ved behov)
+/scripts/fotmob/data/cache/
