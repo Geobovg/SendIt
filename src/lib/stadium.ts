@@ -44,6 +44,9 @@ export const storageHours = [6, 8, 10, 12, 16, 20, 24, 30, 36, 48];
 export const hourlyIncome = [1, 1.5, 2, 3, 4, 5, 6, 8, 10, 12];
 /** Klubb-XP per time for treningsfeltet på nivå 1, 2, 3 … */
 export const hourlyXp = [1, 2, 3, 4, 5, 6, 8, 10, 12, 15];
+/** Plasser på stadionet per tribunenivå 0–10. Bare for å vise hvor stort det har blitt: det påvirker ingenting i spillet. */
+export const seatCapacities = [200, 1_000, 2_500, 5_000, 9_000, 15_000, 24_000, 35_000, 48_000, 62_000, 80_000];
+export const seatsOf = (levels: StadiumLevels) => seatCapacities[Math.min(levels.tribune, buildings.tribune.maxLevel)];
 /** Tribunen gir så mye mer fra billettluka per nivå (0,04 = 4 %). */
 export const TRIBUNE_BONUS_PER_LEVEL = 0.04;
 /** Supporterfeltet kutter så mye av byggetiden per nivå (0,02 = 2 %). */
