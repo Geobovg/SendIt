@@ -1,0 +1,33 @@
+# Henter kampkarakterer fra FotMob for siste uke og legger dem i fotmob_form, som ukens inform-runde leser (migrering 0118).
+# Kjører fredag ettermiddag, før inform-runden lages kl. 18:00 norsk tid. Kan også startes for hånd.
+# Bruker SUPABASE_DB_URL, samme hemmelighet som migreringsjobben.
+name: FotMob-form
+
+on:
+  schedule:
+    - cron: "30 12 * * 5"
+  workflow_dispatch:
+    inputs:
+      dager:
+        description: "Hvor mange dager tilbake kampene skal hentes"
+        default: "7"
+
+concurrency:
+  group: fotmob-form
+  cancel-in-progress: false
+
+jobs:
+  synk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Hent karakterer og skriv til databasen
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/fotmob/synk-form.mjs --dager "${{ inputs.dager || '7' }}" --skriv

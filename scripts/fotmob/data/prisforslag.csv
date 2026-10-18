@@ -1,0 +1,100 @@
+nr;spiller;klubb;fotmob_klubb;pos;ovr;alder;markedsverdi_meur;verdi_rating;naa_mb;forslag_mb;endring_pst
+1;Erling Haaland;Manchester City;Manchester City;ST;92;26;159.3;91;1500;1300;-13
+2;Kylian Mbappé;Real Madrid;Real Madrid;ST;91;27;120.7;90;1100;950;-14
+3;Rodri;Barcelona;Barcelona;CDM;91;30;55.9;86;1100;470;-57
+4;Martin Ødegaard;Arsenal;Arsenal;CAM;90;27;65.6;87;800;470;-41
+5;Vinícius Júnior;Real Madrid;Real Madrid;LW;90;26;116.1;89;800;675;-16
+6;Lamine Yamal;Barcelona;Barcelona;RW;90;19;225.9;92;800;1100;38
+7;Raphinha;Barcelona;Barcelona;RW;90;29;51.7;86;800;400;-50
+8;Harry Kane;Bayern München;Bayern München;ST;90;33;70.0;87;800;470;-41
+9;Jude Bellingham;Real Madrid;Real Madrid;CAM;89;23;139.5;90;560;675;21
+10;Mohamed Salah;Trabzonspor;Trabzonspor;RW;89;34;25.6;85;560;280;-50
+11;Virgil van Dijk;Liverpool;Liverpool;CB;89;35;8.4;85;560;280;-50
+12;Alisson;Liverpool;Liverpool;GK;89;34;14.8;85;560;280;-50
+13;Gianluigi Donnarumma;Manchester City;Manchester City;GK;89;27;50.2;86;560;330;-41
+14;Lionel Messi;Inter Miami;Inter Miami CF;CAM;89;39;14.0;85;560;280;-50
+15;Florian Wirtz;Liverpool;Liverpool;CAM;88;23;116.5;89;400;470;18
+16;Thibaut Courtois;Real Madrid;Real Madrid;GK;88;34;11.5;85;400;240;-40
+17;Rúben Dias;Manchester City;Manchester City;CB;88;29;63.7;86;400;280;-30
+18;Kevin De Bruyne;Napoli;Napoli;CAM;88;35;6.6;84;400;200;-50
+19;Joshua Kimmich;Bayern München;Bayern München;CDM;88;31;36.4;85;400;240;-40
+20;Pedri;Barcelona;Barcelona;CM;88;23;108.9;88;400;400;0
+21;Federico Valverde;Real Madrid;Real Madrid;CM;88;28;110.5;88;400;400;0
+22;Jamal Musiala;Bayern München;Bayern München;CAM;88;23;137.9;90;400;550;38
+23;Ousmane Dembélé;Paris Saint-Germain;Paris Saint-Germain;RW;88;29;89.1;88;400;400;0
+24;Robert Lewandowski;Chicago Fire;Chicago Fire FC;ST;88;38;8.5;85;400;240;-40
+25;Lautaro Martínez;Inter;Inter;ST;88;29;76.9;87;400;330;-18
+26;Jan Oblak;Atlético Madrid;Atlético Madrid;GK;87;33;13.2;85;280;200;-29
+27;Marc-André ter Stegen;Ajax;Ajax;GK;87;34;1.9;84;280;170;-39
+28;Mike Maignan;AC Milan;Milan;GK;87;31;20.2;85;280;200;-29
+29;Theo Hernández;Al-Hilal;Al Hilal;LB;87;29;18.6;85;280;200;-29
+30;William Saliba;Arsenal;Arsenal;CB;87;25;120.4;90;280;470;68
+31;Marquinhos;Paris Saint-Germain;Paris Saint-Germain;CB;87;32;23.5;85;280;200;-29
+32;Vitinha;Paris Saint-Germain;Paris Saint-Germain;CM;87;26;113.8;89;280;400;43
+33;Declan Rice;Arsenal;Arsenal;CDM;87;27;101.2;88;280;330;18
+34;Phil Foden;Manchester City;Manchester City;CAM;87;26;70.9;87;280;280;0
+35;Bruno Fernandes;Manchester United;Manchester United;CAM;87;32;27.2;85;280;200;-29
+36;Bukayo Saka;Arsenal;Arsenal;RW;87;25;112.7;89;280;400;43
+37;Gabriel Magalhães;Arsenal;Arsenal;CB;87;28;82.6;87;280;280;0
+38;Alexander Sørloth;Atlético Madrid;Atlético Madrid;ST;87;30;14.7;85;280;200;-29
+39;Achraf Hakimi;Paris Saint-Germain;Paris Saint-Germain;RB;86;27;82.8;87;200;240;20
+40;Ederson;Fenerbahçe;Fenerbahçe;GK;86;33;8.5;85;200;170;-15
+41;Gregor Kobel;Borussia Dortmund;Borussia Dortmund;GK;86;28;35.4;85;200;170;-15
+42;Alessandro Bastoni;Inter;Inter;CB;86;27;58.2;86;200;200;0
+43;Ronald Araújo;Liverpool;Liverpool;CB;86;27;24.7;85;200;170;-15
+44;Bernardo Silva;Real Madrid;Real Madrid;CM;86;32;17.6;85;200;170;-15
+45;Nicolò Barella;Inter;Inter;CM;86;29;56.3;86;200;200;0
+46;Frenkie de Jong;Barcelona;Barcelona;CM;86;29;38.2;85;200;170;-15
+47;Rafael Leão;Galatasaray;Galatasaray;LW;86;27;43.6;86;200;200;0
+48;Khvicha Kvaratskhelia;Paris Saint-Germain;Paris Saint-Germain;LW;86;25;101.4;88;200;280;40
+49;Rodrygo;Real Madrid;Real Madrid;RW;86;25;40.0;85;200;170;-15
+50;Viktor Gyökeres;Arsenal;Arsenal;ST;86;28;69.2;87;200;240;20
+51;Victor Osimhen;Galatasaray;Galatasaray;ST;86;27;74.3;87;200;240;20
+52;Manuel Neuer;Bayern München;Bayern München;GK;86;40;2.2;84;200;140;-30
+53;Dayot Upamecano;Bayern München;Bayern München;CB;86;27;57.0;86;200;200;0
+54;Hakan Çalhanoğlu;Inter;Inter;CM;86;32;9.0;85;200;170;-15
+55;Tijjani Reijnders;Al-Qadsiah;Al Qadsiah;CM;86;28;40.6;86;200;200;0
+56;Bremer;Juventus;Juventus;CB;86;29;38.5;85;200;170;-15
+57;Nico Schlotterbeck;Borussia Dortmund;Borussia Dortmund;CB;86;26;60.4;86;200;200;0
+58;Antoine Griezmann;Orlando City;Orlando City;ST;86;35;6.8;85;200;170;-15
+59;Bruno Guimarães;Arsenal;Arsenal;CM;86;28;71.3;87;200;240;20
+60;Alexander Isak;Liverpool;Liverpool;ST;85;27;85.1;88;140;240;71
+61;Cole Palmer;Chelsea;Chelsea;CAM;85;24;102.0;88;140;240;71
+62;David Raya;Arsenal;Arsenal;GK;85;31;24.5;85;140;140;0
+63;Yann Sommer;Club Brugge;Club Brugge;GK;85;37;1.9;84;140;120;-14
+64;Trent Alexander-Arnold;Real Madrid;Real Madrid;RB;85;28;54.5;86;140;170;21
+65;Jules Koundé;Barcelona;Barcelona;RB;85;27;58.6;86;140;170;21
+66;Nuno Mendes;Paris Saint-Germain;Paris Saint-Germain;LB;85;24;78.7;87;140;200;43
+67;Federico Dimarco;Inter;Inter;LB;85;28;34.8;85;140;140;0
+68;Joško Gvardiol;Manchester City;Manchester City;CB;85;24;74.7;87;140;200;43
+69;Willian Pacho;Paris Saint-Germain;Paris Saint-Germain;CB;85;25;88.7;88;140;240;71
+70;Ibrahima Konaté;Real Madrid;Real Madrid;CB;85;27;43.1;86;140;170;21
+71;Alexis Mac Allister;Liverpool;Liverpool;CM;85;27;61.9;86;140;170;21
+72;Sandro Tonali;Tottenham Hotspur;Tottenham Hotspur;CM;85;26;93.0;88;140;240;71
+73;Aurélien Tchouaméni;Real Madrid;Real Madrid;CDM;85;26;66.4;87;140;200;43
+74;Eduardo Camavinga;Real Madrid;Real Madrid;CM;85;23;59.9;86;140;170;21
+75;Heung-Min Son;LAFC;Los Angeles FC;LW;85;34;8.6;85;140;140;0
+76;Michael Olise;Bayern München;Bayern München;RW;85;24;198.1;91;140;400;186
+77;Julián Álvarez;Atlético Madrid;Atlético Madrid;ST;85;26;112.5;89;140;280;100
+78;Jonathan Tah;Bayern München;Bayern München;CB;85;30;29.4;85;140;140;0
+79;Leroy Sané;Galatasaray;Galatasaray;RW;85;30;16.3;85;140;140;0
+80;Ryan Gravenberch;Liverpool;Liverpool;CM;85;24;71.4;87;140;200;43
+81;Dominik Szoboszlai;Liverpool;Liverpool;CAM;85;25;122.9;90;140;330;136
+82;Cody Gakpo;Liverpool;Liverpool;LW;85;27;57.7;86;140;170;21
+83;Désiré Doué;Paris Saint-Germain;Paris Saint-Germain;CAM;85;21;119.7;89;140;280;100
+84;Bradley Barcola;Liverpool;Liverpool;LW;85;24;103.5;88;140;240;71
+85;João Neves;Paris Saint-Germain;Paris Saint-Germain;CM;85;22;106.5;88;140;240;71
+86;Fabián Ruiz;Paris Saint-Germain;Paris Saint-Germain;CM;85;30;24.2;85;140;140;0
+87;Christian Pulisic;AC Milan;Milan;RW;85;28;29.2;85;140;140;0
+88;Serhou Guirassy;Borussia Dortmund;Borussia Dortmund;ST;85;30;31.1;85;140;140;0
+89;Emiliano Martínez;Chelsea;Chelsea;GK;85;34;13.6;85;140;140;0
+90;Scott McTominay;Napoli;Napoli;CM;85;29;39.8;85;140;140;0
+91;Cristian Romero;Atlético Madrid;Atlético Madrid;CB;85;28;56.8;86;140;170;21
+92;Cristiano Ronaldo;Al-Nassr;Al Nassr FC;ST;85;41;5.8;84;140;120;-14
+93;Antonio Rüdiger;Real Madrid;Real Madrid;CB;85;33;4.0;84;140;120;-14
+94;Diogo Costa;FC Porto;FC Porto;GK;84;27;42.7;86;100;140;40
+95;Jeremie Frimpong;Liverpool;Liverpool;RB;84;25;43.9;86;100;140;40
+96;Reece James;Chelsea;Chelsea;RB;84;26;60.6;86;100;140;40
+97;Álex Grimaldo;Atlético Madrid;Atlético Madrid;LB;84;31;21.3;85;100;120;20
+98;Alphonso Davies;Bayern München;Bayern München;LB;84;25;42.4;86;100;140;40
+99;Matthijs de Ligt;Manchester United;Manchester United;CB;84;27;38.1;85;100;120;20
