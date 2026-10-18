@@ -14,7 +14,6 @@ import { PlayerCardFace } from "./player-card-face";
 import { buttonClass, secondaryButtonClass } from "./ui";
 
 type Props = { state: StadiumPanelState; serverNow: string; budget: number };
-type Message = { ok: boolean; text: string };
 
 // Plassering i scenen i prosent: m = mobil (høy scene), d = bredere skjermer.
 type Spot = { color: string; icon: string; m: [number, number]; d: [number, number]; big?: boolean };
@@ -49,7 +48,7 @@ export function StadiumPanel({ state: serverState, serverNow, budget }: Props) {
   const [offset] = useState(() => new Date(serverNow).getTime() - Date.now());
   const [now, setNow] = useState(() => new Date(serverNow));
   const [selected, setSelected] = useState<BuildingKey | null>(null);
-  const [message, setMessage] = useState<Message | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date(Date.now() + offset)), 1000);
@@ -65,14 +64,15 @@ export function StadiumPanel({ state: serverState, serverNow, budget }: Props) {
   const duration = (seconds: number) => formatDuration(seconds, text.units);
   const unit = (collector: Collector) => (collector === "mb" ? text.unitMb : text.unitXp);
 
-  const run = (action: () => Promise<StadiumResult>, success: (result: Extract<StadiumResult, { ok: true }>) => string | null) => {
-    setMessage(null);
+  // Bare feil vises. Når noe lykkes, ser man det på selve stadionet.
+  const run = (action: () => Promise<StadiumResult>) => {
+    setError(null);
     startTransition(async () => {
       const result = await action();
-      if (result.ok) { const done = success(result); setMessage(done ? { ok: true, text: done } : null); } else setMessage({ ok: false, text: text.errors[result.reason] });
+      if (!result.ok) setError(text.errors[result.reason]);
     });
   };
-  const collect = (collector: Collector) => run(() => collectStadiumAction(collector), (result) => text.collected(result.amount ?? 0, unit(collector)));
+  const collect = (collector: Collector) => run(() => collectStadiumAction(collector));
 
   const effect = (key: BuildingKey, at: StadiumLevels): string => {
     const level = at[key];
@@ -154,10 +154,10 @@ export function StadiumPanel({ state: serverState, serverNow, budget }: Props) {
         <p className="text-sm font-bold">{text.upgradingTo(upgrade.to)}</p>
         <Bar value={1 - left / total} color={color} />
         <p className="text-xs font-bold text-amber-300">{text.timeLeft(duration(left))}</p>
-        <button type="button" className={secondaryButtonClass} disabled={pending || budget < skip} onClick={() => run(() => speedUpStadiumAction(key), () => text.finishedNow)}>{skip === 0 ? text.speedUpFree : text.speedUp(skip)}</button>
+        <button type="button" className={secondaryButtonClass} disabled={pending || budget < skip} onClick={() => run(() => speedUpStadiumAction(key))}>{skip === 0 ? text.speedUpFree : text.speedUp(skip)}</button>
         {budget < skip ? <p className="text-xs text-rose-300">{text.errors.no_money}</p> : null}
       </div> : blocked === "max_level" ? <p className="text-sm font-black text-lime-300">{text.maxLevel}</p> : <div className="grid gap-1.5">
-        <button type="button" className={buttonClass} disabled={pending || blocked !== null || !affordable} onClick={() => run(() => startStadiumUpgradeAction(key), () => text.upgradingTo(level + 1))}>{level ? text.upgradeCost(nextCost) : text.buildCost(nextCost)}</button>
+        <button type="button" className={buttonClass} disabled={pending || blocked !== null || !affordable} onClick={() => run(() => startStadiumUpgradeAction(key))}>{level ? text.upgradeCost(nextCost) : text.buildCost(nextCost)}</button>
         {"cost" in plan ? <p className={`text-xs ${affordable ? "text-white/55" : "text-rose-300"}`}>{affordable ? text.takes(duration(plan.minutes * 60)) : text.errors.no_money}</p>
           : blocked === "klubbhus_low" ? <p className="text-xs text-amber-300">{text.needsClubhouse(plan.minKlubbhus ?? 1)}</p>
           : blocked === "builders_busy" ? <p className="text-xs text-amber-300">{text.errors.builders_busy}</p> : null}
@@ -168,22 +168,22 @@ export function StadiumPanel({ state: serverState, serverNow, budget }: Props) {
   /** Speideren: send ut, vent, åpne og velg mellom pakka og spilleren. */
   function scoutArea(): ReactNode {
     const current = state.scout;
-    if (scout === "none" || !current) return <button type="button" className={buttonClass} disabled={pending} onClick={() => run(sendScoutAction, () => text.scoutSent)}>{text.scoutSend}</button>;
+    if (scout === "none" || !current) return <button type="button" className={buttonClass} disabled={pending} onClick={() => run(sendScoutAction)}>{text.scoutSend}</button>;
     if (scout === "away") return <div className="grid gap-2 rounded-lg bg-white/5 p-3"><p className="text-sm font-bold">{text.scoutAway(duration(secondsLeft(current.endsAt, now)))}</p><Bar value={1 - secondsLeft(current.endsAt, now) / Math.max(1, (current.endsAt.getTime() - current.startedAt.getTime()) / 1000)} color={look.speiderhytte.color} /></div>;
-    if (scout === "back" || !current.offer) return <div className="grid gap-2 rounded-lg bg-white/5 p-3"><p className="text-sm font-bold text-teal-300">{text.scoutBack}</p><button type="button" className={buttonClass} disabled={pending} onClick={() => run(openScoutAction, () => null)}>{text.scoutOpen}</button></div>;
+    if (scout === "back" || !current.offer) return <div className="grid gap-2 rounded-lg bg-white/5 p-3"><p className="text-sm font-bold text-teal-300">{text.scoutBack}</p><button type="button" className={buttonClass} disabled={pending} onClick={() => run(openScoutAction)}>{text.scoutOpen}</button></div>;
     const offer = current.offer; const player = offer.player;
     return <div className="grid gap-3 rounded-lg bg-white/5 p-3">
       <p className="text-sm font-bold text-teal-300">{player ? text.scoutChoose : text.scoutNoPlayer}</p>
       <div className={`grid gap-3 ${player ? "sm:grid-cols-2" : ""}`}>
         {player ? <div className="grid content-start gap-2">
           <PlayerCardFace player={{ slug: player.slug, name: player.name, position: player.position, overall: player.overall, accent: player.accent, club: player.club, attributes: player.attributes }} />
-          <button type="button" className={buttonClass} disabled={pending || budget < player.price} onClick={() => run(() => chooseScoutAction("player"), () => text.playerAdded)}>{text.scoutBuyBtn(player.price)}</button>
+          <button type="button" className={buttonClass} disabled={pending || budget < player.price} onClick={() => run(() => chooseScoutAction("player"))}>{text.scoutBuyBtn(player.price)}</button>
           {budget < player.price ? <p className="text-xs text-rose-300">{text.errors.no_money}</p> : null}
         </div> : null}
         <div className="grid content-start gap-2 rounded-xl border border-white/15 bg-slate-950/60 p-4">
           <p className="text-3xl">🎁</p>
           <p className="text-sm font-black">{text.scoutPackIs(t.market.packs.name(offer.packKey, offer.packKey))}</p>
-          <button type="button" className={secondaryButtonClass} disabled={pending} onClick={() => run(() => chooseScoutAction("pack"), () => text.packAdded)}>{text.scoutPackBtn}</button>
+          <button type="button" className={secondaryButtonClass} disabled={pending} onClick={() => run(() => chooseScoutAction("pack"))}>{text.scoutPackBtn}</button>
         </div>
       </div>
     </div>;
@@ -212,7 +212,7 @@ export function StadiumPanel({ state: serverState, serverNow, budget }: Props) {
       {buildingKeys.map(tile)}
     </div>
 
-    {message ? <p role="status" className={`rounded-lg border px-3 py-2 text-sm font-bold ${message.ok ? "border-lime-300/40 bg-lime-300/10 text-lime-200" : "border-rose-400/40 bg-rose-400/10 text-rose-200"}`}>{message.text}</p> : null}
+    {error ? <p role="alert" className="rounded-lg border border-rose-400/40 bg-rose-400/10 px-3 py-2 text-sm font-bold text-rose-200">{error}</p> : null}
 
     {selected ? sheet(selected) : <p className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-center text-sm text-white/65">{text.tapHint}</p>}
   </div>;
