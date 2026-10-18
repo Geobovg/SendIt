@@ -4,7 +4,7 @@
   "name": "Erling Haaland",
   "club": "Manchester City",
   "position": "ST",
-  "overall": 91,
+  "overall": 92,
   "art": "klubb-eksakt",
   "fotmobId": 737066,
   "fotmobName": "Erling Haaland",
@@ -28,7 +28,7 @@
   "name": "Martin Ødegaard",
   "club": "Arsenal",
   "position": "CAM",
-  "overall": 88,
+  "overall": 90,
   "art": "klubb-eksakt",
   "fotmobId": 534670,
   "fotmobName": "Martin Ødegaard",
@@ -556,7 +556,7 @@
   "name": "Kristoffer Ajer",
   "club": "Brentford",
   "position": "CB",
-  "overall": 76,
+  "overall": 79,
   "art": "klubb-eksakt",
   "fotmobId": 552718,
   "fotmobName": "Kristoffer Ajer",
@@ -568,7 +568,7 @@
   "name": "Julian Ryerson",
   "club": "Borussia Dortmund",
   "position": "RB",
-  "overall": 76,
+  "overall": 79,
   "art": "klubb-eksakt",
   "fotmobId": 659272,
   "fotmobName": "Julian Ryerson",
@@ -844,7 +844,7 @@
   "name": "Sander Berge",
   "club": "Fulham",
   "position": "CM",
-  "overall": 77,
+  "overall": 80,
   "art": "klubb-eksakt",
   "fotmobId": 540963,
   "fotmobName": "Sander Berge",
@@ -856,7 +856,7 @@
   "name": "Fredrik Aursnes",
   "club": "Benfica",
   "position": "CM",
-  "overall": 78,
+  "overall": 81,
   "art": "klubb-eksakt",
   "fotmobId": 310768,
   "fotmobName": "Fredrik Aursnes",
@@ -868,7 +868,7 @@
   "name": "Patrick Berg",
   "club": "Bodø/Glimt",
   "position": "CDM",
-  "overall": 74,
+  "overall": 77,
   "art": "klubb-eksakt",
   "fotmobId": 530635,
   "fotmobName": "Patrick Berg",
@@ -880,7 +880,7 @@
   "name": "Morten Thorsby",
   "club": "Cremonese",
   "position": "CM",
-  "overall": 75,
+  "overall": 78,
   "art": "klubb-eksakt",
   "fotmobId": 439148,
   "fotmobName": "Morten Thorsby",
@@ -892,7 +892,7 @@
   "name": "Sverre Nypan",
   "club": "Lommel SK",
   "position": "CAM",
-  "overall": 72,
+  "overall": 75,
   "art": "klubb-eksakt",
   "fotmobId": 1355509,
   "fotmobName": "Sverre Nypan",
@@ -916,7 +916,7 @@
   "name": "Lamine Yamal",
   "club": "Barcelona",
   "position": "RW",
-  "overall": 89,
+  "overall": 90,
   "art": "klubb-eksakt",
   "fotmobId": 1467236,
   "fotmobName": "Lamine Yamal",
@@ -952,7 +952,7 @@
   "name": "Raphinha",
   "club": "Barcelona",
   "position": "RW",
-  "overall": 86,
+  "overall": 90,
   "art": "klubb-eksakt",
   "fotmobId": 696679,
   "fotmobName": "Raphinha",
@@ -1096,7 +1096,7 @@
   "name": "Antonio Nusa",
   "club": "RB Leipzig",
   "position": "LW",
-  "overall": 75,
+  "overall": 83,
   "art": "klubb-eksakt",
   "fotmobId": 1248482,
   "fotmobName": "Antonio Nusa",
@@ -1108,7 +1108,7 @@
   "name": "Oscar Bobb",
   "club": "Manchester City",
   "position": "RW",
-  "overall": 75,
+  "overall": 78,
   "art": "annen-klubb",
   "fotmobId": 1113790,
   "fotmobName": "Oscar Bobb",
@@ -1276,7 +1276,7 @@
   "name": "Jørgen Strand Larsen",
   "club": "Crystal Palace",
   "position": "ST",
-  "overall": 78,
+  "overall": 81,
   "art": "klubb-eksakt",
   "fotmobId": 821100,
   "fotmobName": "Jørgen Strand Larsen",
@@ -1421,12 +1421,11 @@
   "club": "Arsenal",
   "position": "CB",
   "overall": 87,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "manuell",
+  "fotmobId": 795179,
+  "fotmobName": "Gabriel",
+  "fotmobTeam": "Arsenal",
+  "fotmobPosition": "CB"
  },
  {
   "slug": "jurrien-timber",
@@ -3188,7 +3187,7 @@
   "name": "Alexander Sørloth",
   "club": "Atlético Madrid",
   "position": "ST",
-  "overall": 84,
+  "overall": 87,
   "art": "klubb-eksakt",
   "fotmobId": 440330,
   "fotmobName": "Alexander Sørloth",
@@ -19264,12 +19263,8 @@
   "club": null,
   "position": "CAM",
   "overall": 97,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-maradona",
@@ -19277,12 +19272,8 @@
   "club": null,
   "position": "CAM",
   "overall": 97,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-ronaldo-nazario",
@@ -19290,12 +19281,8 @@
   "club": null,
   "position": "ST",
   "overall": 96,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-zidane",
@@ -19303,12 +19290,8 @@
   "club": null,
   "position": "CAM",
   "overall": 96,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-cruyff",
@@ -19316,12 +19299,8 @@
   "club": null,
   "position": "ST",
   "overall": 95,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-beckenbauer",
@@ -19329,12 +19308,8 @@
   "club": null,
   "position": "CB",
   "overall": 95,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-maldini",
@@ -19342,12 +19317,8 @@
   "club": null,
   "position": "LB",
   "overall": 94,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-ronaldinho",
@@ -19355,12 +19326,8 @@
   "club": null,
   "position": "LW",
   "overall": 94,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-eusebio",
@@ -19368,12 +19335,8 @@
   "club": null,
   "position": "ST",
   "overall": 93,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-yashin",
@@ -19381,12 +19344,8 @@
   "club": null,
   "position": "GK",
   "overall": 93,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-henry",
@@ -19394,12 +19353,8 @@
   "club": null,
   "position": "LW",
   "overall": 93,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-puskas",
@@ -19407,12 +19362,8 @@
   "club": null,
   "position": "ST",
   "overall": 93,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-gullit",
@@ -19420,12 +19371,8 @@
   "club": null,
   "position": "CM",
   "overall": 92,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-van-basten",
@@ -19433,12 +19380,8 @@
   "club": null,
   "position": "ST",
   "overall": 92,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-kaka",
@@ -19446,11 +19389,8 @@
   "club": null,
   "position": "CAM",
   "overall": 92,
-  "art": "usikker",
-  "fotmobId": 1781510,
-  "fotmobName": "Kaka Scabin",
-  "fotmobTeam": "FC Dallas",
-  "fotmobPosition": null
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-pirlo",
@@ -19458,12 +19398,8 @@
   "club": null,
   "position": "CM",
   "overall": 91,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-xavi",
@@ -19471,19 +19407,8 @@
   "club": null,
   "position": "CM",
   "overall": 91,
-  "art": "flere-usikker",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": [
-   "1173787 Xavi Simons (Tottenham Hotspur, CAM,LW,RW)",
-   "1418042 Xavi Sintes (Estoril, CB)",
-   "1815149 Xavi Espart (Barcelona, LB,CM,RB)",
-   "1447852 Xavi Woudstra (Admira Wacker, null)",
-   "1253529 Xavi Gnaulati (Seattle Sounders FC, CDM,CAM,CM)",
-   "1585850 Xavi Moreno (Sabadell, LM)"
-  ]
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-buffon",
@@ -19491,12 +19416,8 @@
   "club": null,
   "position": "GK",
   "overall": 91,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-cannavaro",
@@ -19504,12 +19425,8 @@
   "club": null,
   "position": "CB",
   "overall": 90,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-roberto-carlos",
@@ -19517,12 +19434,8 @@
   "club": null,
   "position": "LB",
   "overall": 90,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "cavan-sullivan",
@@ -19530,11 +19443,8 @@
   "club": null,
   "position": "CAM",
   "overall": 68,
-  "art": "annen-klubb",
-  "fotmobId": 1630736,
-  "fotmobName": "Cavan Sullivan",
-  "fotmobTeam": "Philadelphia Union",
-  "fotmobPosition": "RM,LM,RW"
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "max-dowman",
@@ -19542,11 +19452,8 @@
   "club": null,
   "position": "RW",
   "overall": 70,
-  "art": "annen-klubb",
-  "fotmobId": 1635773,
-  "fotmobName": "Max Dowman",
-  "fotmobTeam": "Arsenal",
-  "fotmobPosition": "RW,CAM,CM"
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "rio-ngumoha",
@@ -19554,11 +19461,8 @@
   "club": null,
   "position": "LW",
   "overall": 69,
-  "art": "annen-klubb",
-  "fotmobId": 1597668,
-  "fotmobName": "Rio Ngumoha",
-  "fotmobTeam": "Liverpool",
-  "fotmobPosition": "LW,RW"
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-iniesta",
@@ -19566,12 +19470,8 @@
   "club": null,
   "position": "CM",
   "overall": 93,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-hazard",
@@ -19579,12 +19479,8 @@
   "club": null,
   "position": "LW",
   "overall": 91,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-totti",
@@ -19592,12 +19488,8 @@
   "club": null,
   "position": "ST",
   "overall": 90,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-ozil",
@@ -19605,12 +19497,8 @@
   "club": null,
   "position": "CAM",
   "overall": 90,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-busquets",
@@ -19618,12 +19506,8 @@
   "club": null,
   "position": "CDM",
   "overall": 90,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-marcelo",
@@ -19631,11 +19515,8 @@
   "club": null,
   "position": "LB",
   "overall": 90,
-  "art": "annen-klubb",
-  "fotmobId": 1801534,
-  "fotmobName": "Marcelo",
-  "fotmobTeam": "Cruzeiro",
-  "fotmobPosition": null
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-david-villa",
@@ -19643,12 +19524,8 @@
   "club": null,
   "position": "ST",
   "overall": 89,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-chiellini",
@@ -19656,12 +19533,8 @@
   "club": null,
   "position": "CB",
   "overall": 89,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  },
  {
   "slug": "icon-nani",
@@ -19669,11 +19542,7 @@
   "club": null,
   "position": "RW",
   "overall": 89,
-  "art": "ingen",
-  "fotmobId": null,
-  "fotmobName": null,
-  "fotmobTeam": null,
-  "fotmobPosition": null,
-  "kandidater": []
+  "art": "ikon",
+  "fotmobId": null
  }
 ]

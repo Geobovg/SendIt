@@ -38,6 +38,11 @@ for (const s of katalog) {
   const manuell = manuelle[s.slug];
   let treff = [];
   let art = "ingen";
+  // Ikonene er pensjonert og finnes ikke i troppene (et navn som "Marcelo" ville bare truffet feil spiller)
+  if (s.slug.startsWith("icon-") || !s.club) {
+    resultat.push({ slug: s.slug, name: s.name, club: s.club, position: s.position, overall: s.overall, art: "ikon", fotmobId: null });
+    continue;
+  }
   if (manuell) {
     treff = fm.filter((p) => p.id === manuell);
     art = "manuell";
