@@ -45,7 +45,7 @@ const packDescriptions: Record<string, string> = {
   skadoosh_dude: "خمس عشرة بطاقة، كلها بتقييم 80+، مع ضمان واحدة بتقييم 88+ واثنتين 86+ وأربع 84+. 1 كحد أقصى يوميًا.",
   stjerneutvalg: "ثماني بطاقات، كلها بتقييم 82+، مع ضمان واحدة 87+ واثنتين 85+. 3 كحد أقصى يوميًا.",
   formpakka: "بطاقة خاصة واحدة (فورمة أو إشادة) وخمس بطاقات بتقييم 83+، مع ضمان واحدة 86+ واثنتين 84+. 3 كحد أقصى يوميًا.",
-  kachow_pal: "تسع بطاقات: بطاقة Inner Peace واحدة (88–95) وثماني بطاقات بتقييم 86+، مع ضمان واحدة 90+ واثنتين 88+، وفرصة تقارب 9% للحصول على Icon. 1 كحد أقصى يوميًا.",
+  kachow_pal: "تسع بطاقات: بطاقة خاصة واحدة بتقييم 88+ وثماني بطاقات بتقييم 86+، مع ضمان واحدة 90+ واثنتين 88+، وفرصة تقارب 9% للحصول على Icon. أعلى فرصة للحصول على Inner Peace. 1 كحد أقصى يوميًا.",
 };
 
 export const market = {
@@ -139,6 +139,7 @@ export const market = {
     totsOdds: "TOTS (لكل بطاقة)",
     iconOdds: "Icon (لكل بطاقة)",
     honorableOdds: "Honorable mention (لكل بطاقة)",
+    innerPeaceOdds: "Inner Peace (لكل بطاقة)",
     informWeekTitle: "فورمة الأسبوع",
     informWeekIntro: (count: number) => `${count} لاعبين في قمة الفورمة هذا الأسبوع. قد تظهر بطاقاتهم في الحزم.`,
     informWeekResets: (when: string) => `بطاقات فورمة جديدة ${when}`,

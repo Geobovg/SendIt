@@ -291,7 +291,7 @@ export const career = {
     empty: "这里没有荣誉提名卡。",
   },
   innerPeace: {
-    intro: (count: number) => `${count} 张 Inner Peace 卡，授予本赛季状态最好的球员（依据 FotMob）。冷静、掌控与流畅，评分 88–95。只能从 Kachow pal 获得，评分越高越稀有。`,
+    intro: (count: number) => `${count} 张 Inner Peace 卡，授予本赛季状态最好的球员（依据 FotMob）。冷静、掌控与流畅，评分 88–95。可从卡包中获得，最常见于 Kachow pal，评分越高越稀有。`,
     boost: (boost: number) => `比普通卡 +${boost}`,
     empty: "这里没有 Inner Peace 卡。",
   },

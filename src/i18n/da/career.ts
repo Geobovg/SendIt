@@ -291,7 +291,7 @@ export const career = {
     empty: "Ingen Honorable mention-kort her.",
   },
   innerPeace: {
-    intro: (count: number) => `${count} Inner Peace-kort til spillerne i bedst form i denne sæson ifølge FotMob. Ro, kontrol og flow, med rating 88–95. Kun fra Kachow pal, og jo højere rating, desto sjældnere kort.`,
+    intro: (count: number) => `${count} Inner Peace-kort til spillerne i bedst form i denne sæson ifølge FotMob. Ro, kontrol og flow, med rating 88–95. Fra pakkerne, oftest fra Kachow pal, og jo højere rating, desto sjældnere kort.`,
     boost: (boost: number) => `+${boost} fra det almindelige kort`,
     empty: "Ingen Inner Peace-kort her.",
   },

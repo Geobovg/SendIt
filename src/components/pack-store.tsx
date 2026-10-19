@@ -62,6 +62,12 @@ function oddsLabel(percent: number, locale: Locale) {
   return percent.toLocaleString(INTL_LOCALES[locale], { maximumFractionDigits: percent < 1 ? 2 : 1 });
 }
 
+// Det garanterte spesialkortet. 'elite' er et tilfeldig spesialkort på 88+, så ratingen står bak teksten.
+function specialGuaranteeLabel(tp: ReturnType<typeof useT>["market"]["packs"], pack: ManagerPack) {
+  const scope = pack.special_scope === "mix" || pack.special_scope === "elite" || pack.special_scope === "inner_peace" ? "all" : pack.special_scope;
+  return tp.specialGuarantee(pack.special_guarantee, scope) + (pack.special_scope === "elite" ? " 88+" : "");
+}
+
 function PackOdds({ pack, informFactor }: { pack: ManagerPack; informFactor: number }) {
   const tp = useT().market.packs;
   const locale = useLocale();
@@ -71,6 +77,7 @@ function PackOdds({ pack, informFactor }: { pack: ManagerPack; informFactor: num
   const tots = pack.tots_chance * informFactor * 100;
   const icon = pack.icon_chance * informFactor * 100;
   const honorable = pack.honorable_chance * informFactor * 100;
+  const innerPeace = pack.inner_peace_chance * informFactor * 100;
   return <dl className="grid gap-1 text-xs">
     {[...pack.odds].reverse().map((tier) => <div key={tier.min} className="flex items-center justify-between gap-3">
       <dt className="text-muted">{tp.rating(tierLabel(tier))}</dt>
@@ -78,7 +85,7 @@ function PackOdds({ pack, informFactor }: { pack: ManagerPack; informFactor: num
     </div>)}
     {/* Spesialkortet er et eget, garantert kort ved siden av kortene som trekkes etter sjansene over. */}
     {pack.special_guarantee ? <div className="flex items-center justify-between gap-3 border-t border-border pt-1">
-      <dt className="font-semibold" style={{ color: pack.special_scope === "tots" ? specialStyles.tots.glow : specialStyles.inform.border }}>{tp.specialGuarantee(pack.special_guarantee, pack.special_scope === "mix" ? "all" : pack.special_scope)}</dt>
+      <dt className="font-semibold" style={{ color: pack.special_scope === "tots" ? specialStyles.tots.glow : specialStyles.inform.border }}>{specialGuaranteeLabel(tp, pack)}</dt>
       <dd className="font-semibold">{tp.guaranteed}</dd>
     </div> : null}
     {inform > 0 ? <div className="flex items-center justify-between gap-3 border-t border-border pt-1">
@@ -96,6 +103,10 @@ function PackOdds({ pack, informFactor }: { pack: ManagerPack; informFactor: num
     {honorable > 0 ? <div className="flex items-center justify-between gap-3">
       <dt className="font-semibold" style={{ color: specialStyles.honorable.glow }}>{tp.honorableOdds}</dt>
       <dd className="font-semibold tabular-nums">{tp.percent(oddsLabel(honorable, locale))}</dd>
+    </div> : null}
+    {innerPeace > 0 ? <div className="flex items-center justify-between gap-3">
+      <dt className="font-semibold" style={{ color: specialStyles.inner_peace.glow }}>{tp.innerPeaceOdds}</dt>
+      <dd className="font-semibold tabular-nums">{tp.percent(oddsLabel(innerPeace, locale))}</dd>
     </div> : null}
   </dl>;
 }
@@ -324,7 +335,7 @@ export function PackStore({ packs, freePacks, budget, shop }: { packs: ManagerPa
           <div>
             <h3 className="text-lg font-bold">{special ? <span style={{ color: style.badge }}>★ </span> : null}{nameOf(pack)}</h3>
             <p className={`text-sm ${special ? "text-white/70" : "text-muted"}`}>{tp.description(pack.key, pack.description)}</p>
-            <p className="mt-2 text-sm">{tp.cardCount(pack.card_count)} · {pack.guarantees.length || special ? tp.guarantee([...(special ? [tp.specialGuarantee(pack.special_guarantee, pack.special_scope === "mix" ? "all" : pack.special_scope)] : []), ...pack.guarantees.map((guarantee) => `${guarantee.count}× ${guarantee.min}+`)].join(", ")) : tp.noGuarantee}</p>
+            <p className="mt-2 text-sm">{tp.cardCount(pack.card_count)} · {pack.guarantees.length || special ? tp.guarantee([...(special ? [specialGuaranteeLabel(tp, pack)] : []), ...pack.guarantees.map((guarantee) => `${guarantee.count}× ${guarantee.min}+`)].join(", ")) : tp.noGuarantee}</p>
             {left !== null ? <p className={`mt-1 text-xs font-bold ${left ? "" : "text-danger"}`}>{tp.weeklyLeft(left, pack.weekly_limit ?? 0)}</p> : null}
             {dailyLeft !== null ? <p className="mt-1 text-xs font-bold">{tp.dailyLeft(dailyLeft, pack.daily_limit ?? 0)}</p> : null}
             {leftToday !== null ? <p className={`mt-1 text-xs font-bold ${leftToday ? "" : "text-danger"}`}>{tp.purchasesLeftToday(leftToday, pack.daily_purchase_limit ?? 0)}</p> : null}

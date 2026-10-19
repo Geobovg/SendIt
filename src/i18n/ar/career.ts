@@ -291,7 +291,7 @@ export const career = {
     empty: "لا توجد بطاقات Honorable mention هنا.",
   },
   innerPeace: {
-    intro: (count: number) => `${count} بطاقة Inner Peace للاعبين الأفضل حالًا هذا الموسم وفق FotMob. هدوء وتحكم وانسيابية، بتقييم 88–95. من Kachow pal فقط، وكلما ارتفع التقييم زادت ندرة البطاقة.`,
+    intro: (count: number) => `${count} بطاقة Inner Peace للاعبين الأفضل حالًا هذا الموسم وفق FotMob. هدوء وتحكم وانسيابية، بتقييم 88–95. من الحزم، وغالبًا من Kachow pal، وكلما ارتفع التقييم زادت ندرة البطاقة.`,
     boost: (boost: number) => `+${boost} عن البطاقة العادية`,
     empty: "لا توجد بطاقات Inner Peace هنا.",
   },

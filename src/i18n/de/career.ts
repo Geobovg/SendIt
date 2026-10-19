@@ -291,7 +291,7 @@ export const career = {
     empty: "Keine Honorable-Mention-Karten hier.",
   },
   innerPeace: {
-    intro: (count: number) => `${count} Inner-Peace-Karten für die Spieler in der besten Form dieser Saison laut FotMob. Ruhe, Kontrolle und Flow, Rating 88–95. Nur aus dem Kachow pal, und je höher das Rating, desto seltener die Karte.`,
+    intro: (count: number) => `${count} Inner-Peace-Karten für die Spieler in der besten Form dieser Saison laut FotMob. Ruhe, Kontrolle und Flow, Rating 88–95. Aus den Packs, am häufigsten aus dem Kachow pal, und je höher das Rating, desto seltener die Karte.`,
     boost: (boost: number) => `+${boost} gegenüber der normalen Karte`,
     empty: "Hier gibt es keine Inner-Peace-Karten.",
   },
