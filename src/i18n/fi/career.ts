@@ -291,7 +291,7 @@ export const career = {
     empty: "Ei Honorable mention -kortteja.",
   },
   innerPeace: {
-    intro: (count: number) => `${count} Inner Peace -korttia kauden parhaassa kunnossa oleville pelaajille FotMobin mukaan. Rauhaa, hallintaa ja flow'ta, arvosana 88–95. Vain Kachow pal -pakista, ja mitä korkeampi arvosana, sitä harvinaisempi kortti.`,
+    intro: (count: number) => `${count} Inner Peace -korttia kauden parhaassa kunnossa oleville pelaajille FotMobin mukaan. Rauhaa, hallintaa ja flow'ta, arvosana 88–95. Pakoista, useimmin Kachow pal -pakista, ja mitä korkeampi arvosana, sitä harvinaisempi kortti.`,
     boost: (boost: number) => `+${boost} tavalliseen korttiin`,
     empty: "Täällä ei ole Inner Peace -kortteja.",
   },

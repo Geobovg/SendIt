@@ -291,7 +291,7 @@ export const career = {
     empty: "No hay cartas Honorable mention aquí.",
   },
   innerPeace: {
-    intro: (count: number) => `${count} cartas Inner Peace para los jugadores en mejor forma esta temporada según FotMob. Calma, control y fluidez, con valoración de 88 a 95. Solo en el Kachow pal, y cuanto mayor es la valoración, más rara es la carta.`,
+    intro: (count: number) => `${count} cartas Inner Peace para los jugadores en mejor forma esta temporada según FotMob. Calma, control y fluidez, con valoración de 88 a 95. Salen de los paquetes, sobre todo del Kachow pal, y cuanto mayor es la valoración, más rara es la carta.`,
     boost: (boost: number) => `+${boost} sobre la carta normal`,
     empty: "No hay cartas Inner Peace aquí.",
   },

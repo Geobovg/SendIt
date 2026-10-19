@@ -45,7 +45,7 @@ const packDescriptions: Record<string, string> = {
   skadoosh_dude: "Quinze cartes, toutes 80+, dont une 88+, deux 86+ et quatre 84+ garanties. 1 max par jour.",
   stjerneutvalg: "Huit cartes, toutes 82+, dont une 87+ et deux 85+ garanties. 3 max par jour.",
   formpakka: "Une carte spéciale (inform ou honorable mention) et cinq cartes 83+, dont une 86+ et deux 84+ garanties. 3 max par jour.",
-  kachow_pal: "Neuf cartes : une carte Inner Peace (88–95) et huit 86+, dont une 90+ et deux 88+ garanties, et environ 9 % de chance d'avoir une Icon. 1 max par jour.",
+  kachow_pal: "Neuf cartes : une carte spéciale 88+ et huit 86+, dont une 90+ et deux 88+ garanties, et environ 9 % de chance d'avoir une Icon. La meilleure chance d'obtenir une Inner Peace. 1 max par jour.",
 };
 
 export const market = {
@@ -139,6 +139,7 @@ export const market = {
     totsOdds: "TOTS (par carte)",
     iconOdds: "Icon (par carte)",
     honorableOdds: "Honorable mention (par carte)",
+    innerPeaceOdds: "Inner Peace (par carte)",
     informWeekTitle: "Inform de la semaine",
     informWeekIntro: (count: number) => `${count} joueurs sont en forme cette semaine. Leurs cartes Inform peuvent sortir des packs.`,
     informWeekResets: (when: string) => `Nouveaux Inform ${when}`,
