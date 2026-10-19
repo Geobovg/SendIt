@@ -76,11 +76,11 @@ assert.deepEqual(s.incomeOf(s.startLevels()), { perHour: 1, capacity: 6 });
 assert.equal(s.collectable(fresh(), at(30)), 0);
 assert.equal(s.collectable(fresh(), at(180)), 3);
 assert.equal(s.collectable(fresh(), at(60 * 100)), 6);
-// Nivå 10 med full tribune: 12 MB i timen + 40 %, og kassa rommer 48 timer.
+// Nivå 10 med full tribune: 20 MB i timen + 60 %, og kassa rommer 48 timer.
 const maxed = withLevels({ klubbhus: 5, billettluke: 10, kasse: 10, tribune: 10, treningsfelt: 10 }).levels;
-assert.deepEqual(s.incomeOf(maxed), { perHour: 16.8, capacity: 806 });
-// Tribunen gir prosent mer: +4 % per nivå.
-assert.equal(s.incomeOf(withLevels({ tribune: 5 }).levels).perHour, 1.2);
+assert.deepEqual(s.incomeOf(maxed), { perHour: 32, capacity: 1536 });
+// Tribunen gir prosent mer: +6 % per nivå.
+assert.equal(s.incomeOf(withLevels({ tribune: 5 }).levels).perHour, 1.3);
 // En større kasse rommer mer, uten å endre farten.
 assert.deepEqual(s.incomeOf(withLevels({ kasse: 5 }).levels), { perHour: 1, capacity: 16 });
 // Klokka som går bakover gir ingenting.

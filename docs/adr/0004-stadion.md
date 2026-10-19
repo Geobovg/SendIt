@@ -13,10 +13,10 @@ Syv bygninger, med nivå opp til 5 eller 10 (alle tallene ligger i `src/lib/stad
 | Bygning | Start | Maks | Hva den gjør |
 | --- | --- | --- | --- |
 | Klubbhus | 1 | 5 | Setter taket for de andre (2 nivåer per klubbhusnivå) og gir byggere: 2 til å begynne med, så én til for hvert klubbhusnivå fra 3, opp til 5. |
-| Billettluke | 1 | 10 | Gruva: lager 1–12 MB i timen døgnet rundt. |
+| Billettluke | 1 | 10 | Gruva: lager 1–20 MB i timen døgnet rundt. |
 | Kasse | 1 | 10 | Lageret: bestemmer hvor mange timer med produksjon billettluka og treningsfeltet kan fylle seg opp (6–48 timer) før de stopper. |
 | Treningsfelt | 0 | 10 | Lager 1–15 klubb-XP i timen på samme måte. |
-| Tribune | 0 | 10 | Gir 4 % mer inntekt fra billettluka per nivå (opp til +40 %). |
+| Tribune | 0 | 10 | Gir 6 % mer inntekt fra billettluka per nivå (opp til +60 %). |
 | Supporterfelt | 0 | 10 | Dugnad: alle oppgraderinger blir 2 % raskere per nivå (opp til 20 %). |
 | Speiderhytte | 0 | 10 | Sender ut en speider i 24 timer. Han kommer hjem med en pakke eller en spiller du kan kjøpe. |
 
@@ -53,7 +53,7 @@ Knappene, boblene og nedtellingene er vanlig HTML lagt over tegningen med posisj
 
 ## Ting vi ikke har bekreftet
 
-- **Balansen er ikke simulert mot ekte tall.** Vi har ikke hatt tilgang til hvor mye MB som går inn og ut i produksjon. Med full billettluke (12 MB i timen, +40 % fra tribunen, kasse som rommer 48 timer) er maksimalt rundt 400 MB per dag om man tømmer jevnlig, mens en pakke på 1500 MB har en daglig grense på ett kjøp. Hurtigbygging og speiderpakkene (opptil 750 MB verdi per døgn på nivå 9–10) gjør dette til en betydelig kilde til MB og kort. Alt er satt for å være en langsiktig investering, men det må sjekkes mot ekte tall en uke eller to etter utrulling og justeres i `stadium.ts` uten ny migrering.
+- **Balansen er ikke simulert mot ekte tall.** Vi har ikke hatt tilgang til hvor mye MB som går inn og ut i produksjon. Med full billettluke (20 MB i timen, +60 % fra tribunen, kasse som rommer 48 timer) er maksimalt rundt 770 MB per dag om man tømmer jevnlig, mens en pakke på 1500 MB har en daglig grense på ett kjøp. Tallene ble hevet fra 12 MB i timen og +40 % da en gjennomgang viste at stadionet ikke lønte seg: bygningene over nivå 6 tok 100–300 dager å tjene inn, og tribunen var den dårligste investeringen. Nå tjenes de første nivåene inn på 1–4 uker (billettluke og kasse til nivå 6 koster ca. 3 800 MB og gir 160 MB per dag ved ett uttak daglig), alt opp til nivå 10 på ca. 2 måneder, og tribunen er verdt det fra rundt nivå 5. Hurtigbygging og speiderpakkene (opptil 750 MB verdi per døgn på nivå 9–10) gjør dette til en betydelig kilde til MB og kort. Alt er satt for å være en langsiktig investering, men det må sjekkes mot ekte tall en uke eller to etter utrulling og justeres i `stadium.ts` uten ny migrering.
 - **Alle starter på samme tidspunkt.** `stadium_collected_at` og `stadium_xp_collected_at` får standardverdien `now()`, så ingen får opptjent inntekt fra før migreringen. Treningsfeltet begynner å samle når det står ferdig.
 - **Nullstilling:** stadionet nullstilles ikke når managerkarrieren nullstilles.
 - **Arbitrasje på markedet:** spilleren kjøpes til 60 % av verdien og kan ligge ute på overgangsmarkedet til høyere pris. Det er én spiller om dagen og man kan ikke velge hvem, men det er en vei for MB å gå rundt.
