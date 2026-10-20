@@ -4,8 +4,8 @@
 -- beholdes det som er høyest, så ingen mister noe.
 -- * Bjarne: 17 000 MB og stadion for 32 810 MB (klubbhus 5, billettluke 8, kasse 8, treningsfelt 6, tribune 7, supporterfelt 5, speiderhytte 5),
 --   etter det han husker, og kortene han hadde utenfor laget og benken, så langt de kan leses ut av pakkelogg (se under).
--- * De andre som ble flyttet av 0128: 5 000 MB og stadion for 5 810 MB (klubbhus 3, billettluke 5, kasse 5, treningsfelt 4, tribune 4,
---   supporterfelt 3, speiderhytte 2).
+-- * f_edits, den andre som ble flyttet av 0128: 5 000 MB og stadion for 5 810 MB (klubbhus 3, billettluke 5, kasse 5, treningsfelt 4,
+--   tribune 4, supporterfelt 3, speiderhytte 2).
 -- Fordelingen på byggene er en gjetning. Kortene hentes fra pack_openings.pulls, som er loggen over kort fra pakker: kort trukket etter
 -- nullstillingen (0128 bruker 9. oktober) og før flyttingen, som ikke allerede ligger i det gjenopprettede laget. Antallet er det arkivbildet
 -- sier han hadde (card_count) minus det som finnes, og er det flere trukne kort enn plasser, tas de med høyest rating. Kort han kjøpte i
@@ -95,17 +95,16 @@ $fn$;
 do $$
 declare
   bjarne uuid;
-  other uuid;
+  f_edits uuid;
 begin
   select id into bjarne from public.profiles where username = 'Bjarne';
   if bjarne is not null then
     perform pg_temp.patch_universe_one(bjarne, 17000,
       '{"klubbhus": 5, "billettluke": 8, "kasse": 8, "treningsfelt": 6, "tribune": 7, "supporterfelt": 5, "speiderhytte": 5}', true);
   end if;
-  -- Bare de som ble flyttet av 0128 (før 0129 ble tatt i bruk), ikke de som har vunnet Camp Nou siden.
-  for other in select user_id from public.universe_archives
-    where universe = 1 and archived_at < timestamptz '2026-10-20 17:30:00+00' and user_id is distinct from bjarne loop
-    perform pg_temp.patch_universe_one(other, 5000,
+  select id into f_edits from public.profiles where username = 'f_edits';
+  if f_edits is not null then
+    perform pg_temp.patch_universe_one(f_edits, 5000,
       '{"klubbhus": 3, "billettluke": 5, "kasse": 5, "treningsfelt": 4, "tribune": 4, "supporterfelt": 3, "speiderhytte": 2}', false);
-  end loop;
+  end if;
 end $$;
