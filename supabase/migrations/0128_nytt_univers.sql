@@ -76,7 +76,6 @@ begin
   on conflict (user_id, universe) do nothing;
 
   update career_challenges set status = 'expired' where status in ('pending', 'accepted') and target_user in (challenger_id, opponent_id);
-  update direct_transfer_offers set status = 'cancelled' where status = 'pending' and target_user in (seller_id, buyer_id);
   delete from market_bids where bidder_id = target_user;
   delete from market_listings where seller_id = target_user;
   delete from manager_lineups where user_id = target_user;
