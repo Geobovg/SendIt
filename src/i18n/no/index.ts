@@ -15,5 +15,6 @@ import { sbc } from "./sbc";
 import { seasons } from "./seasons";
 import { stadium } from "./stadium";
 import { tournaments } from "./tournaments";
+import { universe } from "./universe";
 
-export const no: Dictionary = { common, auth, profile, friends, tournaments, career, chemistry, market, match, seasons, stadium, draft, sbc, femmer, quiz, dbErrors };
+export const no: Dictionary = { common, auth, profile, friends, tournaments, career, chemistry, market, match, seasons, stadium, draft, sbc, femmer, quiz, dbErrors, universe };

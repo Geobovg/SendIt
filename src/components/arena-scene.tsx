@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useT } from "@/i18n/client";
-import { arenaOf, arenas, divisionRating, type Arena } from "@/lib/arenas";
+import { arenaOf, arenasOf, divisionRating, type Arena } from "@/lib/arenas";
 import type { AiSeason } from "@/lib/seasons";
 import { useScrollLock } from "./use-scroll-lock";
 
 /** Bakgrunnen for sesong- og kampskjermen i arenaens farger. */
-export function arenaBackground(arena: number) {
-  const { colors } = arenaOf(arena);
+export function arenaBackground(arena: number, universe = 1) {
+  const { colors } = arenaOf(arena, universe);
   return `radial-gradient(ellipse at 85% 0%, ${colors.glow}, transparent 45%), radial-gradient(ellipse at 0% 100%, ${colors.glow}, transparent 40%), ${colors.base}`;
 }
 
@@ -17,8 +17,8 @@ export function arenaBackground(arena: number) {
  * Et tegnet stadion i arenaens farger: tribuner, flomlys og bane. Det er en egen illustrasjon,
  * ikke et bilde av det ekte stadionet. Høyere arenaer får flere tribuneringer og flere lys.
  */
-export function StadiumIllustration({ arena, className = "" }: { arena: number; className?: string }) {
-  const { colors, number } = arenaOf(arena);
+export function StadiumIllustration({ arena, universe = 1, className = "" }: { arena: number; universe?: number; className?: string }) {
+  const { colors, number } = arenaOf(arena, universe);
   const tiers = Math.min(number + 1, 4);
   const lights = number >= 3 ? [30, 90, 210, 270] : [40, 260];
   return <svg viewBox="0 0 300 140" className={className} role="img" aria-hidden>
@@ -48,11 +48,11 @@ export function ArenaRoad({ season }: { season: AiSeason }) {
       {season.championTitles ? <span className="rounded-full bg-amber-300 px-3 py-1 text-xs font-black text-slate-950">🏆 {text.championTitles(season.championTitles)}</span> : null}
     </div>
     <ol className="grid gap-2">
-      {[...arenas].reverse().map((arena) => {
+      {[...arenasOf(season.universe)].reverse().map((arena) => {
         const current = arena.number === season.arena;
         const reached = arena.number <= season.highestArena;
         return <li key={arena.number} className={`relative grid grid-cols-[96px_minmax(0,1fr)] items-center gap-3 overflow-hidden rounded-xl border p-2 sm:grid-cols-[140px_minmax(0,1fr)] ${current ? "border-2" : "border-white/10"} ${reached ? "" : "opacity-55"}`} style={{ background: arenaBackground(arena.number), ...(current ? { borderColor: arena.colors.primary } : {}) }}>
-          <StadiumIllustration arena={arena.number} className={`h-16 w-full sm:h-20 ${reached ? "" : "grayscale"}`} />
+          <StadiumIllustration arena={arena.number} universe={season.universe} className={`h-16 w-full sm:h-20 ${reached ? "" : "grayscale"}`} />
           <div className="min-w-0">
             <p className="text-[10px] font-black tracking-[.22em]" style={{ color: arena.colors.primary }}>{text.eyebrow(arena.number)} · {current ? text.current : reached ? text.reached : text.locked}</p>
             <p className="truncate text-lg font-black">{reached ? "" : "🔒 "}{arena.name}</p>
@@ -64,7 +64,7 @@ export function ArenaRoad({ season }: { season: AiSeason }) {
   </section>;
 }
 
-const seenKey = (arena: number) => `arena-unlock-seen-${arena}`;
+const seenKey = (arena: number, universe: number) => universe === 1 ? `arena-unlock-seen-${arena}` : `arena-unlock-seen-${universe}-${arena}`;
 
 /**
  * Feiring første gang man ser en ny arena. Hvem som har sett den, huskes bare i denne nettleseren.
@@ -77,25 +77,25 @@ export function ArenaUnlockCelebration({ season }: { season: AiSeason }) {
   useEffect(() => {
     if (!fresh) return;
     try {
-      if (window.localStorage.getItem(seenKey(season.arena))) return;
-      window.localStorage.setItem(seenKey(season.arena), "1");
+      if (window.localStorage.getItem(seenKey(season.arena, season.universe))) return;
+      window.localStorage.setItem(seenKey(season.arena, season.universe), "1");
       // eslint-disable-next-line react-hooks/set-state-in-effect -- lagringen finnes bare i nettleseren, så feiringen kan først åpnes etter at siden er lastet
       setOpen(true);
     } catch {
       // Uten lagring hoppes feiringen over.
     }
-  }, [fresh, season.arena]);
+  }, [fresh, season.arena, season.universe]);
   if (!open) return null;
-  return <Celebration arena={arenaOf(season.arena)} title={text.unlockedTitle} body={text.unlockedBody(arenaOf(season.arena).name)} button={text.continue} onClose={() => setOpen(false)} />;
+  return <Celebration arena={arenaOf(season.arena, season.universe)} universe={season.universe} title={text.unlockedTitle} body={text.unlockedBody(arenaOf(season.arena, season.universe).name)} button={text.continue} onClose={() => setOpen(false)} />;
 }
 
-function Celebration({ arena, title, body, button, onClose }: { arena: Arena; title: string; body: string; button: string; onClose: () => void }) {
+function Celebration({ arena, universe, title, body, button, onClose }: { arena: Arena; universe: number; title: string; body: string; button: string; onClose: () => void }) {
   useScrollLock();
   return createPortal(<div className="pack-stage" role="dialog" aria-modal="true" aria-label={title}>
     <div className="pack-rays" style={{ "--pack-glow": arena.colors.primary } as React.CSSProperties} />
-    <div className="pack-card-walkout relative grid w-full max-w-md gap-4 rounded-2xl border-2 p-6 text-center text-white shadow-2xl" style={{ background: arenaBackground(arena.number), borderColor: arena.colors.primary }}>
+    <div className="pack-card-walkout relative grid w-full max-w-md gap-4 rounded-2xl border-2 p-6 text-center text-white shadow-2xl" style={{ background: arenaBackground(arena.number, universe), borderColor: arena.colors.primary }}>
       <p className="text-xs font-black tracking-[.3em]" style={{ color: arena.colors.primary }}>{title.toUpperCase()}</p>
-      <StadiumIllustration arena={arena.number} className="h-32 w-full" />
+      <StadiumIllustration arena={arena.number} universe={universe} className="h-32 w-full" />
       <h2 className="text-3xl font-black italic">{arena.name}</h2>
       <p className="text-sm text-white/75">{body}</p>
       <button type="button" onClick={onClose} className="justify-self-center rounded-xl px-6 py-3 font-black text-slate-950" style={{ background: arena.colors.primary }}>{button}</button>
@@ -104,11 +104,11 @@ function Celebration({ arena, title, body, button, onClose }: { arena: Arena; ti
 }
 
 /** Stripe øverst på kampskjermen for AI-sesongkamper: stadion og arena. */
-export function ArenaBanner({ arena }: { arena: number }) {
+export function ArenaBanner({ arena, universe = 1 }: { arena: number; universe?: number }) {
   const t = useT();
-  const info = arenaOf(arena);
-  return <div className="relative flex items-center gap-3 overflow-hidden rounded-xl border p-2 text-white" style={{ background: arenaBackground(arena), borderColor: `${info.colors.primary}66` }}>
-    <StadiumIllustration arena={arena} className="h-12 w-28 shrink-0" />
+  const info = arenaOf(arena, universe);
+  return <div className="relative flex items-center gap-3 overflow-hidden rounded-xl border p-2 text-white" style={{ background: arenaBackground(arena, universe), borderColor: `${info.colors.primary}66` }}>
+    <StadiumIllustration arena={arena} universe={universe} className="h-12 w-28 shrink-0" />
     <div className="min-w-0"><p className="text-[10px] font-black tracking-[.22em]" style={{ color: info.colors.primary }}>{t.seasons.arena.eyebrow(arena)}</p><p className="truncate font-black">{info.name}</p></div>
   </div>;
 }

@@ -29,7 +29,7 @@ En sesong der tabellen består av deg og venner som spiller managerkarrieren sam
 _Avoid_: Liga, Turnering (Turnering er noe annet, se over)
 
 **Arena**:
-Et av fem stadioner i AI-sesongen, som i Clash Royale: Gamle Gress, Ullevaal, Wembley Stadium, Old Trafford og Camp Nou. Hver arena har ti **divisjoner**, så stigen er 50 nivåer lang. Vinner du divisjon 1, går du opp til divisjon 10 i neste arena. Du faller aldri ut av en arena du har nådd. AI-klubbene blir jevnere og får en skjult styrkebonus jo høyere arenaen er, og opprykkspremien ganges opp.
+Et av fem stadioner i AI-sesongen, som i Clash Royale: Gamle Gress, Ullevaal, Wembley Stadium, Old Trafford og Camp Nou. Hver arena har ti **divisjoner**, så stigen er 50 nivåer lang. Vinner du divisjon 1, går du opp til divisjon 10 i neste arena. Du faller aldri ut av en arena du har nådd. Vinner du divisjon 1 på Camp Nou, sendes du til et nytt **univers**. AI-klubbene blir jevnere og får en skjult styrkebonus jo høyere arenaen er, og opprykkspremien ganges opp.
 _Avoid_: Liga, Nivå, Stadion alene (Stadion er navnet, Arena er nivået)
 
 **Stadion**:
@@ -37,12 +37,16 @@ Managerens eget stadion, som en Clash of Clans-base (migrering 0123, ADR 0004). 
 _Avoid_: Arena (arenaen er vanskelighetsnivået på stigen, ikke managerens eget stadion), Klubbanlegg
 
 **Divisjon**:
-Et av ti vanskelighetsnivåer i hver **arena** (Divisjon 10 lavest, Divisjon 1 høyest), der AI-troppenes samlede rating skaleres opp jo høyere divisjon. Etter en AI-sesong rykker topp 2 opp i divisjon 10–7 og bare vinneren i divisjon 6–1; vinneren av divisjon 1 går til neste arena. Plassen rett under spiller **kvalik**. De to nederste rykker ned, unntatt i divisjon 10, som er gulvet i arenaen. Belønningen for opprykk øker jo høyere divisjonen du rykker opp til er.
+Et av ti vanskelighetsnivåer i hver **arena** (Divisjon 10 lavest, Divisjon 1 høyest), der AI-troppenes samlede rating skaleres opp jo høyere divisjon. Etter en AI-sesong rykker topp 2 opp i divisjon 10–7 og bare vinneren i divisjon 6–1; vinneren av divisjon 1 går til neste arena (fra Camp Nou til neste **univers**). Plassen rett under spiller **kvalik**. De to nederste rykker ned, unntatt i divisjon 10, som er gulvet i arenaen. Belønningen for opprykk øker jo høyere divisjonen du rykker opp til er.
 _Avoid_: Nivå (brukes om klubbnivå/XP, som er noe annet), Liga
 
 **Mestertittel**:
-Det du får når du vinner divisjon 1 på Camp Nou, den siste arenaen. Du blir der og kan vinne flere; antallet vises på arenaveien.
+Det du får når du vinner divisjon 1 på Camp Nou, den siste arenaen. Den sender deg til et nytt **univers**. Antallet (universer vunnet) vises på arenaveien.
 _Avoid_: Mesterskap, Trofé
+
+**Univers**:
+En helt ny start i Managerkarrieren (migrering 0128, ADR 0005). Vinner du divisjon 1 på Camp Nou, spilles en overgangsanimasjon, og du starter i univers 2: divisjon 10 i første arena, med Academy-tropp, 120 MB og et nytt stadion. Arenaene har nye navn og farger (univers 2: Bislett Stadion, San Siro, Allianz Arena, Santiago Bernabéu, Maracanã; deretter går det på rundgang), men samme stige, vanskelighet og regler. Klubbnivå, XP, venner, profil, Femmer, turneringer og det personlige kortet (satt tilbake til 70) følger med. Det gamle universet fryses som et skrivebeskyttet øyeblikksbilde (`universe_archives`: laget, kortene, statistikken og sesongene), som kan åpnes fra universbyttet på sesongsiden (`/managerkarriere/univers/[n]`). Motstandere i AI-sesongen og overgangsmarkedet gjelder bare managere i samme univers. Spillere som allerede hadde vunnet Camp Nou, ble flyttet til univers 2 av selve migreringen. `player_profiles.universe` er universet du spiller i nå.
+_Avoid_: Sesong (en sesong er én runde i en divisjon), Prestige, Reset
 
 **Kvalik**:
 Én ekstra kamp etter en AI-sesong for den som havner rett under opprykksplassene, mot en klubb fra divisjonen over (fra divisjon 1: en klubb fra divisjon 10 i neste arena). Kampen må ha en vinner, og bare seier gir opprykk. Den teller ikke i tabellen.

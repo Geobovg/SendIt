@@ -14,6 +14,8 @@ import { sbc } from "./sbc";
 import { seasons } from "./seasons";
 import { stadium } from "./stadium";
 import { tournaments } from "./tournaments";
+// Univers-teksten er foreløpig bare skrevet på norsk og engelsk; de andre språkene bruker den engelske.
+import { universe } from "../en/universe";
 import type { Dictionary } from "../en";
 
-export const ar: Dictionary = { draft, common, auth, profile, friends, tournaments, career, chemistry, market, match, seasons, stadium, sbc, femmer, quiz, dbErrors };
+export const ar: Dictionary = { draft, common, auth, profile, friends, tournaments, career, chemistry, market, match, seasons, stadium, sbc, femmer, quiz, dbErrors, universe };

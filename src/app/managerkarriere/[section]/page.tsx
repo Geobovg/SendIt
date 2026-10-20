@@ -52,7 +52,7 @@ export default async function ManagerCareerSectionPage({ params, searchParams }:
     needsCards.has(active) ? getManagerCareer(userId) : null,
     getManagerRating(userId),
     active === "spillermarked" && !marketTab ? getCatalogPage(defaultCatalogFilters) : undefined,
-    marketTab ? listTransferMarket() : [],
+    marketTab ? listTransferMarket(userId) : [],
     active === "sesong" && tab === "venner" ? Promise.all([getFriendSeasons(userId), listFriends(userId), getCareerChallenges(userId)]) : null,
     active === "sesong" && tab !== "venner" ? getAiSeason(userId) : null,
     active === "karrierehistorikk" ? listManagerMatchHistory(userId) : null,
