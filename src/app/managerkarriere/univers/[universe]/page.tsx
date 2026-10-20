@@ -32,7 +32,7 @@ export default async function UniverseArchivePage({ params }: { params: Promise<
   ];
   const cards = (list: ArchivedCard[]) => <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">{list.map((card, index) => <PlayerCardFace key={index} player={{ ...card, altPositions: card.altPositions ?? [] }} className="!min-h-[22rem]" />)}</div>;
   return <div className="mx-auto grid w-full max-w-[1600px] gap-4">
-    <UniverseBar current={nav.current} archives={nav.archives} />
+    <UniverseBar current={nav.current} archives={nav.archives} viewing={number} />
     <section className="relative overflow-hidden rounded-2xl border p-5 shadow-2xl sm:p-7" style={{ background: arenaBackground(peak, number), borderColor: `${arena.colors.primary}40` }}>
       <StadiumIllustration arena={peak} universe={number} className="pointer-events-none absolute -right-6 top-0 h-40 w-80 opacity-40" />
       <div className="relative grid gap-3">

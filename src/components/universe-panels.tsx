@@ -61,13 +61,22 @@ export function UniverseTransition({ from, to }: { from: number; to: number }) {
   </div>, document.body);
 }
 
-/** Bytter mellom universet du spiller i og de gamle, som bare kan ses. Vises bare om du har et arkivert univers. */
-export function UniverseBar({ current, archives }: { current: number; archives: { universe: number }[] }) {
+/**
+ * Bytter mellom universet du spiller i og de gamle, som bare kan ses. Vises bare om du har et arkivert univers.
+ * `viewing` er arkivet du ser på akkurat nå: da er «Du er her» på det arkivet, og universet ditt blir en lenke tilbake.
+ */
+export function UniverseBar({ current, archives, viewing }: { current: number; archives: { universe: number }[]; viewing?: number }) {
   const t = useT().universe.bar;
   if (!archives.length) return null;
   const chip = "rounded-full border px-3 py-1.5 text-xs font-black tracking-wider";
-  return <nav className="flex flex-wrap items-center gap-2" aria-label={t.label(current)}>
-    <span className={`${chip} border-lime-300/60 bg-lime-300 text-slate-950`}>{t.label(current)} · {t.here}</span>
-    {archives.map((archive) => <Link key={archive.universe} href={`/managerkarriere/univers/${archive.universe}`} className={`${chip} border-white/15 bg-white/5 text-white/75 transition hover:border-white/40`}>{t.viewArchive(archive.universe)}</Link>)}
+  const active = `${chip} border-lime-300/60 bg-lime-300 text-slate-950`;
+  const idle = `${chip} border-white/15 bg-white/5 text-white/75 transition hover:border-white/40`;
+  return <nav className="flex flex-wrap items-center gap-2" aria-label={t.label(viewing ?? current)}>
+    {viewing === undefined
+      ? <span className={active}>{t.label(current)} · {t.here}</span>
+      : <Link href="/managerkarriere" className={idle}>{t.label(current)}</Link>}
+    {archives.map((archive) => archive.universe === viewing
+      ? <span key={archive.universe} aria-current="page" className={active}>{t.viewArchive(archive.universe)}</span>
+      : <Link key={archive.universe} href={`/managerkarriere/univers/${archive.universe}`} className={idle}>{t.viewArchive(archive.universe)}</Link>)}
   </nav>;
 }
