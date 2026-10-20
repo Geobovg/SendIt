@@ -105,7 +105,7 @@ export const seasons: SeasonsDict = {
     unlockedBody: (name: string) => `Velkommen til ${name}. Motstanderne er tøffere her, og premiene er større.`,
     continue: "Kjør på",
     toNextArena: (name: string) => `Bare vinneren går opp til ${name}`,
-    toChampion: "Vinneren får en mestertittel",
+    toChampion: "Vinneren sendes til et nytt univers",
     playoffInfo: (name: string) => `Kvalik: én kamp mot en klubb fra ${name}. Du må vinne.`,
     prizeFactor: (factor: number) => factor > 1 ? `I denne arenaen ganges alle premier med ${String(factor).replace(".", ",")}.` : "",
   },

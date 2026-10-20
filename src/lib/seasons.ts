@@ -9,8 +9,8 @@ import { supabaseAdmin } from "./supabase/server";
 export type SeasonTableRow = { participant: string; name: string; manager?: string; isMe: boolean; played: number; wins: number; draws: number; losses: number; goalsFor: number; goalsAgainst: number; points: number; position: number };
 export type SeasonFixture = { id: string; round: number; homeName: string; awayName: string; homeIsMe: boolean; awayIsMe: boolean; status: "scheduled" | "live" | "completed"; homeScore: number | null; awayScore: number | null; matchId: string | null; playoff: boolean };
 export type SeasonOutcome = "promoted" | "relegated" | "stayed" | "champion";
-/** `highestArena` er den høyeste arenaen manageren har nådd, `championTitles` antall mestertitler på Camp Nou. */
-export type AiSeason = { id: string; seasonNumber: number; arena: number; division: number; teams: AiTeam[]; table: SeasonTableRow[]; fixtures: SeasonFixture[]; nextFixture: SeasonFixture | null; played: number; inPlayoff: boolean; previous: { arena: number; division: number; position: number; outcome: SeasonOutcome } | null; highestArena: number; championTitles: number };
+/** `highestArena` er den høyeste arenaen manageren har nådd, `championTitles` antall universer vunnet (mestertitler på Camp Nou) og `universe` universet manageren spiller i nå. */
+export type AiSeason = { id: string; seasonNumber: number; arena: number; division: number; teams: AiTeam[]; table: SeasonTableRow[]; fixtures: SeasonFixture[]; nextFixture: SeasonFixture | null; played: number; inPlayoff: boolean; previous: { arena: number; division: number; position: number; outcome: SeasonOutcome } | null; highestArena: number; championTitles: number; universe: number; archivedUniverses: number[] };
 export type FriendSeasonMember = { userId: string; username: string; status: "invited" | "joined" };
 export type FriendSeason = { id: string; name: string; status: "open" | "active" | "completed"; inviteCode: string; isOwner: boolean; myStatus: "invited" | "joined"; members: FriendSeasonMember[]; table: SeasonTableRow[]; fixtures: SeasonFixture[]; nextFixture: SeasonFixture | null };
 
@@ -47,13 +47,14 @@ export async function getAiSeason(userId: string): Promise<AiSeason> {
   const fallback = (await getT()).seasons.fallback;
   const { data: seasonId, error: ensureError } = await db.rpc("ensure_ai_season", { target_user: userId });
   if (ensureError) throw new Error(ensureError.message);
-  const [{ data: season, error: seasonError }, { data: fixtures, error: fixturesError }, { data: standings, error: standingsError }, { data: previous }, { data: highest }, { count: championTitles }] = await Promise.all([
+  const [{ data: season, error: seasonError }, { data: fixtures, error: fixturesError }, { data: standings, error: standingsError }, { data: previous }, { data: highest }, { data: archives }, { data: profile }] = await Promise.all([
     db.from("career_ai_seasons").select("id, season_number, arena, division, teams").eq("id", seasonId).single(),
     db.from("career_season_matches").select("id, round, stage, home_user_id, away_user_id, home_ai_key, away_ai_key, status, home_score, away_score, match_id").eq("ai_season_id", seasonId).order("round", { ascending: true }),
     db.rpc("season_standings", { target_ai_season: seasonId, target_friend_season: null }),
     db.from("career_ai_seasons").select("arena, division, final_position, outcome").eq("user_id", userId).eq("status", "completed").order("season_number", { ascending: false }).limit(1).maybeSingle(),
     db.from("career_ai_seasons").select("arena").eq("user_id", userId).order("arena", { ascending: false }).limit(1).maybeSingle(),
-    db.from("career_ai_seasons").select("id", { count: "exact", head: true }).eq("user_id", userId).eq("outcome", "champion"),
+    db.from("universe_archives").select("universe").eq("user_id", userId).order("universe", { ascending: true }),
+    db.from("player_profiles").select("universe").eq("user_id", userId).maybeSingle(),
   ]);
   if (seasonError || fixturesError || standingsError) throw new Error(seasonError?.message ?? fixturesError?.message ?? standingsError?.message);
   const teams = (season.teams ?? []) as AiTeam[];
@@ -66,7 +67,7 @@ export async function getAiSeason(userId: string): Promise<AiSeason> {
     table: toTable((standings ?? []) as StandingRow[], names, userId, fallback.unknown, new Map(teams.filter((team) => team.manager && team.manager !== team.name).map((team) => [team.key, team.manager!]))),
     fixtures: mine, nextFixture, played: mine.filter((fixture) => !fixture.playoff && fixture.status === "completed").length, inPlayoff: nextFixture?.playoff ?? false,
     previous: previous?.outcome ? { arena: previous.arena ?? 1, division: previous.division, position: previous.final_position, outcome: previous.outcome } : null,
-    highestArena: highest?.arena ?? season.arena ?? 1, championTitles: championTitles ?? 0,
+    highestArena: highest?.arena ?? season.arena ?? 1, championTitles: archives?.length ?? 0, universe: profile?.universe ?? 1, archivedUniverses: (archives ?? []).map((row) => row.universe as number),
   };
 }
 

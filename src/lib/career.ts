@@ -8,6 +8,7 @@ import { catalogPageSize, catalogPositions, type CatalogFilters } from "./catalo
 import { catalogBuyMaxOverall } from "./manager-limits";
 import { specialStyles, type SpecialKind } from "./special-cards";
 import { supabaseAdmin } from "./supabase/server";
+import { getUniverse } from "./universe";
 
 export type CareerProfile = { user_id: string; manager_budget: number; manager_budget_earned: number; club_name: string; tournament_wins: number; tournament_draws: number; tournament_losses: number; manager_career_wins: number; manager_career_draws: number; manager_career_losses: number; club_xp: number };
 
@@ -368,12 +369,16 @@ export async function listCatalogClubs(): Promise<string[]> {
 
 export type MarketListing = { id: string; seller_id: string; card_id: string; starting_price: number; buy_now_price: number; ends_at: string; card: { name: string; position: string; overall: number; club: string; special: SpecialKind | null }; seller_name: string; highest_bid: number | null };
 // Overgangsmarkedet er åpent for alle brukere, også egne annonser vises (de kan ikke kjøpes av selgeren).
-export async function listTransferMarket(): Promise<MarketListing[]> {
+// Annonsene er adskilt per univers (migrering 0128): man ser bare selgere fra sitt eget.
+export async function listTransferMarket(userId: string): Promise<MarketListing[]> {
   const db = supabaseAdmin();
+  const { data: peers, error: peersError } = await db.from("player_profiles").select("user_id").eq("universe", await getUniverse(userId));
+  if (peersError) throw new Error(peersError.message);
+  const sameUniverseIds = new Set((peers ?? []).map((peer) => peer.user_id));
   const { data, error } = await db.from("market_listings").select("id, seller_id, card_id, starting_price, buy_now_price, ends_at, manager_cards(name, position, overall, player_catalog(club), special_cards(kind)), profiles!market_listings_seller_id_fkey(username), market_bids(amount)").eq("status", "active").gt("ends_at", new Date().toISOString()).order("ends_at", { ascending: true });
   if (error) throw new Error(error.message);
   const fallback = (await getT()).career.fallback;
-  return (data ?? []).map((row) => {
+  return (data ?? []).filter((row) => sameUniverseIds.has(row.seller_id)).map((row) => {
     const card = Array.isArray(row.manager_cards) ? row.manager_cards[0] : row.manager_cards;
     const catalog = card ? (Array.isArray(card.player_catalog) ? card.player_catalog[0] : card.player_catalog) : null;
     const special = card ? (Array.isArray(card.special_cards) ? card.special_cards[0] : card.special_cards) : null;

@@ -108,7 +108,7 @@ export const seasons = {
     unlockedBody: (name: string) => `Welcome to ${name}. The opponents are tougher here, and the prizes are bigger.`,
     continue: "Let's go",
     toNextArena: (name: string) => `Only the winner goes up to ${name}`,
-    toChampion: "The winner gets a master title",
+    toChampion: "The winner is sent to a new universe",
     playoffInfo: (name: string) => `Play-off: one match against a club from ${name}. You have to win.`,
     prizeFactor: (factor: number) => factor > 1 ? `In this arena all prizes are multiplied by ${factor}.` : "",
   },

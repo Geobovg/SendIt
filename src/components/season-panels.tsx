@@ -9,6 +9,7 @@ import { arenaOf, lastArena } from "@/lib/arenas";
 import { directPromotionSpots, isRelegation, playoffPosition } from "@/lib/season-rules";
 import type { AiSeason, FriendSeason, SeasonFixture, SeasonTableRow } from "@/lib/seasons";
 import { useT } from "@/i18n/client";
+import { UniverseBar } from "./universe-panels";
 import { arenaBackground, ArenaRoad, ArenaUnlockCelebration, StadiumIllustration } from "./arena-scene";
 import { TeamDialog } from "./team-dialog";
 import { buttonClass, secondaryButtonClass } from "./ui";
@@ -83,7 +84,7 @@ export function PlayAiMatchButton({ season, large = false }: { season: AiSeason;
 /** Hvem som rykker opp. I divisjon 1 går vinneren til neste arena, eller blir mester på Camp Nou. */
 function promotionText(t: ReturnType<typeof useT>, season: AiSeason) {
   if (season.division > 1) return t.seasons.ai.promotionRule(directPromotionSpots(season.division));
-  return season.arena >= lastArena ? t.seasons.arena.toChampion : t.seasons.arena.toNextArena(arenaOf(season.arena + 1).name);
+  return season.arena >= lastArena ? t.seasons.arena.toChampion : t.seasons.arena.toNextArena(arenaOf(season.arena + 1, season.universe).name);
 }
 
 /** Hovedkortet på forsiden: hvor du står i AI-sesongen og en knapp til neste kamp. */
@@ -91,10 +92,11 @@ export function AiSeasonHero({ season }: { season: AiSeason }) {
   const t = useT();
   const me = season.table.find((row) => row.isMe);
   const around = season.table.filter((row) => me && Math.abs(row.position - me.position) <= 1 || row.position === 1).slice(0, 4);
-  const arena = arenaOf(season.arena);
-  return <section className="relative overflow-hidden rounded-2xl border p-5 shadow-2xl sm:p-7" style={{ background: arenaBackground(season.arena), borderColor: `${arena.colors.primary}40` }}>
-    <StadiumIllustration arena={season.arena} className="pointer-events-none absolute -right-6 top-0 h-40 w-80 opacity-40" />
+  const arena = arenaOf(season.arena, season.universe);
+  return <section className="relative overflow-hidden rounded-2xl border p-5 shadow-2xl sm:p-7" style={{ background: arenaBackground(season.arena, season.universe), borderColor: `${arena.colors.primary}40` }}>
+    <StadiumIllustration arena={season.arena} universe={season.universe} className="pointer-events-none absolute -right-6 top-0 h-40 w-80 opacity-40" />
     <ArenaUnlockCelebration season={season} />
+    {season.archivedUniverses.length ? <div className="relative mb-4"><UniverseBar current={season.universe} archives={season.archivedUniverses.map((universe) => ({ universe }))} /></div> : null}
     <div className="relative grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,.8fr)]">
       <div className="flex flex-col">
         <p className="text-xs font-black tracking-[.25em]" style={{ color: arena.colors.primary }}>{t.seasons.ai.eyebrow(season.seasonNumber)} · {t.seasons.arena.eyebrow(season.arena)} {arena.name.toUpperCase()}</p>
@@ -118,14 +120,15 @@ export function AiSeasonHero({ season }: { season: AiSeason }) {
 
 export function AiSeasonDetails({ season }: { season: AiSeason }) {
   const t = useT();
-  const arena = arenaOf(season.arena);
+  const arena = arenaOf(season.arena, season.universe);
   return <div className="grid gap-4">
+    <UniverseBar current={season.universe} archives={season.archivedUniverses.map((universe) => ({ universe }))} />
     <ArenaUnlockCelebration season={season} />
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,.9fr)]">
-      <section className={`${panelClass} grid content-start gap-3`} style={{ background: arenaBackground(season.arena), borderColor: `${arena.colors.primary}40` }}>
+      <section className={`${panelClass} grid content-start gap-3`} style={{ background: arenaBackground(season.arena, season.universe), borderColor: `${arena.colors.primary}40` }}>
         <div className="flex flex-wrap items-end justify-between gap-2"><div><p className="text-xs font-black tracking-[.22em]" style={{ color: arena.colors.primary }}>{t.seasons.ai.eyebrow(season.seasonNumber)} · {arena.name.toUpperCase()}</p><h2 className="text-2xl font-black">{t.seasons.division(season.division)}</h2></div><p className="text-xs text-white/50">{t.seasons.ai.legend}</p></div>
         <AiSeasonTable season={season} rows={season.table} />
-        <p className="text-xs text-white/50">{promotionText(t, season)}{playoffPosition(season.division, season.arena) ? ` · ${season.division === 1 ? t.seasons.arena.playoffInfo(arenaOf(season.arena + 1).name) : t.seasons.ai.playoffInfo}` : ""}</p>
+        <p className="text-xs text-white/50">{promotionText(t, season)}{playoffPosition(season.division, season.arena) ? ` · ${season.division === 1 ? t.seasons.arena.playoffInfo(arenaOf(season.arena + 1, season.universe).name) : t.seasons.ai.playoffInfo}` : ""}</p>
         <p className="text-xs text-white/50">{t.seasons.ai.prizeInfo} {t.seasons.arena.prizeFactor(arena.factor)}</p>
         <PlayAiMatchButton season={season} />
       </section>

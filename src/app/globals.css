@@ -1846,3 +1846,72 @@ body:has(.manager-bottom-nav) .audio-fab {
     display: none;
   }
 }
+
+/* Overgangen til et nytt univers etter mestertittelen på Camp Nou (src/components/universe-panels.tsx). */
+.universe-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: radial-gradient(ellipse at center, #0b0d24 0%, #02030a 70%);
+  animation: universe-fade-in 0.8s ease-out both;
+}
+.universe-warp {
+  position: absolute;
+  inset: -60%;
+  background: repeating-conic-gradient(from 0deg, transparent 0 5deg, rgb(255 255 255 / 0.28) 5deg 5.3deg);
+  -webkit-mask-image: radial-gradient(circle, transparent 6%, #000 38%, transparent 70%);
+  mask-image: radial-gradient(circle, transparent 6%, #000 38%, transparent 70%);
+  opacity: 0;
+  transition: opacity 1.2s ease-in;
+}
+.universe-warp[data-on="true"] {
+  opacity: 1;
+  animation: universe-warp-spin 7s linear infinite;
+}
+.universe-ring {
+  position: absolute;
+  width: 18vmin;
+  height: 18vmin;
+  border-radius: 50%;
+  border: 2px solid var(--universe-color);
+  box-shadow: 0 0 24px var(--universe-color), inset 0 0 24px var(--universe-color);
+  opacity: 0;
+}
+.universe-warp[data-on="true"] ~ .universe-ring {
+  animation: universe-ring 2.6s ease-out infinite;
+  animation-delay: var(--delay);
+}
+.universe-content {
+  position: relative;
+  display: grid;
+  gap: 1rem;
+  width: min(92vw, 30rem);
+  justify-items: center;
+  text-align: center;
+  color: #fff;
+}
+.universe-swap {
+  animation: universe-swap 0.9s ease-out both;
+}
+@keyframes universe-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes universe-warp-spin {
+  from { transform: rotate(0deg) scale(1); }
+  to { transform: rotate(360deg) scale(1.6); }
+}
+@keyframes universe-ring {
+  0% { transform: scale(0.15); opacity: 0.95; }
+  100% { transform: scale(9); opacity: 0; }
+}
+@keyframes universe-swap {
+  from { opacity: 0; transform: translateY(14px) scale(0.94); filter: blur(6px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .universe-warp[data-on="true"], .universe-warp[data-on="true"] ~ .universe-ring { animation: none; }
+}

@@ -32,8 +32,24 @@ export const arenas: Arena[] = [
 
 export const lastArena = arenas.length as ArenaNumber;
 
-export function arenaOf(number: number): Arena {
-  return arenas[Math.min(Math.max(Math.round(number), 1), arenas.length) - 1];
+/** Navn og farger i univers 2: samme stige og samme vanskelighet, men nye stadioner. Tallene er de samme som i `arenas`. */
+const secondUniverse: { name: string; colors: Arena["colors"] }[] = [
+  { name: "Bislett Stadion", colors: { primary: "#ff9f1c", glow: "rgba(255,159,28,.2)", base: "#150e06" } },
+  { name: "San Siro", colors: { primary: "#c77dff", glow: "rgba(199,125,255,.2)", base: "#0e0916" } },
+  { name: "Allianz Arena", colors: { primary: "#2ec4b6", glow: "rgba(46,196,182,.2)", base: "#06121a" } },
+  { name: "Santiago Bernabéu", colors: { primary: "#e9ecef", glow: "rgba(233,236,239,.18)", base: "#0f1117" } },
+  { name: "Maracanã", colors: { primary: "#00e676", glow: "rgba(0,230,118,.22)", base: "#04140c" } },
+];
+
+/** Arenaene i et univers. Univers 1 har de opprinnelige, univers 2 de nye, og deretter går det på rundgang. */
+export function arenasOf(universe: number): Arena[] {
+  if (universe % 2 === 1) return arenas;
+  return arenas.map((arena, index) => ({ ...arena, ...secondUniverse[index] }));
+}
+
+export function arenaOf(number: number, universe = 1): Arena {
+  const set = arenasOf(universe);
+  return set[Math.min(Math.max(Math.round(number), 1), set.length) - 1];
 }
 
 /** AI-ratingen for en divisjon i en arena: jevnt fordelt fra divisjon 10 til divisjon 1. */
