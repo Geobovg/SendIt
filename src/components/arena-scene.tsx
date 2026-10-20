@@ -3,15 +3,9 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useT } from "@/i18n/client";
-import { arenaOf, arenasOf, divisionRating, type Arena } from "@/lib/arenas";
+import { arenaBackground, arenaOf, arenasOf, divisionRating, type Arena } from "@/lib/arenas";
 import type { AiSeason } from "@/lib/seasons";
 import { useScrollLock } from "./use-scroll-lock";
-
-/** Bakgrunnen for sesong- og kampskjermen i arenaens farger. */
-export function arenaBackground(arena: number, universe = 1) {
-  const { colors } = arenaOf(arena, universe);
-  return `radial-gradient(ellipse at 85% 0%, ${colors.glow}, transparent 45%), radial-gradient(ellipse at 0% 100%, ${colors.glow}, transparent 40%), ${colors.base}`;
-}
 
 /**
  * Et tegnet stadion i arenaens farger: tribuner, flomlys og bane. Det er en egen illustrasjon,

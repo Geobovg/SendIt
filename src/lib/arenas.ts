@@ -60,3 +60,9 @@ export function divisionRating(arena: number, division: number): number {
 
 /** AI-spillerne i arena 1 er maks 95 som før. Fra arena 2 kan de være opptil 99. */
 export const aiPlayerMaxOverall = (arena: number) => (arena <= 1 ? 95 : 99);
+
+/** Bakgrunnen for sesong- og kampskjermen i arenaens farger. Ligger her og ikke i arena-scene, så serversider kan bruke den. */
+export function arenaBackground(arena: number, universe = 1) {
+  const { colors } = arenaOf(arena, universe);
+  return `radial-gradient(ellipse at 85% 0%, ${colors.glow}, transparent 45%), radial-gradient(ellipse at 0% 100%, ${colors.glow}, transparent 40%), ${colors.base}`;
+}
