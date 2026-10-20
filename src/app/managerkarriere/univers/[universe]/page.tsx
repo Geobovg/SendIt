@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { arenaBackground, StadiumIllustration } from "@/components/arena-scene";
+import { StadiumIllustration } from "@/components/arena-scene";
 import { PlayerCardFace } from "@/components/player-card-face";
 import { UniverseBar } from "@/components/universe-panels";
 import { sessionUserId } from "@/lib/auth";
-import { arenaOf } from "@/lib/arenas";
+import { arenaBackground, arenaOf } from "@/lib/arenas";
 import { getUniverseArchive, getUniverseNav, type ArchivedCard } from "@/lib/universe";
 import { getT } from "@/i18n/server";
 

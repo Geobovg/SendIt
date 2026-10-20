@@ -5,12 +5,12 @@ import { useActionState, useCallback, useState, useTransition } from "react";
 import type { ActionState } from "@/lib/actions";
 import type { Friend } from "@/lib/friends";
 import { createFriendSeasonAction, joinFriendSeasonByCodeAction, playAiSeasonMatchAction, playFriendSeasonMatchAction, respondFriendSeasonAction, startFriendSeasonAction } from "@/lib/season-actions";
-import { arenaOf, lastArena } from "@/lib/arenas";
+import { arenaBackground, arenaOf, lastArena } from "@/lib/arenas";
 import { directPromotionSpots, isRelegation, playoffPosition } from "@/lib/season-rules";
 import type { AiSeason, FriendSeason, SeasonFixture, SeasonTableRow } from "@/lib/seasons";
 import { useT } from "@/i18n/client";
 import { UniverseBar } from "./universe-panels";
-import { arenaBackground, ArenaRoad, ArenaUnlockCelebration, StadiumIllustration } from "./arena-scene";
+import { ArenaRoad, ArenaUnlockCelebration, StadiumIllustration } from "./arena-scene";
 import { TeamDialog } from "./team-dialog";
 import { buttonClass, secondaryButtonClass } from "./ui";
 
