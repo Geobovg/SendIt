@@ -7,7 +7,7 @@ import { supabaseAdmin } from "./supabase/server";
 /** Ett lagret kort i et arkivert univers: det PlayerCardFace trenger, pluss nasjonen. */
 export type ArchivedCard = CardFacePlayer & { nation: string | null };
 export type ArchivedSeason = { season_number: number; arena: number; division: number; final_position: number | null; outcome: "promoted" | "relegated" | "stayed" | "champion" | null };
-/** Det gamle universet slik det sto da du forlot det (migrering 0128). */
+/** Et av de andre universene dine slik det sto da du forlot det (migrering 0128 og 0129). */
 export type UniverseSnapshot = {
   club_name: string; club_xp: number; budget_earned: number; wins: number; draws: number; losses: number; formation: string | null; rating: number | null;
   starters: ArchivedCard[]; bench: ArchivedCard[]; card_count: number; seasons: ArchivedSeason[];
@@ -21,7 +21,7 @@ export const getUniverse = cache(async (userId: string): Promise<number> => {
   return data?.universe ?? 1;
 });
 
-/** Universet du er i, de gamle universene dine, og om overgangsanimasjonen for det siste ikke er sett ennå. */
+/** Universet du er i, de andre universene dine, og om overgangsanimasjonen for det siste ikke er sett ennå. */
 export async function getUniverseNav(userId: string): Promise<UniverseNav> {
   const db = supabaseAdmin();
   const [current, { data, error }] = await Promise.all([
@@ -29,7 +29,8 @@ export async function getUniverseNav(userId: string): Promise<UniverseNav> {
     db.from("universe_archives").select("universe, snapshot, archived_at, seen_at").eq("user_id", userId).order("universe", { ascending: true }),
   ]);
   if (error) throw new Error(error.message);
-  const archives = (data ?? []).map((row) => ({ universe: row.universe as number, snapshot: row.snapshot as UniverseSnapshot, archivedAt: row.archived_at as string, seen: row.seen_at !== null }));
+  // Universet du er i har et gammelt bilde fra forrige gang du forlot det. Det vises ikke, siden du er der nå.
+  const archives = (data ?? []).filter((row) => row.universe !== current).map((row) => ({ universe: row.universe as number, snapshot: row.snapshot as UniverseSnapshot, archivedAt: row.archived_at as string, seen: row.seen_at !== null }));
   return {
     current,
     archives: archives.map((archive) => ({ universe: archive.universe, rating: archive.snapshot.rating, seen: archive.seen })),

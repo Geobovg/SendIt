@@ -3,14 +3,19 @@ import "server-only";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { getT } from "@/i18n/server";
 import type { AiTeam } from "./ai-opponent";
+import { lastArena } from "./arenas";
 import { supabaseAdmin } from "./supabase/server";
 
 /** `manager` er brukernavnet når klubben er en annen brukers lag i AI-sesongen. */
 export type SeasonTableRow = { participant: string; name: string; manager?: string; isMe: boolean; played: number; wins: number; draws: number; losses: number; goalsFor: number; goalsAgainst: number; points: number; position: number };
 export type SeasonFixture = { id: string; round: number; homeName: string; awayName: string; homeIsMe: boolean; awayIsMe: boolean; status: "scheduled" | "live" | "completed"; homeScore: number | null; awayScore: number | null; matchId: string | null; playoff: boolean };
 export type SeasonOutcome = "promoted" | "relegated" | "stayed" | "champion";
-/** `highestArena` er den høyeste arenaen manageren har nådd, `championTitles` antall universer vunnet (mestertitler på Camp Nou) og `universe` universet manageren spiller i nå. */
-export type AiSeason = { id: string; seasonNumber: number; arena: number; division: number; teams: AiTeam[]; table: SeasonTableRow[]; fixtures: SeasonFixture[]; nextFixture: SeasonFixture | null; played: number; inPlayoff: boolean; previous: { arena: number; division: number; position: number; outcome: SeasonOutcome } | null; highestArena: number; championTitles: number; universe: number; archivedUniverses: number[] };
+/**
+ * `highestArena` er den høyeste arenaen manageren har nådd, `championTitles` antall universer vunnet (mestertitler på Camp Nou),
+ * `universe` universet manageren spiller i nå og `archivedUniverses` de andre universene hens. `closed` er et univers der Camp Nou er vunnet:
+ * ligaen er ferdig, så det finnes ingen sesong å spille, bare draft, pakker, venner og stadion.
+ */
+export type AiSeason = { id: string; seasonNumber: number; arena: number; division: number; teams: AiTeam[]; table: SeasonTableRow[]; fixtures: SeasonFixture[]; nextFixture: SeasonFixture | null; played: number; inPlayoff: boolean; previous: { arena: number; division: number; position: number; outcome: SeasonOutcome } | null; highestArena: number; championTitles: number; universe: number; archivedUniverses: number[]; closed: boolean };
 export type FriendSeasonMember = { userId: string; username: string; status: "invited" | "joined" };
 export type FriendSeason = { id: string; name: string; status: "open" | "active" | "completed"; inviteCode: string; isOwner: boolean; myStatus: "invited" | "joined"; members: FriendSeasonMember[]; table: SeasonTableRow[]; fixtures: SeasonFixture[]; nextFixture: SeasonFixture | null };
 
@@ -41,20 +46,43 @@ async function usernames(ids: string[]) {
   return new Map((data ?? []).map((profile) => [profile.id, profile.username]));
 }
 
-/** Brukerens aktive AI-sesong. Finnes den ikke, startes en ny med én gang. Alle lagene heter det brukeren heter. */
+/** Universene dine og hvor mange du har vunnet: de andre universene (arkivert) og om ligaen er lukket i det du er i nå. */
+async function universeSummary(db: ReturnType<typeof supabaseAdmin>, userId: string) {
+  const [{ data: archives }, { data: saves }, { data: profile }] = await Promise.all([
+    db.from("universe_archives").select("universe").eq("user_id", userId).order("universe", { ascending: true }),
+    db.from("universe_saves").select("closed:data->profile->>league_closed").eq("user_id", userId),
+    db.from("player_profiles").select("universe, league_closed").eq("user_id", userId).maybeSingle(),
+  ]);
+  const universe = profile?.universe ?? 1;
+  const closed = profile?.league_closed ?? false;
+  const wins = (saves ?? []).filter((save) => (save as { closed: string | null }).closed === "true").length + (closed ? 1 : 0);
+  return { universe, closed, championTitles: wins, archivedUniverses: (archives ?? []).map((row) => row.universe as number).filter((other) => other !== universe) };
+}
+
+/**
+ * Brukerens aktive AI-sesong. Finnes den ikke, startes en ny med én gang. Alle lagene heter det brukeren heter.
+ * I et univers med lukket liga finnes ingen sesong, og da returneres en tom sesong med `closed` satt.
+ */
 export async function getAiSeason(userId: string): Promise<AiSeason> {
   const db = supabaseAdmin();
   const fallback = (await getT()).seasons.fallback;
   const { data: seasonId, error: ensureError } = await db.rpc("ensure_ai_season", { target_user: userId });
   if (ensureError) throw new Error(ensureError.message);
-  const [{ data: season, error: seasonError }, { data: fixtures, error: fixturesError }, { data: standings, error: standingsError }, { data: previous }, { data: highest }, { data: archives }, { data: profile }] = await Promise.all([
+  if (!seasonId) {
+    const [summary, { data: last }] = await Promise.all([
+      universeSummary(db, userId),
+      db.from("career_ai_seasons").select("season_number, arena").eq("user_id", userId).order("season_number", { ascending: false }).limit(1).maybeSingle(),
+    ]);
+    const arena = last?.arena ?? lastArena;
+    return { ...summary, id: "", seasonNumber: last?.season_number ?? 1, arena, division: 1, teams: [], table: [], fixtures: [], nextFixture: null, played: 0, inPlayoff: false, previous: null, highestArena: arena, closed: true };
+  }
+  const [{ data: season, error: seasonError }, { data: fixtures, error: fixturesError }, { data: standings, error: standingsError }, { data: previous }, { data: highest }, summary] = await Promise.all([
     db.from("career_ai_seasons").select("id, season_number, arena, division, teams").eq("id", seasonId).single(),
     db.from("career_season_matches").select("id, round, stage, home_user_id, away_user_id, home_ai_key, away_ai_key, status, home_score, away_score, match_id").eq("ai_season_id", seasonId).order("round", { ascending: true }),
     db.rpc("season_standings", { target_ai_season: seasonId, target_friend_season: null }),
     db.from("career_ai_seasons").select("arena, division, final_position, outcome").eq("user_id", userId).eq("status", "completed").order("season_number", { ascending: false }).limit(1).maybeSingle(),
     db.from("career_ai_seasons").select("arena").eq("user_id", userId).order("arena", { ascending: false }).limit(1).maybeSingle(),
-    db.from("universe_archives").select("universe").eq("user_id", userId).order("universe", { ascending: true }),
-    db.from("player_profiles").select("universe").eq("user_id", userId).maybeSingle(),
+    universeSummary(db, userId),
   ]);
   if (seasonError || fixturesError || standingsError) throw new Error(seasonError?.message ?? fixturesError?.message ?? standingsError?.message);
   const teams = (season.teams ?? []) as AiTeam[];
@@ -63,11 +91,11 @@ export async function getAiSeason(userId: string): Promise<AiSeason> {
   const mine = all.filter((fixture) => fixture.homeIsMe || fixture.awayIsMe);
   const nextFixture = nextFor(mine);
   return {
-    id: season.id, seasonNumber: season.season_number, arena: season.arena ?? 1, division: season.division, teams,
+    ...summary, id: season.id, seasonNumber: season.season_number, arena: season.arena ?? 1, division: season.division, teams,
     table: toTable((standings ?? []) as StandingRow[], names, userId, fallback.unknown, new Map(teams.filter((team) => team.manager && team.manager !== team.name).map((team) => [team.key, team.manager!]))),
     fixtures: mine, nextFixture, played: mine.filter((fixture) => !fixture.playoff && fixture.status === "completed").length, inPlayoff: nextFixture?.playoff ?? false,
     previous: previous?.outcome ? { arena: previous.arena ?? 1, division: previous.division, position: previous.final_position, outcome: previous.outcome } : null,
-    highestArena: highest?.arena ?? season.arena ?? 1, championTitles: archives?.length ?? 0, universe: profile?.universe ?? 1, archivedUniverses: (archives ?? []).map((row) => row.universe as number),
+    highestArena: highest?.arena ?? season.arena ?? 1, closed: false,
   };
 }
 

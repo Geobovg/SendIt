@@ -47,6 +47,8 @@ export async function playAiSeasonMatchAction(_prev: ActionState, _formData: For
   const user = await requireUser(); const db = supabaseAdmin();
   const { data: seasonId, error: ensureError } = await db.rpc("ensure_ai_season", { target_user: user.id });
   if (ensureError) return { error: await dbErrorMessage(ensureError) };
+  // Ligaen er lukket i et univers der Camp Nou er vunnet (migrering 0129).
+  if (!seasonId) return { error: (await getT()).universe.league.closedError };
   const [{ data: season }, { data: fixtures }] = await Promise.all([
     db.from("career_ai_seasons").select("id, arena, teams").eq("id", seasonId).single(),
     db.from("career_season_matches").select("id, round, stage, status, match_id, home_user_id, home_ai_key, away_ai_key").eq("ai_season_id", seasonId).or(`home_user_id.eq.${user.id},away_user_id.eq.${user.id}`).in("status", ["scheduled", "live"]).order("round", { ascending: true }),

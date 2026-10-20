@@ -87,9 +87,32 @@ function promotionText(t: ReturnType<typeof useT>, season: AiSeason) {
   return season.arena >= lastArena ? t.seasons.arena.toChampion : t.seasons.arena.toNextArena(arenaOf(season.arena + 1, season.universe).name);
 }
 
+/** Et univers der Camp Nou er vunnet: ingen flere ligakamper, men draft, pakker, venner og stadion kan spilles som før. */
+function LeagueClosedCard({ season, large = false }: { season: AiSeason; large?: boolean }) {
+  const t = useT().universe.league;
+  const arena = arenaOf(season.arena, season.universe);
+  const links: [string, string][] = [["/managerkarriere/draft", t.links.draft], ["/managerkarriere/pakker", t.links.packs], ["/managerkarriere/sesong?tab=venner", t.links.friends], ["/managerkarriere/stadion", t.links.stadium]];
+  return <div className="relative grid gap-3">
+    <p className="text-xs font-black tracking-[.25em]" style={{ color: arena.colors.primary }}>{t.eyebrow}</p>
+    <h2 className={`${large ? "text-4xl sm:text-5xl" : "text-2xl"} font-black italic tracking-tight`}>{t.title(arena.name)}</h2>
+    <p className="max-w-xl text-sm text-white/75">{t.text}</p>
+    <div className="flex flex-wrap gap-2">{links.map(([href, label]) => <Link key={href} href={href} className="rounded-xl bg-lime-300 px-4 py-2.5 text-sm font-black text-slate-950 transition hover:bg-lime-200">{label}</Link>)}</div>
+  </div>;
+}
+
+function ClosedLeagueHero({ season }: { season: AiSeason }) {
+  const arena = arenaOf(season.arena, season.universe);
+  return <section className="relative overflow-hidden rounded-2xl border p-5 shadow-2xl sm:p-7" style={{ background: arenaBackground(season.arena, season.universe), borderColor: `${arena.colors.primary}40` }}>
+    <StadiumIllustration arena={season.arena} universe={season.universe} className="pointer-events-none absolute -right-6 top-0 h-40 w-80 opacity-40" />
+    {season.archivedUniverses.length ? <div className="relative mb-4"><UniverseBar current={season.universe} archives={season.archivedUniverses.map((universe) => ({ universe }))} /></div> : null}
+    <LeagueClosedCard season={season} large />
+  </section>;
+}
+
 /** Hovedkortet på forsiden: hvor du står i AI-sesongen og en knapp til neste kamp. */
 export function AiSeasonHero({ season }: { season: AiSeason }) {
   const t = useT();
+  if (season.closed) return <ClosedLeagueHero season={season} />;
   const me = season.table.find((row) => row.isMe);
   const around = season.table.filter((row) => me && Math.abs(row.position - me.position) <= 1 || row.position === 1).slice(0, 4);
   const arena = arenaOf(season.arena, season.universe);
@@ -121,6 +144,11 @@ export function AiSeasonHero({ season }: { season: AiSeason }) {
 export function AiSeasonDetails({ season }: { season: AiSeason }) {
   const t = useT();
   const arena = arenaOf(season.arena, season.universe);
+  if (season.closed) return <div className="grid gap-4">
+    <UniverseBar current={season.universe} archives={season.archivedUniverses.map((universe) => ({ universe }))} />
+    <section className={`${panelClass} grid content-start gap-3`} style={{ background: arenaBackground(season.arena, season.universe), borderColor: `${arena.colors.primary}40` }}><LeagueClosedCard season={season} /></section>
+    <ArenaRoad season={season} />
+  </div>;
   return <div className="grid gap-4">
     <UniverseBar current={season.universe} archives={season.archivedUniverses.map((universe) => ({ universe }))} />
     <ArenaUnlockCelebration season={season} />

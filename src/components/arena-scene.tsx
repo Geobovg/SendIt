@@ -45,7 +45,7 @@ export function ArenaRoad({ season }: { season: AiSeason }) {
       {[...arenasOf(season.universe)].reverse().map((arena) => {
         const current = arena.number === season.arena;
         const reached = arena.number <= season.highestArena;
-        return <li key={arena.number} className={`relative grid grid-cols-[96px_minmax(0,1fr)] items-center gap-3 overflow-hidden rounded-xl border p-2 sm:grid-cols-[140px_minmax(0,1fr)] ${current ? "border-2" : "border-white/10"} ${reached ? "" : "opacity-55"}`} style={{ background: arenaBackground(arena.number), ...(current ? { borderColor: arena.colors.primary } : {}) }}>
+        return <li key={arena.number} className={`relative grid grid-cols-[96px_minmax(0,1fr)] items-center gap-3 overflow-hidden rounded-xl border p-2 sm:grid-cols-[140px_minmax(0,1fr)] ${current ? "border-2" : "border-white/10"} ${reached ? "" : "opacity-55"}`} style={{ background: arenaBackground(arena.number, season.universe), ...(current ? { borderColor: arena.colors.primary } : {}) }}>
           <StadiumIllustration arena={arena.number} universe={season.universe} className={`h-16 w-full sm:h-20 ${reached ? "" : "grayscale"}`} />
           <div className="min-w-0">
             <p className="text-[10px] font-black tracking-[.22em]" style={{ color: arena.colors.primary }}>{text.eyebrow(arena.number)} · {current ? text.current : reached ? text.reached : text.locked}</p>
