@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, useSyncExternalStore, useTransition } from "react";
 import { createPortal } from "react-dom";
 import { useT } from "@/i18n/client";
 import { arenaOf } from "@/lib/arenas";
-import { acknowledgeUniverseAction } from "@/lib/universe-actions";
+import { acknowledgeUniverseAction, switchUniverseAction } from "@/lib/universe-actions";
 import { StadiumIllustration } from "./arena-scene";
 import { useScrollLock } from "./use-scroll-lock";
 
@@ -79,4 +79,22 @@ export function UniverseBar({ current, archives, viewing }: { current: number; a
       ? <span key={archive.universe} aria-current="page" className={active}>{t.viewArchive(archive.universe)}</span>
       : <Link key={archive.universe} href={`/managerkarriere/univers/${archive.universe}`} className={idle}>{t.viewArchive(archive.universe)}</Link>)}
   </nav>;
+}
+
+/** Bytter til universet og tar deg til forsiden der. Kampen eller draften du er i, må være ferdig først. */
+export function SwitchUniverseButton({ universe, color }: { universe: number; color: string }) {
+  const t = useT().universe.switch;
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+  const play = () => startTransition(async () => {
+    const result = await switchUniverseAction(universe);
+    if ("error" in result) { setError(result.error); return; }
+    router.push("/managerkarriere");
+    router.refresh();
+  });
+  return <div className="grid justify-items-start gap-2">
+    <button type="button" disabled={pending} onClick={play} className="rounded-xl px-5 py-3 font-black text-slate-950 transition hover:brightness-110 disabled:opacity-60" style={{ background: color }}>{pending ? t.working : t.button(universe)}</button>
+    {error ? <p role="alert" className="text-sm text-rose-300">{error}</p> : null}
+  </div>;
 }

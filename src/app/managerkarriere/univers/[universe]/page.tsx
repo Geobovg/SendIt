@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { StadiumIllustration } from "@/components/arena-scene";
 import { PlayerCardFace } from "@/components/player-card-face";
-import { UniverseBar } from "@/components/universe-panels";
+import { SwitchUniverseButton, UniverseBar } from "@/components/universe-panels";
 import { sessionUserId } from "@/lib/auth";
 import { arenaBackground, arenaOf } from "@/lib/arenas";
 import { getUniverseArchive, getUniverseNav, type ArchivedCard } from "@/lib/universe";
@@ -10,7 +10,7 @@ import { getT } from "@/i18n/server";
 
 export const dynamic = "force-dynamic";
 
-// Et lukket univers: laget og statistikken slik de sto, uten noen knapper for å spille.
+// Et av de andre universene dine: laget og statistikken slik de sto da du forlot det, med en knapp for å spille videre der.
 export default async function UniverseArchivePage({ params }: { params: Promise<{ universe: string }> }) {
   const userId = await sessionUserId();
   if (!userId) redirect("/login");
@@ -18,10 +18,12 @@ export default async function UniverseArchivePage({ params }: { params: Promise<
   if (!Number.isInteger(number) || number < 1) notFound();
   const [archive, nav, t] = await Promise.all([getUniverseArchive(userId, number), getUniverseNav(userId), getT()]);
   if (!archive) notFound();
+  if (number === nav.current) redirect("/managerkarriere");
   const text = t.universe.archive;
   const { snapshot } = archive;
   const peak = snapshot.seasons.reduce((best, season) => Math.max(best, season.arena), 1);
   const arena = arenaOf(peak, number);
+  const closed = snapshot.seasons.at(-1)?.outcome === "champion";
   const stats: [string, string][] = [
     [text.stats.rating, String(snapshot.rating ?? "–")],
     [text.stats.record, `${snapshot.wins} / ${snapshot.draws} / ${snapshot.losses}`],
@@ -38,7 +40,8 @@ export default async function UniverseArchivePage({ params }: { params: Promise<
       <div className="relative grid gap-3">
         <p className="text-xs font-black tracking-[.25em]" style={{ color: arena.colors.primary }}>{text.eyebrow(number)}</p>
         <h1 className="text-4xl font-black italic tracking-tight sm:text-5xl">{text.title(snapshot.club_name)}</h1>
-        <p className="max-w-xl rounded-lg bg-black/35 px-3 py-2 text-sm text-white/75">{text.readOnly}</p>
+        <p className="max-w-xl rounded-lg bg-black/35 px-3 py-2 text-sm text-white/75">{closed ? text.readOnlyClosed : text.readOnlyOpen}</p>
+        <SwitchUniverseButton universe={number} color={arena.colors.primary} />
         <Link href="/managerkarriere" className="justify-self-start text-sm font-black" style={{ color: arena.colors.primary }}>← {text.back}</Link>
       </div>
     </section>
