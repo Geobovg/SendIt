@@ -20,9 +20,9 @@ async function shrinkImage(file: File, t: Dictionary): Promise<File> {
   const context = canvas.getContext("2d");
   if (!context) { bitmap.close(); throw new Error(t.profile.avatar.noCanvas); }
   context.drawImage(bitmap, 0, 0, width, height); bitmap.close();
-  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.85));
+  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/webp", 0.85));
   if (!blob) throw new Error(t.profile.avatar.compressFailed);
-  return new File([blob], "avatar.jpg", { type: "image/jpeg" });
+  return new File([blob], "avatar.webp", { type: blob.type });
 }
 
 function AvatarForm({ username, avatarUrl }: { username: string; avatarUrl: string | null }) {

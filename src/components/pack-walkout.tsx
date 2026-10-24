@@ -9,7 +9,7 @@ import { playerFlag } from "@/lib/player-nationalities";
 import { playerPhoto } from "@/lib/player-photos";
 import { walkoutClips } from "@/lib/walkout-clips";
 
-const spriteSrc = "/walkouts/sprite-walk.png";
+const spriteSrc = "/walkouts/sprite-walk.webp";
 
 // Safari spiller bare HEVC med gjennomsiktig bakgrunn, de andre bare WebM.
 function isSafari() {
