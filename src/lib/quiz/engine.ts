@@ -102,7 +102,7 @@ const GENERATORS: Record<QuestionKind, Generator> = {
       const player = PHOTO_PLAYERS[index];
       const wrong = pickOthers(PHOTO_PLAYERS, (p) => p.slug === player.slug, 3, rand);
       return withOptions(
-        { id: `player-${player.slug}`, kind: "player", prompt: labels.player, image: { src: `/players/${player.slug}.png`, variant: "photo" } },
+        { id: `player-${player.slug}`, kind: "player", prompt: labels.player, image: { src: `/players/${player.slug}.webp`, variant: "photo" } },
         { label: player.name },
         wrong.map((p) => ({ label: p.name })),
         rand,
@@ -213,5 +213,5 @@ export function createDeck(kind: QuizKind, seed: number, ctx: QuizContext): () =
 // Bildene quizen kan vise, så de kan lagres for bruk uten nett.
 export function quizImageUrls(): string[] {
   const crests = new Set(CRESTS.map((c) => c.crest));
-  return [...crests, ...PHOTO_PLAYERS.map((p) => `/players/${p.slug}.png`), ...FLAG_CODES.map((c) => `/flags/${c}.svg`)];
+  return [...crests, ...PHOTO_PLAYERS.map((p) => `/players/${p.slug}.webp`), ...FLAG_CODES.map((c) => `/flags/${c}.svg`)];
 }

@@ -832,7 +832,7 @@ body:has(.manager-bottom-nav) .audio-fab {
   height: 100%;
   aspect-ratio: 1 / 2;
   translate: -50% 0;
-  background: url("/walkouts/sprite-walk.png") 0 0 / 800% 100% no-repeat;
+  background: url("/walkouts/sprite-walk.webp") 0 0 / 800% 100% no-repeat;
   transform-origin: 50% 100%;
   filter: brightness(0.14) drop-shadow(0 0 1rem var(--pack-glow));
   animation:

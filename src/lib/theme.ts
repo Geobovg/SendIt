@@ -58,7 +58,7 @@ const boards: BoardAd[] = [
 ];
 
 const footballClubs: Crest[] = [
-  { name: "Real Madrid", initials: "RM", shape: "circle", pattern: "ring", colors: ["#f2f2f2", "#5b3fa0", "#e2bb52"], logoUrl: "/crests/real-madrid.png" },
+  { name: "Real Madrid", initials: "RM", shape: "circle", pattern: "ring", colors: ["#f2f2f2", "#5b3fa0", "#e2bb52"], logoUrl: "/crests/real-madrid.webp" },
   { name: "Barcelona", initials: "FCB", shape: "shield", pattern: "stripes", colors: ["#a50044", "#004d98", "#edbb00"] },
   { name: "Bayern München", initials: "FCB", shape: "circle", pattern: "ring", colors: ["#dc052d", "#ffffff", "#0066b2"] },
   { name: "Manchester City", initials: "MCFC", shape: "circle", pattern: "ring", colors: ["#6cabdd", "#ffffff", "#1c2c5b"] },

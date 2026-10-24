@@ -436,11 +436,11 @@ const iconPhotos = new Set<string>([
 /**
  * Bildene på de personlige kortene (migrering 0063) ligger i public/personal. Slugen er den samme som
  * i personal_cards.slug og begynner alltid med «personal-», så den aldri kolliderer med en ekte spiller.
- * Nytt kort: legg bildet i public/personal/<slug>.png (256 × 256, gjennomsiktig bakgrunn) og slugen her.
+ * Nytt kort: legg bildet i public/personal/<slug>.webp (256 × 256, gjennomsiktig bakgrunn) og slugen her.
  */
 const personalPhotos = new Set<string>(["personal-theodor", "personal-wrualswhuarne", "personal-gryteknuten", "personal-sigma", "personal-per", "personal-mjau", "personal-big-cal", "personal-geo", "personal-joeltje", "personal-bjarne", "personal-luch", "personal-loud8", "personal-rogbert", "personal-vicco", "personal-chriseek", "personal-danmatsol", "personal-howie", "personal-hakis", "personal-navidadunlefrwhuin", "personal-f-edits", "personal-joe", "personal-daweed", "personal-villiam", "personal-lucuk", "personal-chima"]);
 
 export function playerPhoto(slug: string): string | null {
-  if (personalPhotos.has(slug)) return `/personal/${slug}.png`;
-  return withPhoto.has(slug) || iconPhotos.has(slug) ?`/players/${slug}.png` : null;
+  if (personalPhotos.has(slug)) return `/personal/${slug}.webp`;
+  return withPhoto.has(slug) || iconPhotos.has(slug) ?`/players/${slug}.webp` : null;
 }

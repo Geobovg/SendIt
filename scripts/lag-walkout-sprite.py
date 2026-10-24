@@ -1,7 +1,7 @@
 # Tegner sprite-arket til walkouten: 8 bilder av en figur som går mot kameraet (hvit på gjennomsiktig).
 # Brukes bare for spillere uten kortbilde, ellers går spillerens eget bilde som skygge.
 # CSS farger figuren mørk og legger lysrand på, se .walkout-sprite i globals.css.
-# Kjøres med `python3 scripts/lag-walkout-sprite.py`, og skriver public/walkouts/sprite-walk.png.
+# Kjøres med `python3 scripts/lag-walkout-sprite.py`, og skriver public/walkouts/sprite-walk.webp.
 import math
 from PIL import Image, ImageDraw
 
@@ -59,5 +59,5 @@ for k in range(FRAMES):
     white = Image.new("RGBA", (W, H), (255, 255, 255, 0))
     white.putalpha(frame(k))
     sheet.paste(white, (k * W, 0))
-sheet.save("public/walkouts/sprite-walk.png", optimize=True)
-print("public/walkouts/sprite-walk.png", sheet.size)
+sheet.save("public/walkouts/sprite-walk.webp", lossless=True, method=6)
+print("public/walkouts/sprite-walk.webp", sheet.size)

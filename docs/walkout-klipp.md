@@ -1,7 +1,7 @@
 # Walkout-klipp
 
 De beste kortene kan ha et eget videoklipp som spilles av i stedet for sprite-walkouten. Alle andre
-walkouts bruker sprite-arket (`public/walkouts/sprite-walk.png`, tegnet av `scripts/lag-walkout-sprite.py`):
+walkouts bruker sprite-arket (`public/walkouts/sprite-walk.webp`, tegnet av `scripts/lag-walkout-sprite.py`):
 en figur med lemmer går mot kameraet som en silhuett, lyses opp i et glimt og blir til spillerbildet.
 
 ## Slik legger du inn et klipp
@@ -24,7 +24,7 @@ kan ikke rigges ut av et avskåret kortbilde uten at det blir strukket og revet.
 bilde-til-video-modell (f.eks. Runway, Kling, Veo, Luma eller Sora), og så gjør vi dem om til klipp med
 gjennomsiktig bakgrunn:
 
-1. Last opp kortbildet (`public/players/<slug>.png`) som startbilde. Be om en **ensfarget grønn bakgrunn**
+1. Last opp kortbildet (`public/players/<slug>.webp`) som startbilde. Be om en **ensfarget grønn bakgrunn**
    (#00FF00), fast kamera, ingen skygger på bakken, 4–6 sekunder, spilleren i full figur.
 2. Beskriv walkouten og feiringen, f.eks.: «The player walks confidently toward the camera against a
    plain bright green background, stops, and performs <feiring>. Static camera, full body, no cuts.»
