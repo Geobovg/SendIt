@@ -15,22 +15,13 @@ import { ConfirmDialog } from "./confirm-dialog";
 import { PlayerCardFace } from "./player-card-face";
 import { PitchMarkings, slotPoint } from "./squad-pitch";
 import { TeamCard, TeamDialog } from "./team-dialog";
+import { useActiveRefresh } from "./use-active-refresh";
 import { useScrollLock } from "./use-scroll-lock";
 
 const initial: ActionState = {};
 const panelClass = "rounded-2xl border border-white/10 bg-slate-900/75 p-4 sm:p-5";
 const limeButton = "rounded-xl bg-lime-300 px-4 py-2.5 font-black text-slate-950 transition hover:bg-lime-200 disabled:opacity-50";
 const ghostButton = "rounded-xl border border-white/15 px-4 py-2.5 text-sm font-black text-white/80 transition hover:border-white/40 hover:text-white disabled:opacity-50";
-
-/** Hold siden oppdatert mens vi venter på andre (venner som drafter, kamper i bracketen). */
-function useAutoRefresh(active: boolean, ms = 5_000) {
-  const router = useRouter();
-  useEffect(() => {
-    if (!active) return;
-    const timer = setInterval(() => { if (document.visibilityState === "visible") router.refresh(); }, ms);
-    return () => clearInterval(timer);
-  }, [active, ms, router]);
-}
 
 function ErrorText({ error }: { error?: string | null }) {
   return error ? <p role="alert" className="text-sm text-rose-300">{error}</p> : null;
@@ -40,7 +31,9 @@ export function DraftPanel({ data, budget }: { data: DraftPageData; budget: numb
   const { current, last, room } = data;
   const inRoom = Boolean(room && (current?.mode === "room" || last?.mode === "room"));
   const roomLive = inRoom && room && (room.status === "open" || room.status === "playing");
-  useAutoRefresh(Boolean(roomLive || data.friends.length || data.fixtures.some((fixture) => fixture.status === "live")));
+  // Tett oppfølging bare når noen faktisk venter på hverandre. Ellers holder det med en sjelden sjekk (nye venner og invitasjoner).
+  const waiting = Boolean(roomLive || data.fixtures.some((fixture) => fixture.status === "live"));
+  useActiveRefresh(waiting ? 5_000 : 30_000, waiting || data.friends.length > 0);
   const canBringTeam = current?.mode === "solo" && current.wins === 0 && !data.fixtures.some((fixture) => fixture.status === "live" || fixture.status === "completed");
 
   // Når siste plass er fylt, går draften over til turneringen. Da skal laget stå øverst, ikke langt nede på siden.
